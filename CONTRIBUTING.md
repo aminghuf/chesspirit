@@ -21,7 +21,7 @@ Thanks for considering a contribution. Patzer is a small, opinionated project â€
 Requirements: Node â‰¥ 20.11.
 
 ```bash
-git clone https://github.com/SikamikanikoBG/patzer.git
+git clone https://github.com/aminghuf/patzer.git
 cd patzer
 npm install
 npm run setup   # downloads Stockfish 17 into ./bin/ (Windows, Linux, macOS)

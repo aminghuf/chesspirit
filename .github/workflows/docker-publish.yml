@@ -1,9 +1,10 @@
 name: Publish to Docker Hub
 
-# Builds and pushes the runtime image to Docker Hub on every push to main, so
-# the ardi deployment (which tracks `sikamikaniko123/patzer:latest` via
-# Watchtower) auto-redeploys. Tag pushes still publish multi-arch to GHCR via
-# release.yml — this workflow is the continuous "latest" channel.
+# Builds and pushes the runtime image to Docker Hub on every push to main, as
+# `<DOCKERHUB_USERNAME>/patzer:latest`. Tag pushes publish multi-arch to GHCR
+# via release.yml — this workflow is the continuous "latest" channel.
+#
+# Needs the DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets.
 
 on:
   push:
@@ -31,7 +32,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: docker.io/sikamikaniko123/patzer
+          images: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/patzer
           tags: |
             type=raw,value=latest
             type=sha,format=short
@@ -44,8 +45,8 @@ jobs:
         with:
           context: .
           push: true
-          # ardi (the deployment target) is linux/amd64. Single-arch keeps the
-          # every-push build fast; release.yml handles multi-arch on tags.
+          # Single-arch keeps the every-push build fast; release.yml handles
+          # multi-arch on tags.
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

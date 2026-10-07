@@ -53,7 +53,7 @@ describe('GitHubStar', () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))));
     const { container } = render(<GitHubStar />);
     const link = container.querySelector('a') as HTMLAnchorElement;
-    expect(link.getAttribute('href')).toBe('https://github.com/SikamikanikoBG/patzer');
+    expect(link.getAttribute('href')).toBe('https://github.com/aminghuf/patzer');
     expect(link.textContent).toBe('Star on GitHub');
   });
 

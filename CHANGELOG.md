@@ -4,7 +4,33 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.0.0] — 2026-10-07
+
+Patzer is now developed independently at
+[aminghuf/patzer](https://github.com/aminghuf/patzer). Version numbers start
+again at 7.0.0 here; every entry below this one, from 7.18.0 down, is the
+history of the original project, [SikamikanikoBG/patzer](https://github.com/SikamikanikoBG/patzer),
+under its own numbering.
+
+### Independent project
+
+- **The update notice follows this repository's releases.** A newer release
+  of the original project no longer shows as an update, and an answer cached
+  from it is ignored.
+- **Images:** releases publish to `ghcr.io/aminghuf/patzer`, which
+  `docker-compose.yml` now pulls; every push to `main` also goes to Docker Hub.
+- The star link, the User-Agent sent to Chess.com and Lichess, and the links
+  in the docs point at this repository.
+
+### Board
+
+- **The piece slide animation is back.** Pieces slide to their square over
+  200ms on every board. A dragged piece doesn't animate, and the animation
+  stays off under `prefers-reduced-motion`.
+
+### Docs
+
+- **Persian README** — [README.fa.md](README.fa.md).
 
 ### Import your whole history, or any PGN
 

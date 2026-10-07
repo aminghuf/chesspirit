@@ -5,22 +5,26 @@
 <h1 align="center">Patzer</h1>
 
 <p align="center">
+  <b>English</b> · <a href="README.fa.md">فارسی</a>
+</p>
+
+<p align="center">
   <b>Your private Chess.com.</b> Self-hosted, AI-coached, family-friendly.<br/>
   Stockfish + your own LLM (Ollama or vLLM), in one Docker container.
 </p>
 
 <p align="center">
-  <a href="https://codespaces.new/SikamikanikoBG/patzer?quickstart=1">
+  <a href="https://codespaces.new/aminghuf/patzer?quickstart=1">
     <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" height="32"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/SikamikanikoBG/patzer/releases"><img src="https://img.shields.io/github/v/release/SikamikanikoBG/patzer?style=flat-square" alt="release"/></a>
-  <a href="https://github.com/SikamikanikoBG/patzer/pkgs/container/patzer"><img src="https://img.shields.io/badge/ghcr.io-patzer-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/SikamikanikoBG/patzer?style=flat-square" alt="MIT"/></a>
-  <a href="https://github.com/SikamikanikoBG/patzer/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/SikamikanikoBG/patzer/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
-  <a href="https://github.com/SikamikanikoBG/patzer/stargazers"><img src="https://img.shields.io/github/stars/SikamikanikoBG/patzer?style=flat-square" alt="stars"/></a>
+  <a href="https://github.com/aminghuf/patzer/releases"><img src="https://img.shields.io/github/v/release/aminghuf/patzer?style=flat-square" alt="release"/></a>
+  <a href="https://github.com/aminghuf/patzer/pkgs/container/patzer"><img src="https://img.shields.io/badge/ghcr.io-patzer-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aminghuf/patzer?style=flat-square" alt="MIT"/></a>
+  <a href="https://github.com/aminghuf/patzer/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/aminghuf/patzer/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
+  <a href="https://github.com/aminghuf/patzer/stargazers"><img src="https://img.shields.io/github/stars/aminghuf/patzer?style=flat-square" alt="stars"/></a>
 </p>
 
 <p align="center">
@@ -100,7 +104,7 @@ Pick **one** of these. The Docker options open <http://localhost:8800>; the Code
 
 **Try it in your browser**
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/SikamikanikoBG/patzer?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aminghuf/patzer?quickstart=1)
 
 Spins up a temporary Codespace with Patzer + Stockfish pre-installed. Wait ~60 seconds for `npm install` + dev server to start, then click the forwarded port labelled *"Patzer (Vite dev — open this)"*. You get the full app **except** the AI Coach narration (which needs an Ollama host on your network — see below).
 
@@ -111,7 +115,7 @@ docker run -d \
   -p 8800:8800 \
   -v patzer-data:/app/data \
   --name patzer \
-  ghcr.io/SikamikanikoBG/patzer:latest
+  ghcr.io/aminghuf/patzer:latest
 ```
 
 **`docker compose`**
@@ -119,7 +123,7 @@ docker run -d \
 ```yaml
 services:
   patzer:
-    image: ghcr.io/SikamikanikoBG/patzer:latest
+    image: ghcr.io/aminghuf/patzer:latest
     container_name: patzer
     restart: unless-stopped
     ports:
@@ -178,7 +182,7 @@ The coach teaches from facts it is handed and never analyses on its own: the ser
 Requirements: Node.js ≥ 20.11.
 
 ```bash
-git clone https://github.com/SikamikanikoBG/patzer.git
+git clone https://github.com/aminghuf/patzer.git
 cd patzer
 npm install
 npm run setup   # downloads Stockfish 17 into ./bin/ (Windows, Linux, macOS)
@@ -308,7 +312,7 @@ Patzer is better for the people who have already sent code — thank you to ever
 
 ## Security
 
-See [SECURITY.md](SECURITY.md). For vulnerabilities, **don't** open a public issue — use [GitHub's private vulnerability reporting](https://github.com/SikamikanikoBG/patzer/security/advisories/new).
+See [SECURITY.md](SECURITY.md). For vulnerabilities, **don't** open a public issue — use [GitHub's private vulnerability reporting](https://github.com/aminghuf/patzer/security/advisories/new).
 
 ## License
 

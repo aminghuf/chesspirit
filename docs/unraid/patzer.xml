@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>patzer</Name>
-  <Repository>ghcr.io/sikamikanikobg/patzer:latest</Repository>
-  <Registry>https://github.com/SikamikanikoBG/patzer/pkgs/container/patzer</Registry>
+  <Repository>ghcr.io/aminghuf/patzer:latest</Repository>
+  <Registry>https://github.com/aminghuf/patzer/pkgs/container/patzer</Registry>
   <Network>bridge</Network>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/SikamikanikoBG/patzer/discussions</Support>
-  <Project>https://github.com/SikamikanikoBG/patzer</Project>
-  <Changes>https://github.com/SikamikanikoBG/patzer/releases</Changes>
+  <Support>https://github.com/aminghuf/patzer/discussions</Support>
+  <Project>https://github.com/aminghuf/patzer</Project>
+  <Changes>https://github.com/aminghuf/patzer/releases</Changes>
   <ExtraSearchTerms>chess stockfish game review lichess chess.com ollama llm coach family kids</ExtraSearchTerms>
   <Overview>
   Patzer is a self-hosted chess app: import your public Chess.com games (or play in the browser) and get a full Game Review computed by the bundled Stockfish - move classifications from Brilliant to Blunder, accuracy, estimated Elo, an eval graph, key moments and engine lines.
@@ -21,8 +21,8 @@
   </Overview>
   <Category>GameServers: HomeAutomation: Tools:</Category>
   <WebUI>http://[IP]:[PORT:8800]</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/SikamikanikoBG/patzer/main/docs/unraid/patzer.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/SikamikanikoBG/patzer/main/docs/unraid/patzer-icon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/aminghuf/patzer/main/docs/unraid/patzer.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/aminghuf/patzer/main/docs/unraid/patzer-icon.png</Icon>
   <Config Name="WebUI Port" Target="8800" Default="8800" Mode="tcp" Description="Port Patzer listens on." Type="Port" Display="always" Required="true" Mask="false">8800</Config>
   <Config Name="Data" Target="/app/data" Default="/mnt/user/appdata/patzer" Mode="rw" Description="Holds the SQLite database and the session secret. Back this up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/patzer</Config>
   <Config Name="COOKIE_SECURE" Target="COOKIE_SECURE" Default="false" Mode="" Description="Set to true when you put Patzer behind a reverse proxy that terminates TLS." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>

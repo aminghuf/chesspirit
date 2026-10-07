@@ -2,7 +2,7 @@
 
 A list of questions that come up often enough to belong here, written tersely so
 you can actually scan them. If your question isn't covered, open a
-[discussion](https://github.com/SikamikanikoBG/patzer/discussions).
+[discussion](https://github.com/aminghuf/patzer/discussions).
 
 ## What is Patzer, in one sentence?
 
@@ -140,7 +140,7 @@ non-root user without elevated privileges.
 
 ## What if I want a feature?
 
-Open a [discussion](https://github.com/SikamikanikoBG/patzer/discussions)
+Open a [discussion](https://github.com/aminghuf/patzer/discussions)
 first. The [ROADMAP](../ROADMAP.md) lists what's queued. Big features (new
 top-level pages, variants, cloud features) will probably get pushed back —
 see [CONTRIBUTING.md](../CONTRIBUTING.md#what-well-probably-push-back-on).

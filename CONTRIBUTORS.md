@@ -1,5 +1,6 @@
 # Contributors
- - Owner: [SikamikanikoBG](https://github.com/SikamikanikoBG)
+ - Maintainer: [aminghuf](https://github.com/aminghuf)
+ - Originally created by [SikamikanikoBG](https://github.com/SikamikanikoBG) — this project began as a fork of [SikamikanikoBG/patzer](https://github.com/SikamikanikoBG/patzer) and is now developed independently
 
 ### FOSS Contributors:
  - [qrakhen](https://github.com/qrakhen)

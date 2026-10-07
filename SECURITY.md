@@ -11,9 +11,9 @@
 
 Please **do not** file a public GitHub issue for security problems.
 
-**Preferred:** use [GitHub's private vulnerability reporting](https://github.com/SikamikanikoBG/patzer/security/advisories/new) — you'll get a private, encrypted thread with the maintainer; nothing is public until a fix is published.
+**Preferred:** use [GitHub's private vulnerability reporting](https://github.com/aminghuf/patzer/security/advisories/new) — you'll get a private, encrypted thread with the maintainer; nothing is public until a fix is published.
 
-**Alternative:** email the address on the [maintainer's GitHub profile](https://github.com/SikamikanikoBG).
+**Alternative:** email the address on the [maintainer's GitHub profile](https://github.com/aminghuf).
 
 Whichever path you pick, please include:
 

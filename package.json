@@ -1,13 +1,13 @@
 {
   "name": "patzer",
-  "version": "7.18.0",
+  "version": "7.0.0",
   "private": true,
   "description": "Patzer — your private Chess.com. Self-hosted, AI-coached, family-friendly. Stockfish + your own LLM in one Docker container.",
   "license": "MIT",
-  "homepage": "https://github.com/SikamikanikoBG/patzer",
+  "homepage": "https://github.com/aminghuf/patzer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SikamikanikoBG/patzer.git"
+    "url": "https://github.com/aminghuf/patzer.git"
   },
   "workspaces": [
     "server",

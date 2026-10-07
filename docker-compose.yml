@@ -1,9 +1,10 @@
 services:
   patzer:
-    # Pulls the published image from Docker Hub by default (rebuilt on every
-    # push to main by .github/workflows/docker-publish.yml). To build from
-    # local source instead, uncomment `build: .` and run `docker compose build`.
-    image: sikamikaniko123/patzer:latest
+    # Pulls the released image from GitHub Container Registry by default
+    # (published on every version tag by .github/workflows/release.yml). To
+    # build from local source instead, uncomment `build: .` and run
+    # `docker compose build`.
+    image: ghcr.io/aminghuf/patzer:latest
     # build: .
     container_name: patzer
     restart: unless-stopped

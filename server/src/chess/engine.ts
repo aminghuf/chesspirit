@@ -213,7 +213,7 @@ export class ChessApiEngine implements AnalysisEngine {
   private async query(fen: string, depth: number, n = 1): Promise<EngineMultiEval> {
     const res = await this.fetchImpl(CHESS_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'User-Agent': 'patzer (+https://github.com/SikamikanikoBG/patzer)' },
+      headers: { 'Content-Type': 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
       body: JSON.stringify({
         fen: strictFen(fen),
         depth: Math.min(depth, CHESS_API_MAX_DEPTH),

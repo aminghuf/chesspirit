@@ -118,7 +118,7 @@ export async function masterStats(fen: string, fetchImpl: FetchLike = fetch): Pr
   const url = `${baseUrl()}/masters?fen=${encodeURIComponent(key + ' 0 1')}&moves=${MAX_MOVES}&topGames=0`;
   try {
     const res = await fetchImpl(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'patzer (+https://github.com/SikamikanikoBG/patzer)' },
+      headers: { Accept: 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!res.ok) throw new Error(`upstream ${res.status}`);

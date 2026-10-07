@@ -16,11 +16,13 @@
 
 import { getSetting, setSetting } from './db.js';
 
-const RELEASES_URL = 'https://api.github.com/repos/SikamikanikoBG/patzer/releases/latest';
+const RELEASES_URL = 'https://api.github.com/repos/aminghuf/patzer/releases/latest';
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6h
 const TIMEOUT_MS = 6000;
 const SETTING_ENABLED = 'update_check_enabled';
-const SETTING_CACHE = 'update_check_cache';
+// Keyed by repo: an answer cached from a different release feed (this project
+// used to follow SikamikanikoBG/patzer) must not be read as ours.
+const SETTING_CACHE = 'update_check_cache:aminghuf/patzer';
 
 export interface UpdateInfo {
   /** Latest version seen upstream, e.g. "7.11.0". Null if never successfully checked. */
@@ -100,7 +102,7 @@ export async function checkForUpdate(currentVersion: string, fetchImpl: FetchLik
     inFlight = (async (): Promise<UpdateInfo> => {
       try {
         const res = await fetchImpl(RELEASES_URL, {
-          headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'patzer (+https://github.com/SikamikanikoBG/patzer)' },
+          headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
           signal: AbortSignal.timeout(TIMEOUT_MS),
         });
         if (!res.ok) throw new Error(`github ${res.status}`);

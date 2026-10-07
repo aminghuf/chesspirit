@@ -6,7 +6,7 @@
 
 import { classifyTimeControl, type TimeClass } from './timeClass.js';
 
-const UA = 'patzer (+https://github.com/SikamikanikoBG/patzer)';
+const UA = 'patzer (+https://github.com/aminghuf/patzer)';
 const BASE = 'https://lichess.org';
 
 // Lichess usernames: 2–30 chars of letters, digits, _ and -.
