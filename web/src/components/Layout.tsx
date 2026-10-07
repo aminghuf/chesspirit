@@ -351,7 +351,12 @@ export default function Layout({ onOpenPalette, onOpenShortcuts }: LayoutProps) 
 
       {/* Main content */}
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6">
+        {/* Game Review's analyzer lays out three columns around a board sized
+            to the viewport height, so it gets the full width and thin padding. */}
+        <div className={cn(
+          'mx-auto px-3 py-4 sm:px-6 sm:py-6',
+          /^\/review\/[^/]+/.test(location.pathname) ? 'max-w-[1920px] lg:px-3 lg:py-3' : 'max-w-7xl',
+        )}>
           <Outlet />
         </div>
       </main>

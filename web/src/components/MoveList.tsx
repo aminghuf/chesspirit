@@ -12,8 +12,9 @@ interface Props {
   /** Optional phase split — when present, inserts OPENING / MIDDLEGAME /
    *  ENDGAME divider rows between move-pairs to match chess.com Game Review. */
   phaseSplit?: PhaseSplit | null;
-  /** Optional pixel cap; defaults to 420. */
-  maxHeight?: number;
+  /** Optional height cap — pixels, or a CSS length such as '100%' to fill
+   *  the parent; defaults to 420. */
+  maxHeight?: number | string;
   /** Plies to make stand out (the rest is dimmed) — see MoveRow. */
   highlight?: Set<number> | null;
 }

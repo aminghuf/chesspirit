@@ -21,6 +21,8 @@ import ExplorerPanel from '../components/ExplorerPanel';
 import { soundForMove, inferMoveFlagsFromSan } from '../lib/sounds';
 import { api } from '../api';
 import { useAuth } from '../state/auth';
+import { cn } from '../lib/utils';
+import { useMediaQuery } from '../lib/useMediaQuery';
 import type { AnalysisResult, AnalyzedMove, KeyMomentSummary, PhaseSplit } from '../types';
 
 interface GameDetail {
@@ -58,7 +60,7 @@ function fmtCp(cp: number | null | undefined): string {
   return `${sign}${(Math.abs(cp) / 100).toFixed(2)}`;
 }
 
-type Tab = 'moves' | 'report' | 'moments';
+type Tab = 'moves' | 'moments';
 
 /** A move the user tried on the board, off the game's own line. */
 interface VariationMove {
@@ -96,6 +98,8 @@ export default function GameAnalyzer() {
   // moves stand out in the move list and the arrows below step through them.
   const [pick, setPick] = useState<MovePick | null>(null);
   const tabsRef = useRef<HTMLDivElement | null>(null);
+  const isLg = useMediaQuery('(min-width: 1024px)');
+  const isWide = useMediaQuery('(min-width: 1440px)');
   // Local UI state for new features.
   const [flipped, setFlipped] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -416,42 +420,188 @@ export default function GameAnalyzer() {
   const eco = analysis?.opening_eco ?? data.game.eco ?? null;
   const openingName = analysis?.opening_name ?? data.game.opening_name ?? null;
 
-  return (
-    <div className="mx-auto max-w-7xl">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <Link to="/review" className="btn-ghost text-sm shrink-0"><ChevronLeft className="h-4 w-4" />{t('common.back')}</Link>
-        <div className="min-w-0 truncate text-end text-sm text-chesscom-500">
-          <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{data.game.white}</span> vs{' '}
-          <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{data.game.black}</span>
-          <span className="ms-2">· {data.game.result}</span>
+  // Wide screens (three columns) and laptops (two) take everything but the
+  // board out of the board column, so the board can use the full height of
+  // the workspace. Phones keep the players and step controls around the board.
+  const backRow = (
+    <div className="mb-3 flex items-center justify-between gap-3">
+      <Link to="/review" className="btn-ghost text-sm shrink-0"><ChevronLeft className="h-4 w-4" />{t('common.back')}</Link>
+      <div className="min-w-0 truncate text-end text-sm text-chesscom-500">
+        <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{data.game.white}</span> vs{' '}
+        <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{data.game.black}</span>
+        <span className="ms-2">· {data.game.result}</span>
+      </div>
+    </div>
+  );
+  const topPlayer = (
+    <PlayerHeader
+      name={orientation === 'white' ? data.game.black : data.game.white}
+      accuracy={orientation === 'white' ? analysis?.accuracy_black : analysis?.accuracy_white}
+      elo={orientation === 'white' ? analysis?.estimated_elo_black : analysis?.estimated_elo_white}
+      side={orientation === 'white' ? 'black' : 'white'}
+      fen={currentFen}
+    />
+  );
+  const bottomPlayer = (
+    <PlayerHeader
+      name={orientation === 'white' ? data.game.white : data.game.black}
+      accuracy={orientation === 'white' ? analysis?.accuracy_white : analysis?.accuracy_black}
+      elo={orientation === 'white' ? analysis?.estimated_elo_white : analysis?.estimated_elo_black}
+      side={orientation}
+      fen={currentFen}
+      highlighted
+    />
+  );
+  const moveBar = (
+    <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm shadow-soft dark:bg-chesscom-800">
+      <div className="min-w-0 truncate text-chesscom-500">
+        {inVariation ? (
+          <span className="flex min-w-0 items-center gap-1.5" dir="ltr">
+            <GitBranch className="h-3.5 w-3.5 shrink-0 text-gold-600" />
+            <span className="truncate font-mono text-xs font-medium text-chesscom-900 dark:text-chesscom-100" title={variationText}>{variationText}</span>
+          </span>
+        ) : move ? (
+          <>
+            <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{ply % 2 === 1 ? t('review.sideShort.white') : t('review.sideShort.black')}: {move.san}</span>
+            {move.best_move_san && move.best_move_san !== move.san && (
+              <span className="ms-2 text-xs text-chesscom-400">{t('review.best', { san: move.best_move_san })}</span>
+            )}
+          </>
+        ) : <span className="italic">{t('review.startingPosition')}</span>}
+      </div>
+      <div className="flex shrink-0 items-center gap-2 ps-2">
+        {inVariation && (
+          <>
+            <button onClick={() => setVariation((v) => v.slice(0, -1))} className="btn-ghost px-1.5 py-1 text-xs" title={t('review.variationUndo')}>
+              <Undo2 className="h-3.5 w-3.5" />
+            </button>
+            <button onClick={() => setVariation([])} className="btn-secondary px-2 py-1 text-xs">
+              {t('review.variationBack')}
+            </button>
+          </>
+        )}
+        <div className="font-mono text-base font-semibold tabular-nums">
+          {inVariation && varEvalCp == null
+            ? <Loader2 className="h-4 w-4 animate-spin text-chesscom-400" />
+            : fmtCp(currentEvalCp)}
         </div>
       </div>
-
-      {/* Workspace fits the fold on lg+: the flex row is capped by viewport
-          height; right rail scrolls inside itself (`overflow-y-auto` + `min-h-0`).
-          Page-level scroll is eliminated. */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:gap-5 lg:max-h-[calc(100vh-11rem)] lg:overflow-hidden">
-        {/* BOARD COLUMN — column itself is wide (max 760px). The BOARD element
-            is what's capped by viewport height (aspect-square keeps it square
-            while the height limit shrinks both dimensions). The eval graph
-            moved into the right rail to leave more vertical room here. */}
-        <div className="mx-auto w-full lg:mx-0 lg:flex-1 lg:max-w-[760px]">
-          <PlayerHeader
-            name={orientation === 'white' ? data.game.black : data.game.white}
-            accuracy={orientation === 'white' ? analysis?.accuracy_black : analysis?.accuracy_white}
-            elo={orientation === 'white' ? analysis?.estimated_elo_black : analysis?.estimated_elo_white}
-            side={orientation === 'white' ? 'black' : 'white'}
-            fen={currentFen}
+    </div>
+  );
+  const stepControls = (
+    <div className="mt-3 flex items-center justify-center gap-1.5 sm:gap-2" dir="ltr">
+      <button onClick={() => jump(0)} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.first')}><ChevronsLeft className="h-5 w-5" /></button>
+      <button onClick={() => jump(Math.max(0, ply - 1))} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.prev')}><ChevronLeft className="h-5 w-5" /></button>
+      <div className="flex h-10 min-w-[5rem] items-center justify-center rounded-xl bg-chesscom-100 px-3 text-sm font-mono tabular-nums dark:bg-chesscom-800 sm:h-12 sm:min-w-[5.5rem]">
+        {ply} / {positions.length - 1}
+      </div>
+      <button onClick={() => jump(Math.min(positions.length - 1, ply + 1))} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.next')}><ChevronRight className="h-5 w-5" /></button>
+      <button onClick={() => jump(positions.length - 1)} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.last')}><ChevronsRight className="h-5 w-5" /></button>
+    </div>
+  );
+  // Moves / Key moments — the "where am I in the game" card, with the coach's
+  // explanation of the selected move above the list. `fill` stretches it to
+  // the height of the left column; otherwise the list has a fixed cap.
+  const movesCard = (fill: boolean) => analysis && (
+    <div ref={tabsRef} className={cn('card overflow-hidden scroll-mt-2', fill && 'my-2 flex min-h-0 flex-1 flex-col')}>
+      <div className="flex items-center gap-0.5 border-b border-chesscom-100 bg-chesscom-50/40 px-1 dark:border-chesscom-700 dark:bg-chesscom-900/40 sm:gap-1 sm:px-2">
+        <TabBtn active={tab === 'moves'} onClick={() => setTab('moves')} icon={ListOrdered} label={t('review.moves', { defaultValue: 'Moves' })} />
+        <TabBtn active={tab === 'moments'} onClick={() => setTab('moments')} icon={Sparkles} label={t('review.keyMoments', { defaultValue: 'Key moments' })} />
+        <button onClick={() => setShowDepthControl((s) => !s)} className="btn-ghost ms-auto p-1.5" title={t('review.depth')}>
+          <SettingsIcon className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className={cn('p-3', fill && 'flex min-h-0 flex-1 flex-col')}>
+        {tab === 'moves' && pick && (
+          <div className="mb-2 flex items-center gap-1.5 rounded-lg border border-gold-500/40 bg-gold-50/60 px-2 py-1.5 text-xs dark:bg-gold-700/10">
+            <span className="min-w-0 flex-1 truncate">
+              <span className="font-semibold">{t(`classification.${pick.classification}`)}</span>
+              <span className="text-chesscom-500"> · {pick.side === 'both' ? t('review.pickBoth', { defaultValue: 'both sides' }) : t(`review.${pick.side}`)}</span>
+            </span>
+            <span className="font-mono tabular-nums text-chesscom-500">{pickIndex >= 0 ? pickIndex + 1 : '–'}/{pickedPlies.length}</span>
+            <button onClick={() => stepPick(-1)} className="btn-ghost p-1" title={t('review.prev')}><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={() => stepPick(1)} className="btn-ghost p-1" title={t('review.next')}><ChevronRight className="h-4 w-4" /></button>
+            <button onClick={() => setPick(null)} className="btn-ghost p-1" title={t('common.close', { defaultValue: 'Close' })}><X className="h-4 w-4" /></button>
+          </div>
+        )}
+        {tab === 'moves' && move && (
+          <div className={cn(fill && 'max-h-[45%] shrink-0 overflow-y-auto')}>
+            <MoveExplanation
+              move={move}
+              userColor={data.game.user_color}
+              coachConfigured={coachConfigured}
+              coachRequest={coachReq}
+            />
+          </div>
+        )}
+        {tab === 'moves' && (
+          <div className={cn(fill && 'min-h-0 flex-1')}>
+          <MoveList
+            moves={analysis.moves.map((m) => ({ ply: m.ply, san: m.san, classification: m.classification }))}
+            current={ply}
+            onSelect={jump}
+            phaseSplit={analysis.phase_split}
+            highlight={pickedSet}
+            maxHeight={fill ? '100%' : isLg ? 460 : 320}
           />
-          {/* Board sized so column fits in the workspace height. Chrome math:
-              workspace chrome (header + breadcrumb + page padding + footer) ≈
-              11rem; board-column chrome (top header + bottom header + eval row +
-              step controls) ≈ 13rem. Board side ≤ 100vh − 24rem keeps the whole
-              column flush. `aspect-square` makes height = width. */}
-          <div className="relative my-2 flex items-stretch justify-center gap-2">
+          </div>
+        )}
+        {tab === 'moments' && (
+          <div className={cn(fill && 'min-h-0 flex-1 overflow-y-auto')}>
+          <KeyMomentsList
+            items={analysis.key_moments.map((m) => {
+              const proseHit = reviewProse?.key_moments.find((p) => p.ply === m.ply);
+              return {
+                ply: m.ply,
+                side: m.side,
+                san: m.san,
+                classification: m.classification,
+                cp_loss: m.cp_loss,
+                win_pct_delta: m.win_pct_delta,
+                best_san: m.best_san,
+                title: proseHit?.title,
+                prose: proseHit?.prose,
+                mine: data.game.user_color ? m.side === data.game.user_color : undefined,
+              };
+            })}
+            current={ply}
+            onSelect={jump}
+          />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="mx-auto max-w-7xl lg:max-w-none">
+      {!isLg && backRow}
+
+      {/* Workspace fits the fold on lg+: the row is exactly as tall as the
+          viewport minus the app chrome (header + page padding + footer ≈
+          7.5rem), and the side columns scroll inside themselves. */}
+      <div className="flex flex-col gap-4 lg:h-[calc(100vh-7.5rem)] lg:min-h-[26rem] lg:flex-row lg:overflow-hidden">
+        {/* LEFT COLUMN (≥1440px) — players, the move list and the step controls. */}
+        {isWide && (
+          <div className="flex min-h-0 w-[300px] shrink-0 flex-col 2xl:w-[340px]">
+            {backRow}
+            {topPlayer}
+            {movesCard(true) || <div className="flex-1" />}
+            {moveBar}
+            {stepControls}
+            <div className="mt-3">{bottomPlayer}</div>
+          </div>
+        )}
+
+        {/* BOARD COLUMN — on lg+ it holds only the eval bar and the board,
+            whose side is capped by the workspace height (`aspect-square`
+            keeps it square) and otherwise by the room the side columns leave. */}
+        <div className="mx-auto w-full min-w-0 lg:mx-0 lg:flex lg:flex-1 lg:items-start lg:justify-center">
+          {!isLg && topPlayer}
+          <div className="relative my-2 flex items-stretch justify-center gap-2 lg:my-0 lg:w-full">
             <EvalBar cp={currentEvalCp} orientation={orientation} />
             <div
-              className={`relative aspect-square w-full min-w-0 board-theme-${user?.profile.board_theme ?? 'green'} lg:max-w-[calc(100vh-24rem)]`}
+              className={`relative aspect-square w-full min-w-0 board-theme-${user?.profile.board_theme ?? 'green'} lg:max-w-[calc(100vh-7.5rem)]`}
             >
               <ChessBoard
                 fen={currentFen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'}
@@ -469,65 +619,30 @@ export default function GameAnalyzer() {
               )}
             </div>
           </div>
-          <PlayerHeader
-            name={orientation === 'white' ? data.game.white : data.game.black}
-            accuracy={orientation === 'white' ? analysis?.accuracy_white : analysis?.accuracy_black}
-            elo={orientation === 'white' ? analysis?.estimated_elo_white : analysis?.estimated_elo_black}
-            side={orientation}
-            fen={currentFen}
-            highlighted
-          />
-
-          <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm shadow-soft dark:bg-chesscom-800">
-            <div className="min-w-0 truncate text-chesscom-500">
-              {inVariation ? (
-                <span className="flex min-w-0 items-center gap-1.5" dir="ltr">
-                  <GitBranch className="h-3.5 w-3.5 shrink-0 text-gold-600" />
-                  <span className="truncate font-mono text-xs font-medium text-chesscom-900 dark:text-chesscom-100" title={variationText}>{variationText}</span>
-                </span>
-              ) : move ? (
-                <>
-                  <span className="font-medium text-chesscom-900 dark:text-chesscom-100">{ply % 2 === 1 ? t('review.sideShort.white') : t('review.sideShort.black')}: {move.san}</span>
-                  {move.best_move_san && move.best_move_san !== move.san && (
-                    <span className="ms-2 text-xs text-chesscom-400">{t('review.best', { san: move.best_move_san })}</span>
-                  )}
-                </>
-              ) : <span className="italic">{t('review.startingPosition')}</span>}
-            </div>
-            <div className="flex shrink-0 items-center gap-2 ps-2">
-              {inVariation && (
-                <>
-                  <button onClick={() => setVariation((v) => v.slice(0, -1))} className="btn-ghost px-1.5 py-1 text-xs" title={t('review.variationUndo')}>
-                    <Undo2 className="h-3.5 w-3.5" />
-                  </button>
-                  <button onClick={() => setVariation([])} className="btn-secondary px-2 py-1 text-xs">
-                    {t('review.variationBack')}
-                  </button>
-                </>
-              )}
-              <div className="font-mono text-base font-semibold tabular-nums">
-                {inVariation && varEvalCp == null
-                  ? <Loader2 className="h-4 w-4 animate-spin text-chesscom-400" />
-                  : fmtCp(currentEvalCp)}
-              </div>
-            </div>
-          </div>
-          <div className="mt-3 flex items-center justify-center gap-1.5 sm:gap-2" dir="ltr">
-            <button onClick={() => jump(0)} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.first')}><ChevronsLeft className="h-5 w-5" /></button>
-            <button onClick={() => jump(Math.max(0, ply - 1))} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.prev')}><ChevronLeft className="h-5 w-5" /></button>
-            <div className="flex h-10 min-w-[5rem] items-center justify-center rounded-xl bg-chesscom-100 px-3 text-sm font-mono tabular-nums dark:bg-chesscom-800 sm:h-12 sm:min-w-[5.5rem]">
-              {ply} / {positions.length - 1}
-            </div>
-            <button onClick={() => jump(Math.min(positions.length - 1, ply + 1))} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.next')}><ChevronRight className="h-5 w-5" /></button>
-            <button onClick={() => jump(positions.length - 1)} className="btn-secondary h-10 w-10 p-0 sm:h-12 sm:w-12" title={t('review.last')}><ChevronsRight className="h-5 w-5" /></button>
-          </div>
-
+          {!isLg && (
+            <>
+              {bottomPlayer}
+              {moveBar}
+              {stepControls}
+            </>
+          )}
         </div>
 
         {/* RIGHT RAIL — scrolls inside itself on lg+ so the page stays fixed.
             `min-h-0` lets the flex child shrink below content height; without it
             flex would force the page to grow. */}
-        <div className="min-w-0 space-y-3 lg:w-[380px] lg:flex-initial lg:max-w-md lg:min-h-0 lg:overflow-y-auto lg:pe-1">
+        <div className={cn('min-w-0 space-y-3 lg:min-h-0 lg:shrink-0 lg:overflow-y-auto lg:pe-1', isWide ? 'w-[340px] 2xl:w-[380px]' : 'lg:w-[380px]')}>
+          {/* Laptops: no room for a third column, so its contents lead the rail. */}
+          {isLg && !isWide && (
+            <div>
+              {backRow}
+              {topPlayer}
+              <div className="mt-2">{movesCard(false)}</div>
+              {moveBar}
+              {stepControls}
+              <div className="mt-3">{bottomPlayer}</div>
+            </div>
+          )}
           {!analysis && (
             <button onClick={() => analyze(requestedDepth, false)} disabled={busy} className="btn-primary w-full">
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -605,121 +720,61 @@ export default function GameAnalyzer() {
                 </div>
               )}
 
-              {/* Tabbed workspace — Moves / AI report / Key moments / Engine / Coach.
-                  This is the ONLY tabbed surface on the page: engine lines moved in
-                  here (previously a peer card) so there is one mental model, not three. */}
-              <div ref={tabsRef} className="card overflow-hidden scroll-mt-2">
-                <div className="flex items-center gap-0.5 border-b border-chesscom-100 bg-chesscom-50/40 px-1 dark:border-chesscom-700 dark:bg-chesscom-900/40 sm:gap-1 sm:px-2">
-                  <TabBtn active={tab === 'moves'} onClick={() => setTab('moves')} icon={ListOrdered} label={t('review.moves', { defaultValue: 'Moves' })} />
-                  <TabBtn active={tab === 'report'} onClick={() => setTab('report')} icon={FileText} label={t('review.gameReport', { defaultValue: 'AI report' })} />
-                  <TabBtn active={tab === 'moments'} onClick={() => setTab('moments')} icon={Sparkles} label={t('review.keyMoments', { defaultValue: 'Key moments' })} />
-                  <button onClick={() => setShowDepthControl((s) => !s)} className="btn-ghost ms-auto p-1.5" title={t('review.depth')}>
-                    <SettingsIcon className="h-3.5 w-3.5" />
-                  </button>
+              {!isLg && movesCard(false)}
+
+              <div className="card p-3">
+                <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
+                  <FileText className="h-4 w-4 text-chesscom-400" />
+                  {t('review.gameReport', { defaultValue: 'AI report' })}
                 </div>
-                <div className="p-3">
-                  {tab === 'moves' && pick && (
-                    <div className="mb-2 flex items-center gap-1.5 rounded-lg border border-gold-500/40 bg-gold-50/60 px-2 py-1.5 text-xs dark:bg-gold-700/10">
-                      <span className="min-w-0 flex-1 truncate">
-                        <span className="font-semibold">{t(`classification.${pick.classification}`)}</span>
-                        <span className="text-chesscom-500"> · {pick.side === 'both' ? t('review.pickBoth', { defaultValue: 'both sides' }) : t(`review.${pick.side}`)}</span>
-                      </span>
-                      <span className="font-mono tabular-nums text-chesscom-500">{pickIndex >= 0 ? pickIndex + 1 : '–'}/{pickedPlies.length}</span>
-                      <button onClick={() => stepPick(-1)} className="btn-ghost p-1" title={t('review.prev')}><ChevronLeft className="h-4 w-4" /></button>
-                      <button onClick={() => stepPick(1)} className="btn-ghost p-1" title={t('review.next')}><ChevronRight className="h-4 w-4" /></button>
-                      <button onClick={() => setPick(null)} className="btn-ghost p-1" title={t('common.close', { defaultValue: 'Close' })}><X className="h-4 w-4" /></button>
-                    </div>
-                  )}
-                  {tab === 'moves' && move && (
-                    <MoveExplanation
-                      move={move}
-                      userColor={data.game.user_color}
-                      coachConfigured={coachConfigured}
-                      coachRequest={coachReq}
-                    />
-                  )}
-                  {tab === 'moves' && (
-                    <MoveList
-                      moves={analysis.moves.map((m) => ({ ply: m.ply, san: m.san, classification: m.classification }))}
-                      current={ply}
-                      onSelect={jump}
-                      phaseSplit={analysis.phase_split}
-                      highlight={pickedSet}
-                      maxHeight={typeof window !== 'undefined' && window.innerWidth < 768 ? 320 : 460}
-                    />
-                  )}
-                  {tab === 'report' && (
-                    <GameReportPanel
-                      gameId={gameId}
-                      initial={reviewProse}
-                      onMomentJump={jump}
-                      onGenerated={setReviewProse}
-                      userColor={data.game.user_color}
-                    />
-                  )}
-                  {tab === 'moments' && (
-                    <KeyMomentsList
-                      items={analysis.key_moments.map((m) => {
-                        const proseHit = reviewProse?.key_moments.find((p) => p.ply === m.ply);
-                        return {
-                          ply: m.ply,
-                          side: m.side,
-                          san: m.san,
-                          classification: m.classification,
-                          cp_loss: m.cp_loss,
-                          win_pct_delta: m.win_pct_delta,
-                          best_san: m.best_san,
-                          title: proseHit?.title,
-                          prose: proseHit?.prose,
-                          mine: data.game.user_color ? m.side === data.game.user_color : undefined,
-                        };
-                      })}
-                      current={ply}
-                      onSelect={jump}
-                    />
-                  )}
-                </div>
+                <GameReportPanel
+                  gameId={gameId}
+                  initial={reviewProse}
+                  onMomentJump={jump}
+                  onGenerated={setReviewProse}
+                  userColor={data.game.user_color}
+                />
               </div>
 
-              <LinesPanel
-                enabled={wantLines}
-                locked={inVariation}
-                onToggle={() => setLinesEnabled((s) => !s)}
-                lines={linesFen === currentFen ? lines : []}
-                loading={linesLoading}
-                error={linesError}
-                whiteToMove={whiteToMove}
-                playedUci={!inVariation && positions[ply + 1] ? (positions[ply + 1]!.from ?? '') + (positions[ply + 1]!.to ?? '') : null}
-                onPlay={tryMove}
-                onHover={setLinesHover}
-              />
+                  <LinesPanel
+                    enabled={wantLines}
+                    locked={inVariation}
+                    onToggle={() => setLinesEnabled((s) => !s)}
+                    lines={linesFen === currentFen ? lines : []}
+                    loading={linesLoading}
+                    error={linesError}
+                    whiteToMove={whiteToMove}
+                    playedUci={!inVariation && positions[ply + 1] ? (positions[ply + 1]!.from ?? '') + (positions[ply + 1]!.to ?? '') : null}
+                    onPlay={tryMove}
+                    onHover={setLinesHover}
+                  />
 
-              <ThreatPanel fen={currentFen} currentCpWhite={currentEvalCp} />
+                  <ThreatPanel fen={currentFen} currentCpWhite={currentEvalCp} />
 
-              <ExplorerPanel fen={currentFen} onPreview={setExplorerHover} />
+                  <ExplorerPanel fen={currentFen} onPreview={setExplorerHover} />
 
-              <GameMetaToolbar
-                gameId={gameId}
-                bookmarked={!!data.game.bookmarked}
-                notes={data.game.notes ?? ''}
-                onFlip={() => setFlipped((f) => !f)}
-                linkCopied={linkCopied}
-                onShare={() => {
-                  const url = window.location.href;
-                  navigator.clipboard?.writeText(url).then(() => {
-                    setLinkCopied(true);
-                    setTimeout(() => setLinkCopied(false), 1400);
-                  }).catch(() => undefined);
-                }}
-              />
+                  <GameMetaToolbar
+                    gameId={gameId}
+                    bookmarked={!!data.game.bookmarked}
+                    notes={data.game.notes ?? ''}
+                    onFlip={() => setFlipped((f) => !f)}
+                    linkCopied={linkCopied}
+                    onShare={() => {
+                      const url = window.location.href;
+                      navigator.clipboard?.writeText(url).then(() => {
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 1400);
+                      }).catch(() => undefined);
+                    }}
+                  />
 
-              <ExportRow
-                pgn={data.game.pgn}
-                fen={pos?.fen ?? ''}
-                fileBase={`${(data.game.white || 'white').replace(/[^A-Za-z0-9]+/g, '_')}_vs_${(data.game.black || 'black').replace(/[^A-Za-z0-9]+/g, '_')}`}
-              />
-            </>
-          )}
+                  <ExportRow
+                    pgn={data.game.pgn}
+                    fen={pos?.fen ?? ''}
+                    fileBase={`${(data.game.white || 'white').replace(/[^A-Za-z0-9]+/g, '_')}_vs_${(data.game.black || 'black').replace(/[^A-Za-z0-9]+/g, '_')}`}
+                  />
+                </>
+              )}
         </div>
       </div>
     </div>

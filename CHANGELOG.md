@@ -4,6 +4,21 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Game Review: three columns and a bigger board
+
+- **The board uses the height of the window.** On a desktop it is now at
+  least 80% of the window's height (716px on a 1440×900 screen, 960px at
+  1920×1080). Only the eval bar stays next to it.
+- **Moves get their own column on the left** (screens 1440px and wider):
+  the players, the Moves / Key moments list with the coach's explanation of
+  the selected move, and the step buttons. The list fills the column and
+  stays visible while you read engine lines on the right.
+- **The AI report is its own card** in the right column instead of a tab.
+- Narrower laptops keep two columns, with the left column's contents at the
+  top of the right one. Phones are unchanged.
+
 ## [7.0.0] — 2026-10-07
 
 Patzer is now developed independently at
