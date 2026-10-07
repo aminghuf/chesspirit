@@ -916,5 +916,39 @@
       "llm_not_configured": "Guarda primero un proveedor con su clave o dirección.",
       "deepseek_api_key_missing": "Añade primero una clave de API."
     }
+  },
+  "offline": {
+    "badge": "Sin conexión",
+    "intro": "Todo aquí funciona en este dispositivo, sin servidor y sin internet.",
+    "play": "Jugar contra el ordenador",
+    "playDesc": "Stockfish en tu teléfono, ocho niveles.",
+    "analysis": "Tablero de análisis",
+    "analysisDesc": "Mueve las piezas y sigue las líneas del motor.",
+    "puzzles": "Problemas",
+    "puzzlesDesc": "{{n}} problemas de Lichess guardados en este dispositivo.",
+    "connect": "Conectar a un servidor",
+    "connectHint": "Un servidor de Chesspirit añade tus partidas, la revisión de partidas, el entrenador de IA, las lecciones y el juego con amigos.",
+    "playAs": "Jugar con",
+    "color": {
+      "white": "Blancas",
+      "random": "Al azar",
+      "black": "Negras"
+    },
+    "level": "Nivel",
+    "levelEasy": "Principiante",
+    "levelHard": "Fuerza máxima",
+    "start": "Empezar partida",
+    "newGame": "Nueva partida",
+    "undo": "Deshacer",
+    "analyse": "Analizar",
+    "thinking": "Stockfish está pensando…",
+    "yourTurn": "Te toca.",
+    "youWin": "Jaque mate: ¡has ganado!",
+    "youLose": "Jaque mate: ha ganado Stockfish.",
+    "draw": "Tablas.",
+    "gameOver": "La partida ha terminado en esta posición.",
+    "engineError": "El motor no ha podido iniciarse en este dispositivo.",
+    "puzzlesDone": "Has pasado por todos los problemas de este dispositivo.",
+    "puzzlesAgain": "Empezar de nuevo"
   }
 }

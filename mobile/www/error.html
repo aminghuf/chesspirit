@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Chesspirit</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Shown by the shell when a page fails to load (server down, no network). -->
+    <main>
+      <img class="logo" src="icon.svg" alt="" />
+      <h1>Can't reach the server</h1>
+      <p class="sub" id="where">Check your connection and try again.</p>
+      <button id="retry" type="button">Try again</button>
+      <button id="change" type="button" class="ghost">Change server</button>
+      <a class="button ghost" href="offline/offline.html">Use offline</a>
+    </main>
+    <script>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('chesspirit.server'); } catch (e) { /* ignore */ }
+        if (saved) document.getElementById('where').textContent = saved.replace(/^https?:\/\//, '') + ' did not answer. Check your connection and try again.';
+        document.getElementById('retry').addEventListener('click', function () {
+          window.location.href = saved ? saved + '/' : 'index.html';
+        });
+        document.getElementById('change').addEventListener('click', function () {
+          // Mark this run as already sent, so the connect screen stays put.
+          try { sessionStorage.setItem('chesspirit.opened', '1'); } catch (e) { /* ignore */ }
+          window.location.href = 'index.html';
+        });
+      })();
+    </script>
+  </body>
+</html>

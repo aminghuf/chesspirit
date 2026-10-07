@@ -154,6 +154,16 @@ To use a different host port, run with `-p 9000:8800` (or set `HOST_PORT=9000` i
 
 If you're terminating TLS at a reverse proxy, set `COOKIE_SECURE=true` in the container's environment so session cookies aren't shipped over plaintext HTTP.
 
+## Android app
+
+There is an Android app in [`mobile/`](mobile/). It asks for your server's address once and then runs that server's Chesspirit, so it works with any instance — on the internet or on your home network. It also has an offline mode that needs no server: a game against Stockfish running on the phone, an analysis board, and 4,070 Lichess puzzles.
+
+Get the APK from the [releases page](https://github.com/aminghuf/chesspirit/releases), or build it yourself — only Docker is needed:
+
+```bash
+./mobile/build-apk.sh   # → mobile/dist/chesspirit-debug.apk
+```
+
 ## Compared to alternatives
 
 |                        | Chesspirit | Lichess Studio | Chess.com Review | Aimchess |

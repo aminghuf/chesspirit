@@ -46,6 +46,12 @@ The tactic, mate and endgame tasks of the Learn section (`web/src/learn/content/
 
 Run `npm ls --all --json` and a license auditor (e.g. `license-checker`) for the full transitive list of any release.
 
+## Stockfish WebAssembly in the Android app (GPL-3.0)
+
+The Android app (`mobile/`) has an offline mode that runs Stockfish on the device. `mobile/build-apk.sh` downloads the single-threaded "lite" WebAssembly build of Stockfish 19 from the [`stockfish`](https://github.com/nmrugg/stockfish.js) npm package (version 19.0.0, checksums pinned in the script) and ships it unmodified inside the APK, together with its licence text (`offline/engine/COPYING.txt`). It runs in a Web Worker and is spoken to over UCI. Stockfish is GPL-3.0; its source is at <https://github.com/official-stockfish/Stockfish> and the WebAssembly port's at <https://github.com/nmrugg/stockfish.js>. Distributing the APK means distributing GPL-3.0 software, with the same obligations as for the container image.
+
+The offline puzzles are the Lichess set already bundled with the server (`server/src/chess/tacticsSet.json`, CC0).
+
 ## Vazirmatn font (SIL OFL 1.1)
 
 `web/src/assets/fonts/Vazirmatn-wght.woff2` is the variable webfont of [Vazirmatn](https://github.com/rastikerdar/vazirmatn), Copyright 2015 The Vazirmatn Project Authors, licensed under the [SIL Open Font License 1.1](https://openfontlicense.org). It is used for the Persian (Farsi) interface. The full license text is next to the font in `web/src/assets/fonts/Vazirmatn-OFL.txt`; the font is bundled unmodified.

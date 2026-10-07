@@ -1,0 +1,36 @@
+# Build environment for the Android app: JDK 21 + Node + the Android SDK.
+# Used by build-apk.sh — nothing here ends up in the APK.
+#
+# linux/amd64 on purpose: Google ships the Android build tools (aapt2 and
+# friends) for x86-64 Linux only, so on an Apple Silicon Mac this runs under
+# emulation. Slow, but it needs no Java or Android Studio on the host.
+FROM --platform=linux/amd64 node:22-bookworm-slim AS node
+
+FROM --platform=linux/amd64 eclipse-temurin:21-jdk-jammy
+
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+ && ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip git \
+ && rm -rf /var/lib/apt/lists/*
+
+ENV ANDROID_HOME=/opt/android-sdk
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$PATH:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools
+
+# Command-line tools from Google, then the platform and build tools Capacitor 7
+# targets. `sdkmanager --licenses` accepts the Android SDK licence agreement
+# (https://developer.android.com/studio/terms) — building the image means
+# agreeing to it.
+ARG CMDLINE_TOOLS=11076708
+RUN mkdir -p $ANDROID_HOME/cmdline-tools \
+ && curl -fsSL -o /tmp/tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS}_latest.zip \
+ && unzip -q /tmp/tools.zip -d $ANDROID_HOME/cmdline-tools \
+ && mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
+ && rm /tmp/tools.zip \
+ && yes | sdkmanager --licenses > /dev/null \
+ && sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" > /dev/null
+
+WORKDIR /repo/mobile
