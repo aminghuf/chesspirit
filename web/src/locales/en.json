@@ -1619,5 +1619,39 @@
       "llm_not_configured": "Save a provider and its key or address first.",
       "deepseek_api_key_missing": "Add an API key first."
     }
+  },
+  "offline": {
+    "badge": "Offline",
+    "intro": "Everything here runs on this device — no server and no internet needed.",
+    "play": "Play the computer",
+    "playDesc": "Stockfish on your phone, eight levels.",
+    "analysis": "Analysis board",
+    "analysisDesc": "Move the pieces and follow the engine's lines.",
+    "puzzles": "Puzzles",
+    "puzzlesDesc": "{{n}} Lichess puzzles stored on this device.",
+    "connect": "Connect to a server",
+    "connectHint": "A Chesspirit server adds your games, Game Review, the AI coach, lessons and play with friends.",
+    "playAs": "Play as",
+    "color": {
+      "white": "White",
+      "random": "Random",
+      "black": "Black"
+    },
+    "level": "Level",
+    "levelEasy": "Beginner",
+    "levelHard": "Full strength",
+    "start": "Start game",
+    "newGame": "New game",
+    "undo": "Take back",
+    "analyse": "Analyse",
+    "thinking": "Stockfish is thinking…",
+    "yourTurn": "Your move.",
+    "youWin": "Checkmate — you won!",
+    "youLose": "Checkmate — Stockfish won.",
+    "draw": "Draw.",
+    "gameOver": "The game is over in this position.",
+    "engineError": "The engine could not start on this device.",
+    "puzzlesDone": "You have been through every puzzle on this device.",
+    "puzzlesAgain": "Start over"
   }
 }

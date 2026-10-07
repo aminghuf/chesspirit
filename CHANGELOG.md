@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Android app
+
+- **New: Chesspirit for Android** (`mobile/`, built with Capacitor). It
+  connects to any Chesspirit server: enter the address once, as you would in
+  a browser, and the app runs that server's Chesspirit — its engine, coach
+  and your account. Plain-http servers on a home network work too. Back from
+  the first page returns to the address screen, and an unreachable server
+  gets a screen of its own instead of a browser error.
+- **Offline mode, no server needed:** play Stockfish on the device (the lite
+  WebAssembly build of Stockfish 19, eight levels), an analysis board that
+  follows every move, and 4,070 Lichess puzzles bundled with the app. Offline
+  games and the offline puzzle rating stay on the phone.
+- `./mobile/build-apk.sh` builds the APK in Docker; the host needs no Java,
+  Node or Android SDK.
+
 ### The coach's AI model is now each user's own
 
 - **Changed: there is no server-wide AI model any more.** Each user adds

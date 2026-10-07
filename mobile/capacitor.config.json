@@ -1,0 +1,15 @@
+{
+  "appId": "com.aminghuf.chesspirit",
+  "appName": "Chesspirit",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": ["*"],
+    "errorPath": "error.html"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#1f2330"
+  }
+}

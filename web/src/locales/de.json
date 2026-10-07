@@ -1619,5 +1619,39 @@
       "llm_not_configured": "Speichere zuerst einen Anbieter mit Schlüssel oder Adresse.",
       "deepseek_api_key_missing": "Trage zuerst einen API-Schlüssel ein."
     }
+  },
+  "offline": {
+    "badge": "Offline",
+    "intro": "Alles hier läuft auf diesem Gerät – ohne Server und ohne Internet.",
+    "play": "Gegen den Computer",
+    "playDesc": "Stockfish auf deinem Handy, acht Stufen.",
+    "analysis": "Analysebrett",
+    "analysisDesc": "Ziehe die Figuren und folge den Varianten der Engine.",
+    "puzzles": "Aufgaben",
+    "puzzlesDesc": "{{n}} Lichess-Aufgaben, auf diesem Gerät gespeichert.",
+    "connect": "Mit einem Server verbinden",
+    "connectHint": "Ein Chesspirit-Server bringt deine Partien, die Partieanalyse, den KI-Coach, Lektionen und Partien mit Freunden.",
+    "playAs": "Spielen als",
+    "color": {
+      "white": "Weiß",
+      "random": "Zufall",
+      "black": "Schwarz"
+    },
+    "level": "Stufe",
+    "levelEasy": "Anfänger",
+    "levelHard": "Volle Stärke",
+    "start": "Partie starten",
+    "newGame": "Neue Partie",
+    "undo": "Zurücknehmen",
+    "analyse": "Analysieren",
+    "thinking": "Stockfish denkt nach …",
+    "yourTurn": "Du bist am Zug.",
+    "youWin": "Schachmatt – du hast gewonnen!",
+    "youLose": "Schachmatt – Stockfish hat gewonnen.",
+    "draw": "Remis.",
+    "gameOver": "In dieser Stellung ist die Partie zu Ende.",
+    "engineError": "Die Engine konnte auf diesem Gerät nicht starten.",
+    "puzzlesDone": "Du hast alle Aufgaben auf diesem Gerät durchgespielt.",
+    "puzzlesAgain": "Von vorn beginnen"
   }
 }

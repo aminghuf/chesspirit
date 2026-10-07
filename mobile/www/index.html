@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Chesspirit</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- The whole app lives on the server. This screen only asks which server,
+         remembers it, and hands the WebView over to it (see connect.js). -->
+    <main>
+      <img class="logo" src="icon.svg" alt="" />
+      <h1>Chesspirit</h1>
+      <p class="sub">Connect to your Chesspirit server</p>
+      <form id="form" novalidate>
+        <label for="server">Server address</label>
+        <input id="server" type="url" inputmode="url" autocomplete="url" autocapitalize="off"
+               autocorrect="off" spellcheck="false" placeholder="chess.example.com" />
+        <p class="hint">The address you open Chesspirit at in a browser, for example
+          <span dir="ltr">chess.example.com</span> or <span dir="ltr">192.168.1.20:8800</span>.</p>
+        <p id="msg" class="msg" role="status"></p>
+        <button id="connect" type="submit">Connect</button>
+        <button id="anyway" type="button" class="ghost" hidden>Open it anyway</button>
+      </form>
+      <!-- No server needed: Stockfish and puzzles on the device (offline/). -->
+      <p class="or">or</p>
+      <a class="button ghost" href="offline/offline.html">Use offline</a>
+    </main>
+    <script src="connect.js"></script>
+  </body>
+</html>
