@@ -92,7 +92,7 @@ export interface MoveStep extends StepBase {
   src?: string;
 }
 
-/** Play it out against Patzer's engine until the goal is reached. */
+/** Play it out against Chesspirit's engine until the goal is reached. */
 export interface PlayStep extends StepBase {
   type: 'play';
   fen: string;

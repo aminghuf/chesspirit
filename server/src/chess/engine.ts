@@ -95,7 +95,7 @@ export type FetchLike = (url: string, init: RequestInit) => Promise<{ ok: boolea
 const UCI_RE = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
 
 /**
- * chess-api.com response → Patzer's EngineMultiEval.
+ * chess-api.com response → Chesspirit's EngineMultiEval.
  *
  * chess-api reports `eval` / `centipawns` / `mate` from WHITE's point of view
  * ("negative = Black winning"); the local engine and everything downstream use
@@ -216,7 +216,7 @@ export class ChessApiEngine implements AnalysisEngine {
   private async query(fen: string, depth: number, n = 1): Promise<EngineMultiEval> {
     const res = await this.fetchImpl(CHESS_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
+      headers: { 'Content-Type': 'application/json', 'User-Agent': 'chesspirit (+https://github.com/aminghuf/chesspirit)' },
       body: JSON.stringify({
         fen: strictFen(fen),
         depth: Math.min(depth, CHESS_API_MAX_DEPTH),

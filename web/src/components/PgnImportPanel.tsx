@@ -17,7 +17,7 @@ interface PgnImportResult {
   ids: number[];
 }
 
-/** Patzer's take on lichess.org/paste: paste PGN text or pick a .pgn file.
+/** Chesspirit's take on lichess.org/paste: paste PGN text or pick a .pgn file.
  *  One game opens straight in the analyzer; several land in the list. */
 export default function PgnImportPanel({ onClose, onDone }: {
   onClose: () => void;

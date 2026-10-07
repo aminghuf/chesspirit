@@ -93,7 +93,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: patzer:ci
+          tags: chesspirit:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -101,8 +101,8 @@ jobs:
       # and the web app, from the image users pull.
       - name: Boot smoke test
         run: |
-          docker run -d --name patzer-ci -p 8800:8800 patzer:ci
+          docker run -d --name chesspirit-ci -p 8800:8800 chesspirit:ci
           for i in $(seq 1 30); do curl -sf http://127.0.0.1:8800/api/meta && break; sleep 2; done
           curl -sf http://127.0.0.1:8800/api/meta
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8800/)" = 200
-          docker logs patzer-ci
+          docker logs chesspirit-ci

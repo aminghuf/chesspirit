@@ -19,7 +19,7 @@ import { join } from 'node:path';
 // stayed green. Every provider × every entry point × every URL spelling a
 // user might type is pinned here.
 
-const dir = mkdtempSync(join(tmpdir(), 'patzer-llm-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-llm-'));
 process.env.DB_PATH = join(dir, 'llm.db');
 const DEEPSEEK_KEY = 'sk-test-123';
 

@@ -17,7 +17,7 @@ import { Chess } from 'chess.js';
 // gets and the guard that stops a praising answer from ever reaching the
 // player.
 
-const dir = mkdtempSync(join(tmpdir(), 'patzer-coach-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-coach-'));
 process.env.DB_PATH = join(dir, 'coach.db');
 
 const at = (moves: string[]) => { const c = new Chess(); for (const m of moves) c.move(m); return c.fen(); };

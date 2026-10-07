@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-// A quiet "star the repo" affordance. Patzer is free and self-hosted, so the
+// A quiet "star the repo" affordance. Chesspirit is free and self-hosted, so the
 // only currency a user can pay back with is a star — but a chess app is not
 // the place for a pulsing call to action next to the board. It lives in the
 // footer, in the changelog modal (right after you've read what you just got)
@@ -12,7 +12,7 @@ import { cn } from '../lib/utils';
 // Once you click it we assume you starred — the browser can't actually know
 // without your GitHub auth — and the link goes muted for good on this device.
 
-export const REPO_URL = 'https://github.com/aminghuf/patzer';
+export const REPO_URL = 'https://github.com/aminghuf/chesspirit';
 
 const COUNT_KEY = 'github.stars';
 const STARRED_KEY = 'github.starred';
@@ -36,7 +36,7 @@ function useStarCount(): number | null {
     let alive = true;
     // No Referer: this also runs on the sign-up and password-reset pages,
     // whose URLs carry invite codes and reset tokens.
-    fetch('https://api.github.com/repos/aminghuf/patzer', { referrerPolicy: 'no-referrer' })
+    fetch('https://api.github.com/repos/aminghuf/chesspirit', { referrerPolicy: 'no-referrer' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { stargazers_count?: number } | null) => {
         if (!alive || typeof d?.stargazers_count !== 'number') return;
@@ -78,8 +78,8 @@ export default function GitHubStar({ variant = 'footer', className }: Props) {
     ? t('github.starred', { defaultValue: 'Starred' })
     : t('github.star', { defaultValue: 'Star on GitHub' });
   const title = starred
-    ? t('github.thanks', { defaultValue: 'Thanks for starring Patzer!' })
-    : t('github.starTitle', { defaultValue: 'Star Patzer on GitHub — it is the whole thank-you the project asks for' });
+    ? t('github.thanks', { defaultValue: 'Thanks for starring Chesspirit!' })
+    : t('github.starTitle', { defaultValue: 'Star Chesspirit on GitHub — it is the whole thank-you the project asks for' });
 
   return (
     <a

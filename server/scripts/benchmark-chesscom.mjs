@@ -1,4 +1,4 @@
-// Run inside the patzer container against the compiled dist (no TS).
+// Run inside the chesspirit container against the compiled dist (no TS).
 // Usage:  node /tmp/bench/benchmark-chesscom.mjs [depth=16]
 // Reads:  /tmp/bench/benchmark-games.json   (10 chess.com games with reference accuracies)
 // Writes: /tmp/bench/benchmark-report.md    (markdown comparison) and prints progress.

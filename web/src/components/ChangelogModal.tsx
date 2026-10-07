@@ -34,7 +34,7 @@ export default function ChangelogModal({ onClose }: Props) {
         {/* Having just read what the last few releases gave you for free is the
             one moment to ask for a star. */}
         <div className="flex items-center justify-between gap-3 border-t border-ink-200 px-5 py-3 text-xs text-ink-500 dark:border-ink-700">
-          <span>{t('github.changelogCta', { defaultValue: 'Patzer is free and self-hosted.' })}</span>
+          <span>{t('github.changelogCta', { defaultValue: 'Chesspirit is free and self-hosted.' })}</span>
           <GitHubStar variant="inline" className="shrink-0" />
         </div>
       </div>

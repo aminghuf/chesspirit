@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 // The route opens the real database on import, so point it at a throwaway file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-insights-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-insights-'));
 process.env.DB_PATH = join(dir, 'insights.db');
 
 type Router = { request: (path: string, init?: RequestInit) => Response | Promise<Response> };

@@ -7,7 +7,7 @@ import Database from 'better-sqlite3';
 // The routes open the real database on import, so point it at a throwaway
 // file first. The local puzzle file would sit next to it — and is never
 // downloaded here, so the local source reads as missing.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-puzzles-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-puzzles-'));
 process.env.DB_PATH = join(dir, 'chess.db');
 
 type DbModule = typeof import('../src/db.js');

@@ -2,7 +2,7 @@
 //
 // A game page can't treat a dropped socket as the end of the game: phones
 // freeze backgrounded tabs, Wi-Fi hands over to mobile data, laptops suspend.
-// Until v7.14.0 Patzer's play socket had `onclose = () => {}`, so any of those
+// Until v7.14.0 Chesspirit's play socket had `onclose = () => {}`, so any of those
 // silently ended the game while the board carried on looking alive.
 //
 // Kept deliberately small and injectable — `open` and `random` are parameters

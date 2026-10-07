@@ -6,7 +6,7 @@
 
 import { classifyTimeControl, type TimeClass } from './timeClass.js';
 
-const UA = 'patzer (+https://github.com/aminghuf/patzer)';
+const UA = 'chesspirit (+https://github.com/aminghuf/chesspirit)';
 const BASE = 'https://lichess.org';
 
 // Lichess usernames: 2–30 chars of letters, digits, _ and -.
@@ -39,7 +39,7 @@ export interface LichessGame {
   pgn?: string;
 }
 
-/** A Lichess game reduced to the columns Patzer stores. */
+/** A Lichess game reduced to the columns Chesspirit stores. */
 export interface ImportRow {
   external_id: string;
   pgn: string;
@@ -62,7 +62,7 @@ function playerName(p: LichessPlayer): string {
   return 'Anonymous';
 }
 
-/** Map one exported game onto Patzer's columns, or null if it can't be
+/** Map one exported game onto Chesspirit's columns, or null if it can't be
  *  reviewed here (a variant, an aborted game, or no moves). */
 export function toImportRow(g: LichessGame, username: string): ImportRow | null {
   // Standard chess only — the classifier and coach assume it. "fromPosition"

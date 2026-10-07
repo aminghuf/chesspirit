@@ -330,9 +330,9 @@ router.post('/test/email', async (c) => {
   if (!conn.ok) return c.json({ ok: false, error: conn.error ?? 'connection_failed' });
   const res = await sendMail({
     to: parsed.data.to,
-    subject: 'Patzer SMTP test',
-    text: 'This is a test email from your Patzer server. SMTP is working.',
-    html: '<p>This is a test email from your <b>Patzer</b> server. SMTP is working. ♟</p>',
+    subject: 'Chesspirit SMTP test',
+    text: 'This is a test email from your Chesspirit server. SMTP is working.',
+    html: '<p>This is a test email from your <b>Chesspirit</b> server. SMTP is working. ♟</p>',
   });
   return c.json({ ok: res.ok, error: res.error });
 });

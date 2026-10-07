@@ -7,8 +7,8 @@ import { fetchRecentGames, type ChessComGame } from './chesscom.js';
 /** `limit` is the most recent N games; undefined imports the whole history. */
 export async function importChessComGames(userId: number, username: string, limit: number | undefined): Promise<{ imported: number; total: number }> {
   const games = await fetchRecentGames(username, limit ?? Infinity);
-  // Imported chess.com games are NEVER rated in Patzer's pool — they have their
-  // own chess.com rating that lives there. Only PvP games inside Patzer count.
+  // Imported chess.com games are NEVER rated in Chesspirit's pool — they have their
+  // own chess.com rating that lives there. Only PvP games inside Chesspirit count.
   const stmt = db.prepare(`
     INSERT INTO games (user_id, source, external_id, pgn, white, black, result, time_control, time_class, end_time, user_color, rated)
     VALUES (?, 'chesscom', ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)

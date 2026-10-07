@@ -31,7 +31,7 @@ export default function Setup() {
     setTestStatus('testing'); setTestError(''); setTestHint(undefined); setModels([]);
     try {
       const res = await fetch('/api/setup/test-ollama', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'patzer' },
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'chesspirit' },
         body: JSON.stringify({ url: ollamaUrl }),
       });
       const data = await res.json();

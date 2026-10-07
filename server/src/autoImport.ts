@@ -1,4 +1,4 @@
-// Automatic Chess.com + Lichess import. On a schedule, Patzer pulls each
+// Automatic Chess.com + Lichess import. On a schedule, Chesspirit pulls each
 // profile's recent games from both sites, dedupes them into `games`, then
 // analyzes and reviews the new ones in the background — so a game you finish
 // on Chess.com or Lichess shows up here (with its review) without a manual

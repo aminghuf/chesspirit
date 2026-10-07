@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="web/public/icon.svg" width="96" alt="Patzer" />
+  <img src="web/public/icon.svg" width="96" alt="Chesspirit" />
 </p>
 
-<h1 align="center">Patzer</h1>
+<h1 align="center">Chesspirit</h1>
 
 <p align="center">
   <b>English</b> · <a href="README.fa.md">فارسی</a>
@@ -14,29 +14,29 @@
 </p>
 
 <p align="center">
-  <a href="https://codespaces.new/aminghuf/patzer?quickstart=1">
+  <a href="https://codespaces.new/aminghuf/chesspirit?quickstart=1">
     <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" height="32"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/aminghuf/patzer/releases"><img src="https://img.shields.io/github/v/release/aminghuf/patzer?style=flat-square" alt="release"/></a>
-  <a href="https://github.com/aminghuf/patzer/pkgs/container/patzer"><img src="https://img.shields.io/badge/ghcr.io-patzer-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/aminghuf/patzer?style=flat-square" alt="MIT"/></a>
-  <a href="https://github.com/aminghuf/patzer/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/aminghuf/patzer/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
-  <a href="https://github.com/aminghuf/patzer/stargazers"><img src="https://img.shields.io/github/stars/aminghuf/patzer?style=flat-square" alt="stars"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/releases"><img src="https://img.shields.io/github/v/release/aminghuf/chesspirit?style=flat-square" alt="release"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/pkgs/container/chesspirit"><img src="https://img.shields.io/badge/ghcr.io-chesspirit-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aminghuf/chesspirit?style=flat-square" alt="MIT"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/aminghuf/chesspirit/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/stargazers"><img src="https://img.shields.io/github/stars/aminghuf/chesspirit?style=flat-square" alt="stars"/></a>
 </p>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/analyzer-dark.png">
-    <img src="docs/screenshots/analyzer.png" width="960" alt="Patzer Game Review — classified move list, engine lines and the What's-the-threat probe on a sacrifice from the Opera Game"/>
+    <img src="docs/screenshots/analyzer.png" width="960" alt="Chesspirit Game Review — classified move list, engine lines and the What's-the-threat probe on a sacrifice from the Opera Game"/>
   </picture>
   <br/>
   <sub><b>Game Review</b> — every move classified, top engine lines, and <i>What's the threat?</i> answering in plain words. <i>Demo accounts, Morphy's Opera Game.</i></sub>
 </p>
 
-## Why Patzer
+## Why Chesspirit
 
 - **Your games stay home.** Single Docker container on a Pi / NAS / old laptop. No cloud, no telemetry, no upsell.
 - **Bring your own LLM.** The AI coach runs against your own [Ollama](https://ollama.com) or [vLLM](https://docs.vllm.ai) host. The coach teaches, but never analyses: Stockfish, chess.js and your own game history work out the facts server-side, so a small local model can't hallucinate moves or pieces.
@@ -44,7 +44,7 @@
 
 ## What it is
 
-Patzer is a tiny, self-hosted take on the Chess.com / Lichess workflow you actually use:
+Chesspirit is a tiny, self-hosted take on the Chess.com / Lichess workflow you actually use:
 
 - **Game Review** — pull your public Chess.com or Lichess games (or paste a PGN; both Chess.com and Lichess games can sync on their own), analyze with bundled Stockfish, get chess.com-style classifications (Brilliant / Great / Best / Excellent / Good / Book / Inaccuracy / Mistake / Miss / Blunder), accuracy %, estimated Elo, eval graph, key moments, top engine lines, a "What's the threat?" probe, and master-game statistics for the position. Import your whole history in one go, then filter the list by period, site, result, colour and time control. Move the pieces on the review board to try a different move and see the engine's verdict on it — evaluation, top lines, and arrows for what it preferred and what it would play next. Click a count in the move table (say, *Blunder 2*) to list those moves and jump to them; the mating move gets its own `#` badge and sound; and a game the engine is still working on shows *Analyzing…* in the list instead of inviting a second click.
 - **Your choice of engine** — Game Review runs on the bundled Stockfish (locally, or on the hosted chess-api.com), or on an engine an admin downloads with one click in *Admin → System*: Stockfish 19, Reckless, Viridithas or Avalanche. Downloads come from the projects' official releases and are checked against a pinned checksum before they run. The same page sets the default analysis depth.
@@ -60,7 +60,7 @@ Patzer is a tiny, self-hosted take on the Chess.com / Lichess workflow you actua
 - **Multilingual** — English, Bulgarian, Spanish, German, Russian and Persian (فارسی) out of the box, UI *and* coach prompts. Persian is complete down to every Learn lesson, with a right-to-left layout (the board and moves stay left to right) and the bundled Vazirmatn font. Adding a language is one table entry per file — see CONTRIBUTING.
 - **Self-hosted, single container** — runs on a Pi, a NAS, an old laptop. Your games never leave home.
 - **Phone-friendly** — full-width board, sticky action bar and a swipe-up move list on small screens.
-- **Tells you when it's stale** — a self-hosted app can't update itself, but Patzer checks GitHub every six hours and shows a one-line notice when a newer release is out, so you know to pull. Sends nothing about you; switch it off in *Admin → System*.
+- **Tells you when it's stale** — a self-hosted app can't update itself, but Chesspirit checks GitHub every six hours and shows a one-line notice when a newer release is out, so you know to pull. Sends nothing about you; switch it off in *Admin → System*.
 
 ## Screenshots
 
@@ -104,9 +104,9 @@ Pick **one** of these. The Docker options open <http://localhost:8800>; the Code
 
 **Try it in your browser**
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aminghuf/patzer?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aminghuf/chesspirit?quickstart=1)
 
-Spins up a temporary Codespace with Patzer + Stockfish pre-installed. Wait ~60 seconds for `npm install` + dev server to start, then click the forwarded port labelled *"Patzer (Vite dev — open this)"*. You get the full app **except** the AI Coach narration (which needs an Ollama host on your network — see below).
+Spins up a temporary Codespace with Chesspirit + Stockfish pre-installed. Wait ~60 seconds for `npm install` + dev server to start, then click the forwarded port labelled *"Chesspirit (Vite dev — open this)"*. You get the full app **except** the AI Coach narration (which needs an Ollama host on your network — see below).
 
 **`docker run`**
 
@@ -115,15 +115,15 @@ docker run -d \
   -p 8800:8800 \
   -v patzer-data:/app/data \
   --name patzer \
-  ghcr.io/aminghuf/patzer:latest
+  ghcr.io/aminghuf/chesspirit:latest
 ```
 
 **`docker compose`**
 
 ```yaml
 services:
-  patzer:
-    image: ghcr.io/aminghuf/patzer:latest
+  chesspirit:
+    image: ghcr.io/aminghuf/chesspirit:latest
     container_name: patzer
     restart: unless-stopped
     ports:
@@ -138,16 +138,16 @@ volumes:
 > move classification, accuracy %, eval graph, opening detection. The setup wizard takes you
 > straight to a working board.
 >
-> **What needs an LLM:** the AI Coach commentary voice. Until you point Patzer at an Ollama or
+> **What needs an LLM:** the AI Coach commentary voice. Until you point Chesspirit at an Ollama or
 > vLLM host, the *Coach* panel just shows the engine facts in plain text.
 >
 > **What needs a Chess.com or Lichess username:** importing your public games for review. Without it
 > you can still load PGNs by paste or play live and review from the move list. Once a username is set,
-> Patzer can pull new games automatically on an interval you pick in *Settings → Automation*.
+> Chesspirit can pull new games automatically on an interval you pick in *Settings → Automation*.
 
 You'll want, optionally:
 
-- **For the AI Coach:** each user adds their own model in *Settings → Connections* and pays for their own use — there is no shared, server-wide model. Any user can add a [DeepSeek](https://platform.deepseek.com) API key. An [Ollama](https://ollama.com) or [vLLM](https://docs.vllm.ai) server reachable from the Patzer container works too: for admins always (the setup wizard saves the one you enter as the first admin's own), and for other users once an admin switches it on in *Admin → System*.
+- **For the AI Coach:** each user adds their own model in *Settings → Connections* and pays for their own use — there is no shared, server-wide model. Any user can add a [DeepSeek](https://platform.deepseek.com) API key. An [Ollama](https://ollama.com) or [vLLM](https://docs.vllm.ai) server reachable from the Chesspirit container works too: for admins always (the setup wizard saves the one you enter as the first admin's own), and for other users once an admin switches it on in *Admin → System*.
 - **For Game Review on your own games:** a Chess.com and/or Lichess username (entered later in *Settings*).
 
 To use a different host port, run with `-p 9000:8800` (or set `HOST_PORT=9000` if you're using `docker compose`).
@@ -156,7 +156,7 @@ If you're terminating TLS at a reverse proxy, set `COOKIE_SECURE=true` in the co
 
 ## Compared to alternatives
 
-|                        | Patzer | Lichess Studio | Chess.com Review | Aimchess |
+|                        | Chesspirit | Lichess Studio | Chess.com Review | Aimchess |
 | ---------------------- | :----: | :------------: | :--------------: | :------: |
 | Self-hosted            |   ✅   |       ❌        |        ❌         |    ❌    |
 | LLM coach (BYO model)  |   ✅   |       ❌        |        ❌         |    ❌    |
@@ -182,8 +182,8 @@ The coach teaches from facts it is handed and never analyses on its own: the ser
 Requirements: Node.js ≥ 20.11.
 
 ```bash
-git clone https://github.com/aminghuf/patzer.git
-cd patzer
+git clone https://github.com/aminghuf/chesspirit.git
+cd chesspirit
 npm install
 npm run setup   # downloads Stockfish 17 into ./bin/ (Windows, Linux, macOS)
 npm run dev
@@ -218,7 +218,7 @@ Create `.env.deploy` (gitignored) on the workstation you're deploying *from*:
 
 ```
 HOST=user@192.168.x.x
-REMOTE_DIR=/home/user/patzer
+REMOTE_DIR=/home/user/chesspirit
 SUDO_PASS=... # only if your user is not in the docker group on the target
 HOST_PORT=8800
 ```
@@ -257,7 +257,7 @@ All user-facing configuration is done **through the UI** and persisted in SQLite
 | `ENGINE_BACKEND` | `local` | `chessapi` sends Game Review positions to the hosted chess-api.com engine instead of the bundled Stockfish (also a toggle in *Admin → System*; the env var wins over the UI setting, and while it is set analysis stays on Stockfish even if another engine is selected there) |
 | `CHESSCOM_SYNC_MINUTES` | `15` | Default Chess.com auto-sync interval (minutes) applied when a profile's setting is first created. The live interval is per-profile under *Settings → Automation* (Lichess has its own too); `0` makes auto-sync opt-in |
 
-System settings (the analysis engine and its default depth, Stockfish path override, who can sign up, whether users may enter their own Ollama/vLLM address) live in *Admin → System*; invites in *Admin → Users*. Engines downloaded there are stored in `engines/` next to the database, so they survive image updates as long as the data volume does; downloads are available when Patzer runs on Linux (the Docker image), and bot play always uses the bundled Stockfish.
+System settings (the analysis engine and its default depth, Stockfish path override, who can sign up, whether users may enter their own Ollama/vLLM address) live in *Admin → System*; invites in *Admin → Users*. Engines downloaded there are stored in `engines/` next to the database, so they survive image updates as long as the data volume does; downloads are available when Chesspirit runs on Linux (the Docker image), and bot play always uses the bundled Stockfish.
 Per-profile settings (language, audience, coach behavior, TTS voice, sound sets, Chess.com / Lichess usernames) live in *Settings*, alongside the *Automation* section: a toggle to write the AI review automatically when a game finishes, and a per-site auto-sync interval for Chess.com and Lichess. *Settings → Connections* holds each user's own coach model and Lichess API token; both are stored on the server and never sent back to the browser.
 
 ## How move classification works
@@ -288,10 +288,10 @@ Estimated Elo comes from average centipawn loss on a piecewise curve calibrated 
 
 ## Troubleshooting
 
-- **"Stockfish binary not found"** — Patzer no longer falls back to a bare `stockfish` PATH lookup (defense-in-depth: a malicious binary earlier in `$PATH` would otherwise run as the server user). Either install Stockfish into `/usr/games/stockfish`, `/usr/local/bin/stockfish`, `/opt/homebrew/bin/stockfish`, or `bin/stockfish` in the project, or set `STOCKFISH_PATH` (env) / *Admin → System → Stockfish path*.
-- **"Ollama unreachable" / "fetch failed"** — inside Docker, `localhost` is the Patzer container itself, not your computer. Two things have to line up:
+- **"Stockfish binary not found"** — Chesspirit no longer falls back to a bare `stockfish` PATH lookup (defense-in-depth: a malicious binary earlier in `$PATH` would otherwise run as the server user). Either install Stockfish into `/usr/games/stockfish`, `/usr/local/bin/stockfish`, `/opt/homebrew/bin/stockfish`, or `bin/stockfish` in the project, or set `STOCKFISH_PATH` (env) / *Admin → System → Stockfish path*.
+- **"Ollama unreachable" / "fetch failed"** — inside Docker, `localhost` is the Chesspirit container itself, not your computer. Two things have to line up:
   1. **Ollama listens on the network.** By default it only answers on its own machine's loopback. Set `OLLAMA_HOST=0.0.0.0` (Windows: a user environment variable, then quit and restart Ollama from the tray; Linux: `sudo systemctl edit ollama` → `Environment="OLLAMA_HOST=0.0.0.0"`, then restart the service).
-  2. **Patzer uses an address that reaches it.** Same machine: `http://host.docker.internal:11434` — built into Docker Desktop on Windows/Mac; on Linux uncomment the `extra_hosts` lines in `docker-compose.yml`, or add `--add-host=host.docker.internal:host-gateway` to `docker run`. Another machine: its LAN IP, e.g. `http://192.168.1.20:11434`.
+  2. **Chesspirit uses an address that reaches it.** Same machine: `http://host.docker.internal:11434` — built into Docker Desktop on Windows/Mac; on Linux uncomment the `extra_hosts` lines in `docker-compose.yml`, or add `--add-host=host.docker.internal:host-gateway` to `docker run`. Another machine: its LAN IP, e.g. `http://192.168.1.20:11434`.
 
   The setup wizard and *Admin → System* show this hint when the test fails. The setup-time test only allows loopback / RFC1918 / `*.local` / `host.docker.internal` URLs. After setup, change it any time in *Admin → System*.
 - **Port 8800 already in use** — `-p 9000:8800` (docker run) or `HOST_PORT=9000 docker compose up -d`.
@@ -300,7 +300,7 @@ Estimated Elo comes from average centipawn loss on a piecewise curve calibrated 
 
 ## More
 
-- **[FAQ](docs/FAQ.md)** — what Patzer is and isn't, Chess.com API legality, playing a friend across the internet, NAT/proxy notes, backup, "I lost my admin password", language additions.
+- **[FAQ](docs/FAQ.md)** — what Chesspirit is and isn't, Chess.com API legality, playing a friend across the internet, NAT/proxy notes, backup, "I lost my admin password", language additions.
 - **[Roadmap](ROADMAP.md)** — what's queued and what's deliberately out of scope.
 - **[Changelog](CHANGELOG.md)** — every release, with why-not-just-what entries.
 
@@ -308,11 +308,11 @@ Estimated Elo comes from average centipawn loss on a piecewise curve calibrated 
 
 PRs welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) first. Translations especially encouraged.
 
-Patzer is better for the people who have already sent code — thank you to everyone in [CONTRIBUTORS.md](CONTRIBUTORS.md).
+Chesspirit is better for the people who have already sent code — thank you to everyone in [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 ## Security
 
-See [SECURITY.md](SECURITY.md). For vulnerabilities, **don't** open a public issue — use [GitHub's private vulnerability reporting](https://github.com/aminghuf/patzer/security/advisories/new).
+See [SECURITY.md](SECURITY.md). For vulnerabilities, **don't** open a public issue — use [GitHub's private vulnerability reporting](https://github.com/aminghuf/chesspirit/security/advisories/new).
 
 ## License
 

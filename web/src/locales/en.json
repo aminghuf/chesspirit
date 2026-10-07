@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Patzer",
+    "name": "Chesspirit",
     "tagline": "Your private Chess.com.",
     "home": "Home"
   },
@@ -38,7 +38,7 @@
     "betaHint": "Still being refined — feedback is welcome."
   },
   "setup": {
-    "title": "Welcome to Patzer",
+    "title": "Welcome to Chesspirit",
     "subtitle": "Let's set up your chess server. This is a one-time wizard.",
     "step1": "Create your admin account",
     "step2": "Connect Ollama (for the AI Coach)",
@@ -54,7 +54,7 @@
     "passwordHint": "At least 10 characters.",
     "next": "Next",
     "llmHint": {
-      "docker_localhost": "Patzer runs in Docker, where \"localhost\" is the container itself, not your computer. Use http://host.docker.internal:11434 (built into Docker Desktop on Windows and Mac; on Linux only after enabling the extra_hosts lines in docker-compose.yml) or your computer's network address, e.g. http://192.168.1.20:11434. The AI server must also accept connections from the network — for Ollama, set OLLAMA_HOST=0.0.0.0 and restart Ollama.",
+      "docker_localhost": "Chesspirit runs in Docker, where \"localhost\" is the container itself, not your computer. Use http://host.docker.internal:11434 (built into Docker Desktop on Windows and Mac; on Linux only after enabling the extra_hosts lines in docker-compose.yml) or your computer's network address, e.g. http://192.168.1.20:11434. The AI server must also accept connections from the network — for Ollama, set OLLAMA_HOST=0.0.0.0 and restart Ollama.",
       "unreachable": "Nothing answered at this address. Check that the AI server is running, that address and port are right, and that it accepts connections from the network (for Ollama: set OLLAMA_HOST=0.0.0.0, then restart it). A firewall on that computer can also block the port."
     }
   },
@@ -289,7 +289,7 @@
     },
     "regenerateReport": "Write it again",
     "importedOf": "Imported {{n}} new games ({{total}} found)",
-    "importAllSlow": "Importing your whole history — with thousands of games this can take a few minutes. You can keep using Patzer meanwhile.",
+    "importAllSlow": "Importing your whole history — with thousands of games this can take a few minutes. You can keep using Chesspirit meanwhile.",
     "importScope": {
       "label": "How many games to import",
       "last": "Last {{n}}",
@@ -485,7 +485,7 @@
       "board": "Real board"
     },
     "moveSoundSetDesc": {
-      "classic": "Synthesized wood knocks — the original Patzer sounds.",
+      "classic": "Synthesized wood knocks — the original Chesspirit sounds.",
       "board": "Recordings of real pieces set down on a wooden board."
     },
     "soundSet": "Check & game-end sounds",
@@ -494,7 +494,7 @@
       "soft": "Soft"
     },
     "soundSetDesc": {
-      "classic": "Bright bells — the original Patzer sounds.",
+      "classic": "Bright bells — the original Chesspirit sounds.",
       "soft": "Warm wooden marimba notes that match the move sounds."
     },
     "soundSetPreview": "Preview",
@@ -503,11 +503,11 @@
     "autoReview": "Automatic game review",
     "autoReviewDesc": "Write the AI review as soon as a game finishes, without clicking Review.",
     "chessComSyncInterval": "Chess.com auto-sync",
-    "chessComSyncIntervalHelp": "How often Patzer pulls your new Chess.com games automatically. Off keeps manual Import only.",
+    "chessComSyncIntervalHelp": "How often Chesspirit pulls your new Chess.com games automatically. Off keeps manual Import only.",
     "chessComSyncOff": "Off",
     "chessComSyncEvery": "Every {{n}} min",
     "lichessSyncInterval": "Lichess auto-sync",
-    "lichessSyncIntervalHelp": "How often Patzer pulls your new Lichess games automatically. Off keeps manual Import only.",
+    "lichessSyncIntervalHelp": "How often Chesspirit pulls your new Lichess games automatically. Off keeps manual Import only.",
     "lichessSyncOff": "Off",
     "lichessSyncEvery": "Every {{n}} min"
   },
@@ -648,7 +648,7 @@
     "engineBackendEnv": "Set by the ENGINE_BACKEND environment variable — this toggle is ignored.",
     "engines": {
       "intro": "Game Review and engine lines run on the engine chosen here. Bot play always uses the bundled Stockfish. Extra engines are downloaded from their official releases and checked against a pinned checksum before they run.",
-      "bundled": "Bundled with Patzer",
+      "bundled": "Bundled with Chesspirit",
       "use": "Use this engine",
       "inUse": "In use",
       "install": "Download",
@@ -657,7 +657,7 @@
       "remove": "Remove",
       "failed": "Install failed: {{error}}",
       "unavailable": {
-        "platform": "Downloads are only available when Patzer runs on Linux (e.g. in Docker).",
+        "platform": "Downloads are only available when Chesspirit runs on Linux (e.g. in Docker).",
         "arch": "No build for this server's processor type.",
         "cpu": "This server's processor is too old for this engine (needs AVX2 and BMI2)."
       },
@@ -843,7 +843,7 @@
     "mate": "Checkmate! Well done.",
     "goodKeepGoing": "Good! Keep going.",
     "opponentMoves": "Your opponent replies …",
-    "opponentThinks": "Patzer is thinking …",
+    "opponentThinks": "Chesspirit is thinking …",
     "hintPiece": "This piece makes the move.",
     "hintArrow": "Play the move the arrow shows.",
     "white": "White",
@@ -883,7 +883,7 @@
       "draw": "That's a draw now. Try again.",
       "lost": "Your opponent won a piece — the win is gone. Try again.",
       "limit": "You've used all {{limit}} moves. Try again — it can be done faster.",
-      "engineDown": "Patzer's engine didn't answer.",
+      "engineDown": "Chesspirit's engine didn't answer.",
       "retryEngine": "Ask again",
       "skip": "Skip this exercise",
       "skipped": "Skipped — without the engine this exercise can't be played. Carry on with the lesson.",
@@ -983,7 +983,7 @@
       "trainer": "Trainer"
     },
     "trainer": {
-      "intro": "Pick a line. Patzer plays the other side, you find your moves. Only the move of the line counts — every move you don't find comes back in your daily review.",
+      "intro": "Pick a line. Chesspirit plays the other side, you find your moves. Only the move of the line counts — every move you don't find comes back in your daily review.",
       "loadError": "Couldn't load the opening trainer.",
       "reviewTitle": "Daily review",
       "dueToday": "due today",
@@ -1026,7 +1026,7 @@
       "missedCount_one": "{{count}} missed",
       "missedCount_other": "{{count}} missed",
       "yourMove": "Your move — how does the line go on?",
-      "opponentMove": "Patzer is moving…",
+      "opponentMove": "Chesspirit is moving…",
       "wrong": "Not the move of this line — it may still be a good move, but this line goes on differently. One more try!",
       "wrongAgain": "That's not it either. This move goes into your review — play the move the arrow shows.",
       "showMove": "Show me the move",
@@ -1059,13 +1059,13 @@
       "branchCount_other": "{{count}} deviations",
       "practiseBranches_one": "Practise the deviation",
       "practiseBranches_other": "Practise the {{count}} deviations",
-      "practiseBranchesDesc": "Patzer leaves the main line: the other moves you will meet, and a few tempting ones to punish.",
+      "practiseBranchesDesc": "Chesspirit leaves the main line: the other moves you will meet, and a few tempting ones to punish.",
       "repertoireBranches_one": "Your opponents left this line once in a way you can practise too — after the line, choose “Practise the deviation”.",
       "repertoireBranches_other": "Your opponents left this line in {{count}} ways you can practise too — after the line, choose “Practise the deviations”.",
       "branchOf": "Deviation {{i}} of {{n}}",
-      "branchText": "Patzer plays {{move}} instead of {{main}}. How do you go on?",
-      "branchTextNoMain": "Patzer plays {{move}}. How do you go on?",
-      "branchTrap": "Patzer plays {{move}} instead of {{main}} — it looks tempting, but it can be punished. How?",
+      "branchText": "Chesspirit plays {{move}} instead of {{main}}. How do you go on?",
+      "branchTextNoMain": "Chesspirit plays {{move}}. How do you go on?",
+      "branchTrap": "Chesspirit plays {{move}} instead of {{main}} — it looks tempting, but it can be punished. How?",
       "branchGames_one": "From your games (once).",
       "branchGames_other": "From your games ({{count}} times).",
       "branchPlayed_one": "From your games (once). You answered with {{played}} — the analysis found a better move.",
@@ -1243,7 +1243,7 @@
     "createAccount": "Create account",
     "forgotPassword": "Forgot password?",
     "signupTitle": "Create your account",
-    "signupSubtitle": "Join this Patzer server",
+    "signupSubtitle": "Join this Chesspirit server",
     "signupSubtitleInvite": "This server is invite-only. Enter the code you were given.",
     "haveInvite": "I have an invite",
     "inviteCode": "Invite code",
@@ -1381,21 +1381,21 @@
     "openSettings": "Add one in Settings → Connections."
   },
   "update": {
-    "available": "Patzer {{latest}} is out — you are running {{current}}.",
+    "available": "Chesspirit {{latest}} is out — you are running {{current}}.",
     "whatsNew": "What's new",
     "how": "Pull the new image and recreate the container.",
     "dismiss": "Dismiss until the next release",
     "checkTitle": "Check for updates",
-    "checkHelp": "Once every six hours, Patzer asks GitHub whether a newer release exists and shows a one-line notice if so. It sends nothing about you or your games — it is an unauthenticated read of a public page. Turn it off if this machine has no internet, or if you would rather track releases yourself.",
+    "checkHelp": "Once every six hours, Chesspirit asks GitHub whether a newer release exists and shows a one-line notice if so. It sends nothing about you or your games — it is an unauthenticated read of a public page. Turn it off if this machine has no internet, or if you would rather track releases yourself.",
     "upToDate": "Up to date",
     "newAvailable": "Version {{latest}} is available"
   },
   "github": {
     "star": "Star on GitHub",
     "starred": "Starred",
-    "thanks": "Thanks for starring Patzer!",
-    "starTitle": "Star Patzer on GitHub — it is the whole thank-you the project asks for",
-    "changelogCta": "Patzer is free and self-hosted."
+    "thanks": "Thanks for starring Chesspirit!",
+    "starTitle": "Star Chesspirit on GitHub — it is the whole thank-you the project asks for",
+    "changelogCta": "Chesspirit is free and self-hosted."
   },
   "achievements": {
     "first_game": {

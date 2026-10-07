@@ -1,6 +1,6 @@
 // Opening trainer — the practice mode of the Openings page (roadmap #6).
 // Pick a line (a built-in main line, or one from your own repertoire tree);
-// Patzer plays the other side and you find your moves. Every move you miss is
+// Chesspirit plays the other side and you find your moves. Every move you miss is
 // stored on the server, per profile, and comes back in a daily review queue.
 
 import { useEffect, useMemo, useState } from 'react';
@@ -340,7 +340,7 @@ function Drill({ line, phase: startPhase, due, onRestart, onExit, onReview, onBr
   const ownDone = userMoveCount(line.moves.slice(0, ply), line.color, start);
   const wrong = wrongAt === ply;
 
-  // Patzer plays the other side after a short pause, so you see each move arrive.
+  // Chesspirit plays the other side after a short pause, so you see each move arrive.
   useEffect(() => {
     if (phase === 'ask' || done || userTurn) return;
     const id = window.setTimeout(() => {

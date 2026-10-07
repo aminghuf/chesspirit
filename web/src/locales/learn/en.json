@@ -296,7 +296,7 @@
     "intro": "With two rooks, mate is easy: one rook **cuts off** a rank, the other gives **check** on the next one. The king has to step back each time, and the rooks climb after it like a ladder – until mate on the edge.",
     "intro_kid": "Two rooks work like a ladder: one blocks, the other checks – step by step the king has to go back, until he's stuck at the edge. Checkmate!",
     "m1": "Finish it: checkmate in one move with the two rooks.",
-    "play": "Now play it out against Patzer: checkmate the black king with your two rooks. Tip: keep the rooks far away from the king, so it can't attack them."
+    "play": "Now play it out against Chesspirit: checkmate the black king with your two rooks. Tip: keep the rooks far away from the king, so it can't attack them."
   },
   "queen-mate": {
     "title": "Queen and king mate",
@@ -309,7 +309,7 @@
     "patt_stalemate": "Stalemate – a draw",
     "patt_check": "Just check",
     "patt_done": "Right – stalemate! The king isn't in check but has no move. Qe8 or Qf8 would have been checkmate.",
-    "play": "Your turn: checkmate the black king with queen and king – Patzer defends. Don't let the queen be taken, and avoid stalemate!"
+    "play": "Your turn: checkmate the black king with queen and king – Chesspirit defends. Don't let the queen be taken, and avoid stalemate!"
   },
   "rook-mate": {
     "title": "Rook and king mate",
@@ -581,7 +581,7 @@
     "draw_yes": "Yes",
     "draw_no": "No, it's a draw",
     "draw_done": "Right – a draw with best play. Black has the opposition, and this time the pawn has no spare move: the white king on e3 stands in its way.",
-    "play": "Now win it yourself: get your king in front of the pawn, take the opposition, and promote. Patzer defends."
+    "play": "Now win it yourself: get your king in front of the pawn, take the opposition, and promote. Chesspirit defends."
   },
   "pawn-endgames": {
     "title": "Pawn endgames",
@@ -686,7 +686,7 @@
     "desc": "Win with rook and pawn: build a bridge.",
     "intro": "The **Lucena position**: your pawn is on the 7th rank, your king stands in front of it, and your rook on the c-file keeps the black king away. The black rook on the a-file stops your king from stepping out on that side. So how does your king get out?",
     "bridge": "The answer is called **building a bridge**. 1.Rd1+ pushes the black king one more file away. 2.**Rd4!** puts the rook on the 4th rank. Now the king walks out, the black rook keeps checking – and when the king reaches b5, the rook blocks the last check on **b4**. Nothing can stop the pawn anymore.",
-    "play": "Now you: win the Lucena position and promote the pawn – Patzer defends. Tip: first push the king away with a check, then build the bridge."
+    "play": "Now you: win the Lucena position and promote the pawn – Chesspirit defends. Tip: first push the king away with a check, then build the bridge."
   },
   "philidor": {
     "title": "The Philidor position",

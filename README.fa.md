@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="web/public/icon.svg" width="96" alt="Patzer" />
+  <img src="web/public/icon.svg" width="96" alt="Chesspirit" />
 </p>
 
-<h1 align="center">Patzer</h1>
+<h1 align="center">Chesspirit</h1>
 
 <p align="center">
   <a href="README.md">English</a> · <b>فارسی</b>
@@ -14,23 +14,23 @@
 </p>
 
 <p align="center">
-  <a href="https://codespaces.new/aminghuf/patzer?quickstart=1">
+  <a href="https://codespaces.new/aminghuf/chesspirit?quickstart=1">
     <img src="https://github.com/codespaces/badge.svg" alt="باز کردن در GitHub Codespaces" height="32"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/aminghuf/patzer/releases"><img src="https://img.shields.io/github/v/release/aminghuf/patzer?style=flat-square" alt="release"/></a>
-  <a href="https://github.com/aminghuf/patzer/pkgs/container/patzer"><img src="https://img.shields.io/badge/ghcr.io-patzer-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/aminghuf/patzer?style=flat-square" alt="MIT"/></a>
-  <a href="https://github.com/aminghuf/patzer/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/aminghuf/patzer/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
-  <a href="https://github.com/aminghuf/patzer/stargazers"><img src="https://img.shields.io/github/stars/aminghuf/patzer?style=flat-square" alt="stars"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/releases"><img src="https://img.shields.io/github/v/release/aminghuf/chesspirit?style=flat-square" alt="release"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/pkgs/container/chesspirit"><img src="https://img.shields.io/badge/ghcr.io-chesspirit-2496ed?style=flat-square&logo=docker&logoColor=white" alt="GHCR"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aminghuf/chesspirit?style=flat-square" alt="MIT"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/aminghuf/chesspirit/ci.yml?style=flat-square&label=CI" alt="CI"/></a>
+  <a href="https://github.com/aminghuf/chesspirit/stargazers"><img src="https://img.shields.io/github/stars/aminghuf/chesspirit?style=flat-square" alt="stars"/></a>
 </p>
 
 <p align="center" dir="rtl">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/analyzer-dark.png">
-    <img src="docs/screenshots/analyzer.png" width="960" alt="بررسی بازی در Patzer — فهرست حرکت‌های دسته‌بندی‌شده، خط‌های موتور و ابزار «تهدید چیست؟» روی یک قربانی از بازی اپرا"/>
+    <img src="docs/screenshots/analyzer.png" width="960" alt="بررسی بازی در Chesspirit — فهرست حرکت‌های دسته‌بندی‌شده، خط‌های موتور و ابزار «تهدید چیست؟» روی یک قربانی از بازی اپرا"/>
   </picture>
   <br/>
   <sub><b>بررسی بازی</b> — هر حرکت دسته‌بندی می‌شود، بهترین خط‌های موتور نمایش داده می‌شود و <i>«تهدید چیست؟»</i> به زبان ساده جواب می‌دهد. <i>حساب‌های نمایشی، بازی اپرای مورفی.</i></sub>
@@ -38,15 +38,15 @@
 
 <div dir="rtl">
 
-## چرا Patzer
+## چرا Chesspirit
 
 - **بازی‌هایتان در خانه می‌ماند.** یک کانتینر Docker روی Raspberry Pi، NAS یا یک لپ‌تاپ قدیمی. بدون ابر، بدون تله‌متری، بدون تبلیغ برای خرید اشتراک.
 - **مدل زبانی خودتان را بیاورید.** مربی هوش مصنوعی با سرور [Ollama](https://ollama.com) یا [vLLM](https://docs.vllm.ai) خودتان کار می‌کند. مربی آموزش می‌دهد، اما هیچ‌وقت تحلیل نمی‌کند: Stockfish، chess.js و سابقهٔ بازی‌های خودتان واقعیت‌ها را سمت سرور به دست می‌آورند، پس یک مدل کوچک محلی نمی‌تواند حرکت یا مهره‌ای از خودش دربیاورد.
 - **برای یک خانه ساخته شده، نه یک ورزشگاه.** چندکاربره با کنسول مدیریت، زبان جدا برای هر نمایه، هشدار اشتباه فاحش در حالت کودک و نام‌های کودکانه برای مهره‌ها («اسبی») در نمایهٔ کوچک‌ترها.
 
-## Patzer چیست
+## Chesspirit چیست
 
-Patzer نسخه‌ای کوچک و خودمیزبان از همان کارهایی است که واقعاً در Chess.com و Lichess انجام می‌دهید:
+Chesspirit نسخه‌ای کوچک و خودمیزبان از همان کارهایی است که واقعاً در Chess.com و Lichess انجام می‌دهید:
 
 - **بررسی بازی** — بازی‌های عمومی‌تان را از Chess.com یا Lichess بگیرید (یا یک PGN بچسبانید؛ بازی‌های هر دو سایت می‌توانند خودکار همگام شوند)، با Stockfish همراه برنامه تحلیل کنید و دسته‌بندی‌هایی به سبک chess.com بگیرید (درخشان / عالی / بهترین / خیلی خوب / خوب / کتابی / بی‌دقتی / اشتباه / فرصت از دست رفته / اشتباه فاحش)، به‌همراه درصد دقت، ریتینگ تخمینی، نمودار ارزیابی، لحظه‌های کلیدی، بهترین خط‌های موتور، ابزار «تهدید چیست؟» و آمار بازی‌های استادان برای همان وضعیت. کل سابقه‌تان را یک‌جا وارد کنید و بعد فهرست را بر اساس بازهٔ زمانی، سایت، نتیجه، رنگ و کنترل زمان فیلتر کنید. مهره‌ها را روی صفحهٔ بررسی جابه‌جا کنید تا حرکت دیگری را امتحان کنید و نظر موتور را ببینید — ارزیابی، بهترین خط‌ها و پیکان‌هایی برای حرکتی که ترجیح می‌داد و حرکت بعدی‌اش. روی یک شمارش در جدول حرکت‌ها کلیک کنید (مثلاً *اشتباه فاحش ۲*) تا آن حرکت‌ها فهرست شوند و به آن‌ها بروید؛ حرکت مات نشان `#` و صدای خودش را دارد؛ و بازی‌ای که موتور هنوز رویش کار می‌کند در فهرست *در حال تحلیل…* را نشان می‌دهد تا کسی دوباره کلیک نکند.
 - **انتخاب موتور با شما** — بررسی بازی با Stockfish همراه برنامه اجرا می‌شود (محلی، یا روی سرویس میزبانی‌شدهٔ chess-api.com)، یا با موتوری که مدیر با یک کلیک در *مدیریت ← سیستم* دانلود می‌کند: Stockfish 19، Reckless، Viridithas یا Avalanche. دانلودها از انتشارهای رسمی همان پروژه‌ها می‌آیند و پیش از اجرا با یک چک‌سام ثابت سنجیده می‌شوند. عمق پیش‌فرض تحلیل هم در همان صفحه تنظیم می‌شود.
@@ -62,7 +62,7 @@ Patzer نسخه‌ای کوچک و خودمیزبان از همان کارهای
 - **چندزبانه** — انگلیسی، بلغاری، اسپانیایی، آلمانی، روسی و فارسی از همان ابتدا، هم رابط کاربری *و هم* متن‌های مربی. فارسی تا آخرین درس بخش آموزش کامل است، با چیدمان راست‌به‌چپ (صفحهٔ شطرنج و حرکت‌ها چپ‌به‌راست می‌مانند) و قلم Vazirmatn که همراه برنامه است. افزودن یک زبان یعنی یک ردیف در جدول هر فایل — CONTRIBUTING را ببینید.
 - **خودمیزبان، تک‌کانتینری** — روی Raspberry Pi، NAS یا یک لپ‌تاپ قدیمی اجرا می‌شود. بازی‌هایتان هیچ‌وقت از خانه بیرون نمی‌روند.
 - **سازگار با گوشی** — صفحهٔ تمام‌عرض، نوار دکمه‌های چسبان و فهرست حرکتی که با کشیدن به بالا باز می‌شود.
-- **وقتی قدیمی شود خبر می‌دهد** — برنامهٔ خودمیزبان نمی‌تواند خودش را به‌روز کند، اما Patzer هر شش ساعت GitHub را بررسی می‌کند و وقتی انتشار تازه‌تری آمده باشد یک اعلان یک‌خطی نشان می‌دهد تا بدانید باید نسخهٔ جدید را بگیرید. هیچ اطلاعاتی دربارهٔ شما نمی‌فرستد؛ در *مدیریت ← سیستم* می‌شود خاموشش کرد.
+- **وقتی قدیمی شود خبر می‌دهد** — برنامهٔ خودمیزبان نمی‌تواند خودش را به‌روز کند، اما Chesspirit هر شش ساعت GitHub را بررسی می‌کند و وقتی انتشار تازه‌تری آمده باشد یک اعلان یک‌خطی نشان می‌دهد تا بدانید باید نسخهٔ جدید را بگیرید. هیچ اطلاعاتی دربارهٔ شما نمی‌فرستد؛ در *مدیریت ← سیستم* می‌شود خاموشش کرد.
 
 ## تصویرها
 
@@ -106,9 +106,9 @@ Patzer نسخه‌ای کوچک و خودمیزبان از همان کارهای
 
 **در مرورگر امتحانش کنید**
 
-[![باز کردن در GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aminghuf/patzer?quickstart=1)
+[![باز کردن در GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aminghuf/chesspirit?quickstart=1)
 
-یک Codespace موقت با Patzer و Stockfish ازپیش‌نصب‌شده بالا می‌آورد. حدود ۶۰ ثانیه صبر کنید تا `npm install` و سرور توسعه راه بیفتند، بعد روی پورت فورواردشده با برچسب *«Patzer (Vite dev — open this)»* کلیک کنید. کل برنامه را دارید **به‌جز** روایت مربی هوش مصنوعی (که به یک سرور Ollama در شبکهٔ شما نیاز دارد — پایین‌تر را ببینید).
+یک Codespace موقت با Chesspirit و Stockfish ازپیش‌نصب‌شده بالا می‌آورد. حدود ۶۰ ثانیه صبر کنید تا `npm install` و سرور توسعه راه بیفتند، بعد روی پورت فورواردشده با برچسب *«Chesspirit (Vite dev — open this)»* کلیک کنید. کل برنامه را دارید **به‌جز** روایت مربی هوش مصنوعی (که به یک سرور Ollama در شبکهٔ شما نیاز دارد — پایین‌تر را ببینید).
 
 **`docker run`**
 
@@ -119,7 +119,7 @@ docker run -d \
   -p 8800:8800 \
   -v patzer-data:/app/data \
   --name patzer \
-  ghcr.io/aminghuf/patzer:latest
+  ghcr.io/aminghuf/chesspirit:latest
 ```
 
 </div>
@@ -130,8 +130,8 @@ docker run -d \
 
 ```yaml
 services:
-  patzer:
-    image: ghcr.io/aminghuf/patzer:latest
+  chesspirit:
+    image: ghcr.io/aminghuf/chesspirit:latest
     container_name: patzer
     restart: unless-stopped
     ports:
@@ -148,17 +148,17 @@ volumes:
 > دسته‌بندی حرکت‌ها، درصد دقت، نمودار ارزیابی و تشخیص گشایش. راه‌انداز شما را مستقیم به یک
 > صفحهٔ آمادهٔ بازی می‌رساند.
 >
-> **چه چیزی به مدل زبانی نیاز دارد:** صدای روایت مربی هوش مصنوعی. تا وقتی Patzer را به یک سرور
+> **چه چیزی به مدل زبانی نیاز دارد:** صدای روایت مربی هوش مصنوعی. تا وقتی Chesspirit را به یک سرور
 > Ollama یا vLLM وصل نکرده‌اید، پنل *مربی* فقط واقعیت‌های موتور را به‌صورت متن ساده نشان می‌دهد.
 >
 > **چه چیزی به نام کاربری Chess.com یا Lichess نیاز دارد:** وارد کردن بازی‌های عمومی‌تان برای بررسی.
 > بدون آن هم می‌توانید PGN بچسبانید یا زنده بازی کنید و از فهرست حرکت‌ها بررسی کنید. وقتی نام کاربری
-> تنظیم شد، Patzer می‌تواند بازی‌های تازه را خودکار و با فاصله‌ای که در *تنظیمات ← خودکارسازی* انتخاب
+> تنظیم شد، Chesspirit می‌تواند بازی‌های تازه را خودکار و با فاصله‌ای که در *تنظیمات ← خودکارسازی* انتخاب
 > می‌کنید بگیرد.
 
 این‌ها اختیاری‌اند، اما احتمالاً می‌خواهیدشان:
 
-- **برای مربی هوش مصنوعی:** هر کاربر مدل خودش را در *تنظیمات ← اتصال‌ها* اضافه می‌کند و هزینهٔ مصرف خودش را می‌پردازد — مدل مشترک و سراسری وجود ندارد. هر کاربری می‌تواند یک کلید API از [DeepSeek](https://platform.deepseek.com) اضافه کند. یک سرور [Ollama](https://ollama.com) یا [vLLM](https://docs.vllm.ai) که از کانتینر Patzer در دسترس باشد هم کار می‌کند: برای مدیران همیشه (راه‌انداز، نشانی‌ای را که وارد می‌کنید به‌عنوان مدل خودِ اولین مدیر ذخیره می‌کند) و برای بقیهٔ کاربران وقتی مدیر آن را در *مدیریت ← سیستم* روشن کند.
+- **برای مربی هوش مصنوعی:** هر کاربر مدل خودش را در *تنظیمات ← اتصال‌ها* اضافه می‌کند و هزینهٔ مصرف خودش را می‌پردازد — مدل مشترک و سراسری وجود ندارد. هر کاربری می‌تواند یک کلید API از [DeepSeek](https://platform.deepseek.com) اضافه کند. یک سرور [Ollama](https://ollama.com) یا [vLLM](https://docs.vllm.ai) که از کانتینر Chesspirit در دسترس باشد هم کار می‌کند: برای مدیران همیشه (راه‌انداز، نشانی‌ای را که وارد می‌کنید به‌عنوان مدل خودِ اولین مدیر ذخیره می‌کند) و برای بقیهٔ کاربران وقتی مدیر آن را در *مدیریت ← سیستم* روشن کند.
 - **برای بررسی بازی‌های خودتان:** نام کاربری Chess.com و/یا Lichess (بعداً در *تنظیمات* وارد می‌شود).
 
 برای استفاده از پورت دیگری روی میزبان، با `-p 9000:8800` اجرا کنید (یا اگر از `docker compose` استفاده می‌کنید `HOST_PORT=9000` بگذارید).
@@ -167,7 +167,7 @@ volumes:
 
 ## مقایسه با گزینه‌های دیگر
 
-|                                   | Patzer | Lichess Studio | Chess.com Review | Aimchess |
+|                                   | Chesspirit | Lichess Studio | Chess.com Review | Aimchess |
 | --------------------------------- | :----: | :------------: | :--------------: | :------: |
 | خودمیزبان                         |   ✅   |       ❌        |        ❌         |    ❌    |
 | مربی با مدل زبانی (مدل خودتان)    |   ✅   |       ❌        |        ❌         |    ❌    |
@@ -195,8 +195,8 @@ volumes:
 <div dir="ltr">
 
 ```bash
-git clone https://github.com/aminghuf/patzer.git
-cd patzer
+git clone https://github.com/aminghuf/chesspirit.git
+cd chesspirit
 npm install
 npm run setup   # downloads Stockfish 17 into ./bin/ (Windows, Linux, macOS)
 npm run dev
@@ -237,7 +237,7 @@ npm run build       # production build of both workspaces
 
 ```
 HOST=user@192.168.x.x
-REMOTE_DIR=/home/user/patzer
+REMOTE_DIR=/home/user/chesspirit
 SUDO_PASS=... # only if your user is not in the docker group on the target
 HOST_PORT=8800
 ```
@@ -282,7 +282,7 @@ HOST_PORT=8800
 | `ENGINE_BACKEND` | `local` | با `chessapi` وضعیت‌های بررسی بازی به‌جای Stockfish همراه برنامه به موتور میزبانی‌شدهٔ chess-api.com فرستاده می‌شود (در *مدیریت ← سیستم* هم کلیدی دارد؛ متغیر محیطی بر تنظیم رابط کاربری اولویت دارد و تا وقتی تنظیم شده باشد تحلیل روی Stockfish می‌ماند، حتی اگر آن‌جا موتور دیگری انتخاب شده باشد) |
 | `CHESSCOM_SYNC_MINUTES` | `15` | فاصلهٔ پیش‌فرض همگام‌سازی خودکار Chess.com (به دقیقه) که هنگام ساخته شدن تنظیمات یک نمایه اعمال می‌شود. فاصلهٔ واقعی برای هر نمایه در *تنظیمات ← خودکارسازی* است (Lichess هم تنظیم خودش را دارد)؛ با `0` همگام‌سازی خودکار فقط با انتخاب کاربر روشن می‌شود |
 
-تنظیمات سیستم (موتور تحلیل و عمق پیش‌فرض آن، جایگزین مسیر Stockfish، این‌که چه کسی می‌تواند ثبت‌نام کند، و این‌که کاربران اجازه دارند نشانی Ollama/vLLM خودشان را وارد کنند یا نه) در *مدیریت ← سیستم* است؛ دعوت‌ها در *مدیریت ← کاربران*. موتورهایی که آن‌جا دانلود می‌شوند در پوشهٔ `engines/` کنار پایگاه‌داده ذخیره می‌شوند، پس تا وقتی volume داده سر جایش باشد با به‌روزرسانی ایمیج از بین نمی‌روند؛ دانلود وقتی در دسترس است که Patzer روی لینوکس اجرا شود (ایمیج Docker)، و بازی با ربات همیشه از Stockfish همراه برنامه استفاده می‌کند.
+تنظیمات سیستم (موتور تحلیل و عمق پیش‌فرض آن، جایگزین مسیر Stockfish، این‌که چه کسی می‌تواند ثبت‌نام کند، و این‌که کاربران اجازه دارند نشانی Ollama/vLLM خودشان را وارد کنند یا نه) در *مدیریت ← سیستم* است؛ دعوت‌ها در *مدیریت ← کاربران*. موتورهایی که آن‌جا دانلود می‌شوند در پوشهٔ `engines/` کنار پایگاه‌داده ذخیره می‌شوند، پس تا وقتی volume داده سر جایش باشد با به‌روزرسانی ایمیج از بین نمی‌روند؛ دانلود وقتی در دسترس است که Chesspirit روی لینوکس اجرا شود (ایمیج Docker)، و بازی با ربات همیشه از Stockfish همراه برنامه استفاده می‌کند.
 تنظیمات هر نمایه (زبان، سطح مخاطب، رفتار مربی، صدای TTS، مجموعهٔ صداها، نام کاربری Chess.com / Lichess) در *تنظیمات* است، کنار بخش *خودکارسازی*: کلیدی برای نوشتن خودکار بررسی هوش مصنوعی وقتی بازی تمام می‌شود، و فاصلهٔ همگام‌سازی خودکار جدا برای Chess.com و Lichess. بخش *تنظیمات ← اتصال‌ها* مدل مربی و توکن API لیچسِ خودِ هر کاربر را نگه می‌دارد؛ هر دو روی سرور ذخیره می‌شوند و هیچ‌وقت به مرورگر برگردانده نمی‌شوند.
 
 ## دسته‌بندی حرکت‌ها چطور کار می‌کند
@@ -313,10 +313,10 @@ HOST_PORT=8800
 
 ## رفع اشکال
 
-- **«Stockfish binary not found»** — Patzer دیگر به جست‌وجوی سادهٔ `stockfish` در PATH برنمی‌گردد (دفاع در عمق: وگرنه یک فایل اجرایی مخرب که زودتر در `$PATH` آمده با دسترسی کاربر سرور اجرا می‌شد). یا Stockfish را در `/usr/games/stockfish`، `/usr/local/bin/stockfish`، `/opt/homebrew/bin/stockfish` یا `bin/stockfish` داخل پروژه نصب کنید، یا `STOCKFISH_PATH` (متغیر محیطی) / *مدیریت ← سیستم ← مسیر Stockfish* را تنظیم کنید.
-- **«Ollama unreachable» / «fetch failed»** — داخل Docker، ‏`localhost` خودِ کانتینر Patzer است، نه رایانهٔ شما. دو چیز باید با هم جور باشد:
+- **«Stockfish binary not found»** — Chesspirit دیگر به جست‌وجوی سادهٔ `stockfish` در PATH برنمی‌گردد (دفاع در عمق: وگرنه یک فایل اجرایی مخرب که زودتر در `$PATH` آمده با دسترسی کاربر سرور اجرا می‌شد). یا Stockfish را در `/usr/games/stockfish`، `/usr/local/bin/stockfish`، `/opt/homebrew/bin/stockfish` یا `bin/stockfish` داخل پروژه نصب کنید، یا `STOCKFISH_PATH` (متغیر محیطی) / *مدیریت ← سیستم ← مسیر Stockfish* را تنظیم کنید.
+- **«Ollama unreachable» / «fetch failed»** — داخل Docker، ‏`localhost` خودِ کانتینر Chesspirit است، نه رایانهٔ شما. دو چیز باید با هم جور باشد:
   1. **Ollama روی شبکه گوش بدهد.** به‌طور پیش‌فرض فقط روی loopback دستگاه خودش جواب می‌دهد. `OLLAMA_HOST=0.0.0.0` را تنظیم کنید (ویندوز: یک متغیر محیطی کاربر، بعد Ollama را از system tray ببندید و دوباره باز کنید؛ لینوکس: `sudo systemctl edit ollama` ← ‏`Environment="OLLAMA_HOST=0.0.0.0"`، بعد سرویس را دوباره راه بیندازید).
-  2. **Patzer از نشانی‌ای استفاده کند که به آن برسد.** همان دستگاه: `http://host.docker.internal:11434` — در Docker Desktop ویندوز/مک از پیش هست؛ در لینوکس خط‌های `extra_hosts` را در `docker-compose.yml` از حالت توضیح درآورید، یا `--add-host=host.docker.internal:host-gateway` را به `docker run` اضافه کنید. دستگاه دیگر: نشانی IP آن در شبکهٔ محلی، مثلاً `http://192.168.1.20:11434`.
+  2. **Chesspirit از نشانی‌ای استفاده کند که به آن برسد.** همان دستگاه: `http://host.docker.internal:11434` — در Docker Desktop ویندوز/مک از پیش هست؛ در لینوکس خط‌های `extra_hosts` را در `docker-compose.yml` از حالت توضیح درآورید، یا `--add-host=host.docker.internal:host-gateway` را به `docker run` اضافه کنید. دستگاه دیگر: نشانی IP آن در شبکهٔ محلی، مثلاً `http://192.168.1.20:11434`.
 
   راه‌انداز و *مدیریت ← سیستم* وقتی آزمون ناموفق باشد همین راهنمایی را نشان می‌دهند. آزمونِ هنگام راه‌اندازی فقط نشانی‌های loopback / RFC1918 / `*.local` / `host.docker.internal` را می‌پذیرد. بعد از راه‌اندازی، هر وقت خواستید در *مدیریت ← سیستم* عوضش کنید.
 - **پورت 8800 از قبل در حال استفاده است** — `-p 9000:8800` (در docker run) یا `HOST_PORT=9000 docker compose up -d`.
@@ -325,7 +325,7 @@ HOST_PORT=8800
 
 ## بیشتر
 
-- **[پرسش‌های متداول](docs/FAQ.md)** (انگلیسی) — Patzer چه هست و چه نیست، قانونی بودن API سایت Chess.com، بازی با دوست از راه اینترنت، نکته‌های NAT/پراکسی، پشتیبان‌گیری، «گذرواژهٔ مدیر را گم کرده‌ام»، افزودن زبان.
+- **[پرسش‌های متداول](docs/FAQ.md)** (انگلیسی) — Chesspirit چه هست و چه نیست، قانونی بودن API سایت Chess.com، بازی با دوست از راه اینترنت، نکته‌های NAT/پراکسی، پشتیبان‌گیری، «گذرواژهٔ مدیر را گم کرده‌ام»، افزودن زبان.
 - **[نقشهٔ راه](ROADMAP.md)** (انگلیسی) — چه چیزهایی در صف است و چه چیزهایی عمداً بیرون از محدوده مانده.
 - **[تغییرات](CHANGELOG.md)** (انگلیسی) — همهٔ انتشارها، با توضیح چرایی و نه فقط چیستی.
 
@@ -333,11 +333,11 @@ HOST_PORT=8800
 
 از Pull Request استقبال می‌شود — لطفاً اول [CONTRIBUTING.md](CONTRIBUTING.md) را بخوانید. ترجمه‌ها به‌ویژه مایهٔ خوشحالی‌اند.
 
-Patzer به‌لطف کسانی که تا امروز کد فرستاده‌اند بهتر شده است — سپاس از همهٔ افراد در [CONTRIBUTORS.md](CONTRIBUTORS.md).
+Chesspirit به‌لطف کسانی که تا امروز کد فرستاده‌اند بهتر شده است — سپاس از همهٔ افراد در [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 ## امنیت
 
-[SECURITY.md](SECURITY.md) را ببینید. برای آسیب‌پذیری‌ها issue عمومی باز **نکنید** — از [گزارش خصوصی آسیب‌پذیری در GitHub](https://github.com/aminghuf/patzer/security/advisories/new) استفاده کنید.
+[SECURITY.md](SECURITY.md) را ببینید. برای آسیب‌پذیری‌ها issue عمومی باز **نکنید** — از [گزارش خصوصی آسیب‌پذیری در GitHub](https://github.com/aminghuf/chesspirit/security/advisories/new) استفاده کنید.
 
 ## مجوز
 

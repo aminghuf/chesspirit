@@ -1,6 +1,6 @@
 // Tactic puzzles — the "Puzzles" tab of the Train page. Unlike the Tactic
 // Trainer (puzzles from your own mistakes, routes/train.ts) these are puzzles
-// from the Lichess puzzle database (CC0) that ship with Patzer: a few thousand
+// from the Lichess puzzle database (CC0) that ship with Chesspirit: a few thousand
 // popular, often-played ones spread over the whole rating range
 // (chess/tacticsSet.json, made by scripts/build-tactics-set.mjs — see there).
 //

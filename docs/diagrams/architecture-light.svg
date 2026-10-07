@@ -28,11 +28,11 @@
     </g>
   </g>
 
-  <!-- Patzer container -->
+  <!-- Chesspirit container -->
   <g transform="translate(330,60)">
     <rect width="560" height="480" rx="22" fill="#fbfbfa" stroke="#a09a93" stroke-width="1.5" stroke-dasharray="0"/>
     <rect x="18" y="-14" width="300" height="28" rx="14" fill="#769656"/>
-    <text x="168" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">PATZER — ONE DOCKER CONTAINER</text>
+    <text x="168" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">CHESSPIRIT — ONE DOCKER CONTAINER</text>
 
     <!-- Hono server -->
     <g transform="translate(40,50)">

@@ -130,7 +130,7 @@ export async function masterStats(fen: string, fetchImpl: FetchLike = fetch, tok
   const url = `${baseUrl()}/masters?fen=${encodeURIComponent(key + ' 0 1')}&moves=${MAX_MOVES}&topGames=0`;
   let res: Awaited<ReturnType<FetchLike>>;
   try {
-    const headers: Record<string, string> = { Accept: 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' };
+    const headers: Record<string, string> = { Accept: 'application/json', 'User-Agent': 'chesspirit (+https://github.com/aminghuf/chesspirit)' };
     if (token) headers.Authorization = `Bearer ${token}`;
     res = await fetchImpl(url, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) });
   } catch {

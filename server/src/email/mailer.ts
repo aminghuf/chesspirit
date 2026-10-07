@@ -35,7 +35,7 @@ export function resolveSmtpConfig(): SmtpConfig | null {
   const secure = secureRaw ? /^(1|true|yes|on)$/.test(secureRaw) : port === 465;
   const user = envOrSetting('SMTP_USER', 'smtp_user').trim();
   const pass = process.env.SMTP_PASS ?? getSetting('smtp_pass') ?? '';
-  const from = (envOrSetting('SMTP_FROM', 'smtp_from').trim()) || user || `patzer@${host}`;
+  const from = (envOrSetting('SMTP_FROM', 'smtp_from').trim()) || user || `chesspirit@${host}`;
   return { host, port, secure, user, pass, from };
 }
 
@@ -110,7 +110,7 @@ export async function verifyConnection(): Promise<SendResult> {
 
 // ---- Templates -----------------------------------------------------------
 
-const BRAND = 'Patzer';
+const BRAND = 'Chesspirit';
 
 function shell(title: string, bodyHtml: string): string {
   // Inline styles only — email clients strip <style>/<link>. Kept deliberately
@@ -163,7 +163,7 @@ export function welcomeTemplate(displayName: string, link: string) {
     html: shell(
       `Welcome, ${displayName} 👋`,
       `<p style="margin:0 0 16px;line-height:1.5">Your ${BRAND} account is ready. Play vs Stockfish, review your games, and let the AI coach explain your moves.</p>
-       <p style="margin:0">${button(link, 'Open Patzer')}</p>`,
+       <p style="margin:0">${button(link, 'Open Chesspirit')}</p>`,
     ),
   };
 }

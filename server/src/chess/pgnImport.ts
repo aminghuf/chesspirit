@@ -1,4 +1,4 @@
-// PGN text → `games` rows: the "Import PGN" box on Game Review, Patzer's
+// PGN text → `games` rows: the "Import PGN" box on Game Review, Chesspirit's
 // take on lichess.org/paste. Takes pasted text or the contents of a .pgn
 // file, which may hold one game or many.
 
@@ -7,7 +7,7 @@ import { Chess } from 'chess.js';
 import { db } from '../db.js';
 import { classifyTimeControl, type TimeClass } from './timeClass.js';
 
-/** A PGN game reduced to the columns Patzer stores. */
+/** A PGN game reduced to the columns Chesspirit stores. */
 export interface PgnRow {
   external_id: string;
   pgn: string;
@@ -59,7 +59,7 @@ function pgnDate(date: string | undefined, time: string | undefined): string | n
   return new Date(ms).toISOString();
 }
 
-/** Parse one game. `names` are the importing user's own names (Patzer login,
+/** Parse one game. `names` are the importing user's own names (Chesspirit login,
  *  display name, Chess.com and Lichess usernames), matched case-insensitively
  *  against the White / Black tags to know which side the user played. */
 export function toPgnRow(pgn: string, names: string[], now = new Date()): PgnRow | SkipReason {
@@ -155,7 +155,7 @@ export function importPgnGames(userId: number, text: string): PgnImportResult {
   `).get(userId) as Record<string, string | null> | undefined;
   const own = Object.values(names ?? {}).filter((n): n is string => typeof n === 'string');
 
-  // Pasted games are never rated in Patzer's pool — only PvP games are.
+  // Pasted games are never rated in Chesspirit's pool — only PvP games are.
   const insert = db.prepare(`
     INSERT INTO games (user_id, source, external_id, pgn, white, black, result, time_control, time_class, end_time, user_color, rated)
     VALUES (?, 'imported', ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)

@@ -343,7 +343,7 @@ export default function AdminSystem() {
         <div className="space-y-4 p-5">
           <ToggleRow checked={mail.update_check_enabled} onChange={(v) => setMail({ ...mail, update_check_enabled: v })}
             label={t('update.checkTitle', { defaultValue: 'Check for updates' })}
-            hint={t('update.checkHelp', { defaultValue: 'Once every six hours, Patzer asks GitHub whether a newer release exists.' })} />
+            hint={t('update.checkHelp', { defaultValue: 'Once every six hours, Chesspirit asks GitHub whether a newer release exists.' })} />
           <fieldset>
             <legend className="text-sm font-medium">{t('admin.signupMode')}</legend>
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
@@ -422,7 +422,7 @@ export default function AdminSystem() {
           </div>
           <div>
             <label className="label mb-1 block">{t('admin.smtpFrom')}</label>
-            <input className="input" value={mail.smtp_from} onChange={(e) => setMail({ ...mail, smtp_from: e.target.value })} placeholder="Patzer <chess@example.com>" />
+            <input className="input" value={mail.smtp_from} onChange={(e) => setMail({ ...mail, smtp_from: e.target.value })} placeholder="Chesspirit <chess@example.com>" />
           </div>
 
           <div className="flex justify-end">

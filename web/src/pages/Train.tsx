@@ -1,6 +1,6 @@
 // Train — three drills behind tabs (?tab=…):
 //   - From your games: puzzles extracted from your own analyzed games. The
-//     point: chess.com puzzles are generic. Patzer's are *yours* — every
+//     point: chess.com puzzles are generic. Chesspirit's are *yours* — every
 //     position is a real moment from your own play where you missed something.
 //   - Coordinates: name the squares (components/CoordinateTrainer.tsx).
 //   - Notation: write the move that was just played (components/NotationTrainer.tsx).

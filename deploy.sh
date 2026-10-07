@@ -3,7 +3,7 @@
 #
 # Reads HOST and SUDO_PASS from .env.deploy (gitignored). Example .env.deploy:
 #   HOST=user@1.2.3.4
-#   REMOTE_DIR=/home/user/patzer
+#   REMOTE_DIR=/home/user/chesspirit
 #   SUDO_PASS=...
 #   HOST_PORT=8800
 #
@@ -75,8 +75,8 @@ remote_exec() {
 remote_sudo_script() {
   local script="$1"
   local local_script remote_script rc
-  local_script="$(mktemp -t patzer-remote-XXXXXX.sh)"
-  remote_script="/tmp/patzer-remote-$RANDOM-$$.sh"
+  local_script="$(mktemp -t chesspirit-remote-XXXXXX.sh)"
+  remote_script="/tmp/chesspirit-remote-$RANDOM-$$.sh"
   {
     printf '#!/usr/bin/env bash\nset -e\n'
     printf '%s\n' "$script"
@@ -98,8 +98,8 @@ log "Ensuring remote dir $REMOTE_DIR exists"
 remote_exec "mkdir -p '$REMOTE_DIR'"
 
 log "Syncing source to ${HOST_TARGET}:${REMOTE_DIR}"
-local_tar="$(mktemp -t patzer-deploy-XXXXXX.tar.gz)"
-remote_tar="/tmp/patzer-deploy-$RANDOM-$$.tar.gz"
+local_tar="$(mktemp -t chesspirit-deploy-XXXXXX.tar.gz)"
+remote_tar="/tmp/chesspirit-deploy-$RANDOM-$$.tar.gz"
 trap 'rm -f "$local_tar"' EXIT
 
 tar \

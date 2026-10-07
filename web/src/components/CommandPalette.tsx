@@ -1,5 +1,5 @@
 // Command Palette — ⌘K / Ctrl+K. Global quick-search for navigation,
-// recent games, and high-level actions. Patzer's killer-app UX detail
+// recent games, and high-level actions. Chesspirit's killer-app UX detail
 // over chess.com (which has no equivalent).
 
 import { useEffect, useMemo, useRef, useState } from 'react';

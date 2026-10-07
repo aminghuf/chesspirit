@@ -6,7 +6,7 @@ import { connectionHint } from '../src/coach/connectionHint.js';
 
 // The setup routes open the real database on import, so point it at a
 // throwaway file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-hint-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-hint-'));
 process.env.DB_PATH = join(dir, 'hint.db');
 
 type SetupModule = typeof import('../src/routes/setup.js');

@@ -14,7 +14,7 @@ const PORT = Number(process.env.PORT ?? 8899);
 const BASE = `http://127.0.0.1:${PORT}`;
 process.env.PORT = String(PORT);
 process.env.HOST = '127.0.0.1';
-const dbPath = process.env.DB_PATH ?? join(tmpdir(), `patzer-e2e-${process.pid}.db`);
+const dbPath = process.env.DB_PATH ?? join(tmpdir(), `chesspirit-e2e-${process.pid}.db`);
 process.env.DB_PATH = dbPath;
 for (const suffix of ['', '-wal', '-shm']) { try { rmSync(dbPath + suffix, { force: true }); } catch { /* ignore */ } }
 
@@ -27,7 +27,7 @@ function check(cond: unknown, label: string) {
 async function api(path: string, body?: unknown, cookie?: string): Promise<{ status: number; json: any; cookie?: string }> {
   const res = await fetch(BASE + path, {
     method: body === undefined ? 'GET' : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'patzer', ...(cookie ? { Cookie: cookie } : {}) },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'chesspirit', ...(cookie ? { Cookie: cookie } : {}) },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const setCookie = res.headers.get('set-cookie') ?? undefined;

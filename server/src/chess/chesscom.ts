@@ -1,6 +1,6 @@
 // Chess.com public API client. The API is unauthenticated but requires a User-Agent.
 
-const UA = 'patzer/3.1 (+https://github.com/aminghuf/patzer)';
+const UA = 'chesspirit/3.1 (+https://github.com/aminghuf/chesspirit)';
 
 // Chess.com usernames are 3–25 chars; we extend slightly for historical grandfathered handles.
 const USERNAME_RE = /^[A-Za-z0-9_-]{2,40}$/;

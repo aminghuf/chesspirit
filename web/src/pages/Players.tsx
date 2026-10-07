@@ -1,4 +1,4 @@
-// Players — the social directory. Browse everyone on this Patzer instance,
+// Players — the social directory. Browse everyone on this Chesspirit instance,
 // see their record at a glance, sort the leaderboard, and jump into a full
 // profile. Also surfaces *missed invitations* (challenges that expired before
 // you answered) so the social loop closes.
