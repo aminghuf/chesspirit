@@ -76,14 +76,14 @@ app.use('/api/*', cors({
 }));
 
 // CSRF guard: every state-changing /api request must carry `X-Requested-With:
-// patzer`. Browsers will not attach this header on cross-origin form/img/link
+// chesspirit`. Browsers will not attach this header on cross-origin form/img/link
 // requests, so simple-request CSRF (which the cookie's SameSite=Lax does not
 // fully block on top-level POSTs) becomes infeasible. The fetch helper in
 // web/src/api.ts adds the header automatically on every mutating call.
 app.use('/api/*', async (c, next) => {
   const m = c.req.method;
   if (m === 'GET' || m === 'HEAD' || m === 'OPTIONS') return next();
-  if (c.req.header('X-Requested-With') === 'patzer') return next();
+  if (c.req.header('X-Requested-With') === 'chesspirit') return next();
   return c.json({ error: 'csrf_required' }, 403);
 });
 

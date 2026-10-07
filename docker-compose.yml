@@ -4,7 +4,7 @@ services:
     # (published on every version tag by .github/workflows/release.yml). To
     # build from local source instead, uncomment `build: .` and run
     # `docker compose build`.
-    image: ghcr.io/aminghuf/patzer:latest
+    image: ghcr.io/aminghuf/chesspirit:latest
     # build: .
     container_name: patzer
     restart: unless-stopped

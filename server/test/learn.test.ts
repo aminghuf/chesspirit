@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 // The module under test opens the real database on import, so point it at a
 // throwaway file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-learn-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-learn-'));
 process.env.DB_PATH = join(dir, 'learn.db');
 
 type LearnModule = typeof import('../src/learnProgress.js');

@@ -23,7 +23,7 @@ function game(over: Partial<LichessGame> = {}): LichessGame {
 }
 
 describe('toImportRow', () => {
-  it('maps a game onto Patzer columns from the importing user’s side', () => {
+  it('maps a game onto Chesspirit columns from the importing user’s side', () => {
     const row = toImportRow(game(), 'DrNykterstein')!;
     expect(row).toMatchObject({
       external_id: 'kAdOQKeh',
@@ -48,7 +48,7 @@ describe('toImportRow', () => {
     expect(toImportRow(game(), 'someone_else')!).toMatchObject({ user_color: null, result: 'loss' });
   });
 
-  it('classifies time controls with Patzer’s own rules', () => {
+  it('classifies time controls with Chesspirit’s own rules', () => {
     expect(toImportRow(game({ clock: { initial: 60, increment: 0 } }), 'x')!.time_class).toBe('bullet');
     expect(toImportRow(game({ clock: { initial: 600, increment: 5 } }), 'x')!.time_class).toBe('rapid');
     const corr = toImportRow(game({ clock: undefined, daysPerTurn: 3, speed: 'correspondence' }), 'x')!;
@@ -124,7 +124,7 @@ describe('fetchRecentGames', () => {
     expect(url.searchParams.get('since')).toBe('1700000000000');
     expect(url.searchParams.get('pgnInJson')).toBe('true');
     expect(calls[0]!.headers.Accept).toBe('application/x-ndjson');
-    expect(calls[0]!.headers['User-Agent']).toMatch(/patzer/);
+    expect(calls[0]!.headers['User-Agent']).toMatch(/chesspirit/);
   });
 
   it('asks for the whole history when no max is given', async () => {

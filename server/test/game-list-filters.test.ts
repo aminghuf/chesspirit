@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 // The routes open the real database on import, so point it at a throwaway
 // file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-game-filters-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-game-filters-'));
 process.env.DB_PATH = join(dir, 'filters.db');
 
 type DbModule = typeof import('../src/db.js');

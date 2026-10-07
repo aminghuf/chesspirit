@@ -1,6 +1,6 @@
 {
-  "name": "Patzer",
-  "short_name": "Patzer",
+  "name": "Chesspirit",
+  "short_name": "Chesspirit",
   "description": "Your private Chess.com — self-hosted, AI-coached, family-friendly.",
   "start_url": "/",
   "display": "standalone",

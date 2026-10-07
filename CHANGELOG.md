@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.0.0] — 2026-10-07
 
 Patzer is now developed independently at
-[aminghuf/patzer](https://github.com/aminghuf/patzer). Version numbers start
+[aminghuf/chesspirit](https://github.com/aminghuf/chesspirit). Version numbers start
 again at 7.0.0 here; every entry below this one, from 7.18.0 down, is the
 history of the original project, [SikamikanikoBG/patzer](https://github.com/SikamikanikoBG/patzer),
 under its own numbering.
@@ -89,7 +89,7 @@ under its own numbering.
 - **The update notice follows this repository's releases.** A newer release
   of the original project no longer shows as an update, and an answer cached
   from it is ignored.
-- **Images:** releases publish to `ghcr.io/aminghuf/patzer`, which
+- **Images:** releases publish to `ghcr.io/aminghuf/chesspirit`, which
   `docker-compose.yml` now pulls; every push to `main` also goes to Docker Hub.
 - The star link, the User-Agent sent to Chess.com and Lichess, and the links
   in the docs point at this repository.

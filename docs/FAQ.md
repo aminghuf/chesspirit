@@ -1,24 +1,25 @@
-# Patzer FAQ
+# Chesspirit FAQ
 
 A list of questions that come up often enough to belong here, written tersely so
 you can actually scan them. If your question isn't covered, open a
-[discussion](https://github.com/aminghuf/patzer/discussions).
+[discussion](https://github.com/aminghuf/chesspirit/discussions).
 
-## What is Patzer, in one sentence?
+## What is Chesspirit, in one sentence?
 
 A self-hosted **Chess.com Game Review** alternative: pull your own games, get
 Lichess-style classifications + accuracy + an LLM-narrated review, plus
 play-vs-Stockfish and play-vs-friend, all in one Docker container.
 
-## Why "Patzer"?
+## Wasn't this called "Patzer"?
 
-A *patzer* is chess slang for a weak amateur. The maintainer is one. The name
-sets expectations: this tool is built for people who want to get better, not
-for grandmasters who already have a coaching team.
+Yes — Chesspirit used to be named Patzer. A *patzer* is chess slang for a weak
+amateur. The maintainer is one. The old name set expectations that still hold:
+this tool is built for people who want to get better, not for grandmasters who
+already have a coaching team.
 
 ## Is using the Chess.com API legal? Will I get a takedown?
 
-Patzer pulls games through the **public, documented Chess.com API**
+Chesspirit pulls games through the **public, documented Chess.com API**
 (`api.chess.com/pub/...`), with a proper User-Agent, against URLs you've
 explicitly given it (your own username, entered in *Settings*). No scraping, no
 auth circumvention, no rate-limit dodging, no resale of data. This is the
@@ -30,7 +31,7 @@ If Chess.com ever changes its terms, the fetch is one file. We'll adapt.
 
 ## Is this a Chess.com clone?
 
-No, and we try not to call it that. Patzer focuses on the **Game Review /
+No, and we try not to call it that. Chesspirit focuses on the **Game Review /
 training / analysis** slice of what Chess.com offers. It does **not** ship:
 matchmaking against strangers, ratings against the global pool, tournaments,
 puzzle rush, video lessons, or a public social graph. If you want those, stay
@@ -38,8 +39,8 @@ on Chess.com.
 
 ## Do I need to pay Chess.com Premium?
 
-No. Patzer reads the public game archives that every Chess.com account
-publishes for free. Premium changes nothing about the API surface Patzer uses.
+No. Chesspirit reads the public game archives that every Chess.com account
+publishes for free. Premium changes nothing about the API surface Chesspirit uses.
 
 ## Is Ollama required?
 
@@ -53,32 +54,32 @@ Review; the Coach panel just won't talk back.
 
 Yes, with caveats. Stockfish + the web stack run comfortably on a Pi 4 / Pi 5.
 The AI Coach has to call out to an Ollama or vLLM host — which usually isn't
-a Pi, because small LLMs are still pretty heavy. Point Patzer at an Ollama
+a Pi, because small LLMs are still pretty heavy. Point Chesspirit at an Ollama
 running on a desktop or NAS on the same LAN; the Pi just hosts the web app.
 That said, the coach only *phrases* facts computed by Stockfish, so a 1B
 model on a modest CPU produces perfectly readable commentary.
 
 ## Can I play a friend who lives somewhere else?
 
-Yes — PvP just needs both browsers to reach the *same* Patzer instance, so
+Yes — PvP just needs both browsers to reach the *same* Chesspirit instance, so
 the question is only how your friend reaches your box. No public server is
 involved and nothing needs to be opened on your router:
 
-- **Tailscale (easiest).** Install Tailscale on the Patzer host and on your
+- **Tailscale (easiest).** Install Tailscale on the Chesspirit host and on your
   friend's phone/laptop, then [share the node](https://tailscale.com/kb/1084/sharing)
   with their tailnet (or put them in yours). They open
   `http://<your-node>:8800`, log in with the profile you made for them, and
   challenge you from *Players*. Moves travel over WireGuard, relayed through
   Tailscale's DERP servers when a direct path can't be found.
 - **Cloudflare Tunnel + Access.** Gives you a real `chess.example.com` with
-  TLS and an email-based login gate in front of Patzer, without exposing a
+  TLS and an email-based login gate in front of Chesspirit, without exposing a
   port. Set `COOKIE_SECURE=true` and make sure WebSockets are enabled on the
   tunnel (they are by default).
 - **Plain WireGuard / any VPN** you already run works the same way.
 
 Whatever you choose, give each friend their own profile (Admin → Users) so
 ratings, history and the coach's audience level are theirs. Federated play
-between two *separate* Patzer installs — no shared instance at all — is on
+between two *separate* Chesspirit installs — no shared instance at all — is on
 the [roadmap](../ROADMAP.md).
 
 ## I'm behind a NAT / reverse proxy. What do I do?
@@ -118,7 +119,7 @@ Then replace the offending row's `password_hash` with a fresh `bcryptjs` hash
 
 ## How is this different from Lichess Studio?
 
-Lichess Studio is a great public, browser-hosted analysis surface. Patzer is
+Lichess Studio is a great public, browser-hosted analysis surface. Chesspirit is
 **self-hosted** (your games never leave your network), is **family-aware**
 (profiles, admin console, per-profile language and audience tiers, kid-mode),
 and has a **BYO-LLM coach** voice. Lichess is also free and excellent — if you
@@ -126,7 +127,7 @@ don't need self-hosting or kid-mode, use Lichess.
 
 ## How is this different from Aimchess?
 
-Aimchess is a paid SaaS focused on weakness reports and drills. Patzer doesn't
+Aimchess is a paid SaaS focused on weakness reports and drills. Chesspirit doesn't
 compete on drill design or stat-arbitrage marketing — it's a Game Review +
 coach + family platform you own.
 
@@ -140,7 +141,7 @@ non-root user without elevated privileges.
 
 ## What if I want a feature?
 
-Open a [discussion](https://github.com/aminghuf/patzer/discussions)
+Open a [discussion](https://github.com/aminghuf/chesspirit/discussions)
 first. The [ROADMAP](../ROADMAP.md) lists what's queued. Big features (new
 top-level pages, variants, cloud features) will probably get pushed back —
 see [CONTRIBUTING.md](../CONTRIBUTING.md#what-well-probably-push-back-on).
@@ -154,8 +155,8 @@ Spanish (PR #17) is a complete worked example. Step-by-step in
 
 ## Why GPL components if the project is MIT?
 
-Patzer bundles **chessground** (GPL-3.0) for the board UI and links **Stockfish**
-(GPL-3.0) as the engine. The MIT license applies to Patzer's own code; the
+Chesspirit bundles **chessground** (GPL-3.0) for the board UI and links **Stockfish**
+(GPL-3.0) as the engine. The MIT license applies to Chesspirit's own code; the
 Docker image as a whole is therefore GPL-3.0 because of those components. See
 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). If you're packaging
-Patzer downstream, mirror the GPL-3.0 obligations for the image.
+Chesspirit downstream, mirror the GPL-3.0 obligations for the image.

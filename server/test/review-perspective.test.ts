@@ -11,7 +11,7 @@ import type { AnalysisResult, AnalyzedMove, Classification, KeyMomentSummary } f
 // but accuracy numbers, so it could only repeat them. These tests pin what
 // the model now gets.
 
-const dir = mkdtempSync(join(tmpdir(), 'patzer-review-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-review-'));
 process.env.DB_PATH = join(dir, 'review.db');
 
 type Review = typeof import('../src/coach/review.js');

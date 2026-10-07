@@ -293,7 +293,7 @@ async function runDownload(url: string, j: NonNullable<typeof job>): Promise<voi
   rmSync(PARTIAL_PATH, { force: true });
   const res = await fetch(url, {
     signal: j.abort.signal,
-    headers: { 'User-Agent': 'Patzer (self-hosted chess trainer)' },
+    headers: { 'User-Agent': 'Chesspirit (self-hosted chess trainer)' },
   });
   if (!res.ok || !res.body) throw new Error(`download_failed_${res.status}`);
   const len = Number(res.headers.get('content-length'));

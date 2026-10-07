@@ -371,7 +371,7 @@ export default function Layout({ onOpenPalette, onOpenShortcuts }: LayoutProps) 
               className="hover:text-chesscom-700 dark:hover:text-chesscom-200"
               title={t('common.viewChangelog')}
             >
-              Patzer v{version}
+              Chesspirit v{version}
             </button>
           )}
           {version && <span aria-hidden="true">·</span>}

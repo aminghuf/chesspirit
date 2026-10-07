@@ -1,4 +1,4 @@
-// Players directory + public profiles — the "social" surface of Patzer.
+// Players directory + public profiles — the "social" surface of Chesspirit.
 //
 // Everything here is read-only and scoped to *other* users' public chess
 // record (game counts, win-rate, ratings, recent games) plus the requester's

@@ -20,7 +20,7 @@ import { Chess } from 'chess.js';
 const PORT = 8895;
 const BASE = `http://127.0.0.1:${PORT}`;
 process.env.PORT = String(PORT); process.env.HOST = '127.0.0.1';
-const dbPath = join(tmpdir(), `patzer-resumeui-${process.pid}.db`);
+const dbPath = join(tmpdir(), `chesspirit-resumeui-${process.pid}.db`);
 process.env.DB_PATH = dbPath;
 for (const s of ['', '-wal', '-shm']) rmSync(dbPath + s, { force: true });
 
@@ -30,7 +30,7 @@ const ok = (c: unknown, label: string) => { if (c) console.log(`  ok   ${label}`
 async function api(path: string, body?: unknown, cookie?: string) {
   const res = await fetch(BASE + path, {
     method: body === undefined ? 'GET' : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'patzer', ...(cookie ? { Cookie: cookie } : {}) },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'chesspirit', ...(cookie ? { Cookie: cookie } : {}) },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const sc = res.headers.get('set-cookie'); let json: any = null; try { json = await res.json(); } catch { /* */ }

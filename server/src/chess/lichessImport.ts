@@ -12,8 +12,8 @@ export async function importLichessGames(
   since?: number,
 ): Promise<{ imported: number; total: number; skipped: number }> {
   const games = await fetchRecentGames(username, { max: limit, since });
-  // Imported Lichess games are NEVER rated in Patzer's pool — they have their
-  // own Lichess rating that lives there. Only PvP games inside Patzer count.
+  // Imported Lichess games are NEVER rated in Chesspirit's pool — they have their
+  // own Lichess rating that lives there. Only PvP games inside Chesspirit count.
   const stmt = db.prepare(`
     INSERT INTO games (user_id, source, external_id, pgn, white, black, result, time_control, time_class, end_time, user_color, rated)
     VALUES (?, 'lichess', ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)

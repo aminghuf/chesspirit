@@ -53,7 +53,7 @@ export default function UpdateNotice() {
           {t('update.available', {
             latest: info.latest,
             current: info.current,
-            defaultValue: 'Patzer {{latest}} is out — you are running {{current}}.',
+            defaultValue: 'Chesspirit {{latest}} is out — you are running {{current}}.',
           })}{' '}
           {info.url && (
             <a href={info.url} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-gold-700">

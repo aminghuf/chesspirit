@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 // The routes open the real database on import, so point it at a throwaway
 // file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-pgn-import-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-pgn-import-'));
 process.env.DB_PATH = join(dir, 'pgn.db');
 
 type PgnModule = typeof import('../src/chess/pgnImport.js');
@@ -86,7 +86,7 @@ describe('splitPgn', () => {
 });
 
 describe('toPgnRow', () => {
-  it('maps the tags onto Patzer columns from the importing user’s side', () => {
+  it('maps the tags onto Chesspirit columns from the importing user’s side', () => {
     const row = pgn.toPgnRow(LICHESS, ['magnus', 'drnykterstein']);
     expect(row).toMatchObject({
       white: 'respects_55',

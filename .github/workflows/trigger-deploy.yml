@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   trigger:
     # The fork only — the same file on upstream or another fork must not try.
-    if: github.repository == 'aminghuf/patzer'
+    if: github.repository == 'aminghuf/chesspirit'
     runs-on: ubuntu-latest
     steps:
       - name: Start the deploy workflow

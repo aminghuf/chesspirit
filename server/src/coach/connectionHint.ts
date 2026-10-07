@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 
 // When the coach's Ollama/vLLM test fails with a network error, the raw
-// message ("fetch failed") says nothing about the usual cause: Patzer runs in
+// message ("fetch failed") says nothing about the usual cause: Chesspirit runs in
 // Docker, where `localhost` is the container itself, and Ollama by default
 // only listens on the host's own loopback. The UI turns these codes into a
 // short how-to (see `setup.llmHint.*` in the locales).

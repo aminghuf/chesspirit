@@ -17,7 +17,7 @@ import { chromium, type Page, type BrowserContext } from 'playwright';
 const PORT = 8896;
 const BASE = `http://127.0.0.1:${PORT}`;
 process.env.PORT = String(PORT); process.env.HOST = '127.0.0.1';
-const dbPath = join(tmpdir(), `patzer-pvpui-${process.pid}.db`);
+const dbPath = join(tmpdir(), `chesspirit-pvpui-${process.pid}.db`);
 process.env.DB_PATH = dbPath;
 for (const s of ['', '-wal', '-shm']) rmSync(dbPath + s, { force: true });
 const SHOTS = process.argv[2] ?? '.';
@@ -26,7 +26,7 @@ let fails = 0;
 const ok = (c: unknown, label: string) => { if (c) console.log(`  ok   ${label}`); else { fails++; console.log(`  FAIL ${label}`); } };
 
 async function api(path: string, body?: unknown, cookie?: string) {
-  const res = await fetch(BASE + path, { method: body === undefined ? 'GET' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'patzer', ...(cookie ? { Cookie: cookie } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const res = await fetch(BASE + path, { method: body === undefined ? 'GET' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'chesspirit', ...(cookie ? { Cookie: cookie } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
   const sc = res.headers.get('set-cookie'); let json: any = null; try { json = await res.json(); } catch { /* */ }
   return { status: res.status, json, cookie: sc ? sc.split(';')[0] : undefined };
 }

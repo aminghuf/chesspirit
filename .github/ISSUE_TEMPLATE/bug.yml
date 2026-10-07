@@ -25,7 +25,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Patzer version
+      label: Chesspirit version
       description: Click the version pill in the bottom-left of the sidebar (or check `package.json`).
       placeholder: 3.0.0
     validations:
@@ -34,7 +34,7 @@ body:
   - type: dropdown
     id: deployment
     attributes:
-      label: How are you running Patzer?
+      label: How are you running Chesspirit?
       options:
         - Docker (docker compose)
         - Docker (docker run)

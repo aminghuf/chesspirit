@@ -19,7 +19,7 @@ const PAGE_SIZE = 100;
 // history on the site; re-importing is safe, games already here are skipped.
 const IMPORT_SCOPES = ['20', '100', '500', 'all'] as const;
 type ImportScope = typeof IMPORT_SCOPES[number];
-const SCOPE_KEY = 'patzer.importScope';
+const SCOPE_KEY = 'chesspirit.importScope';
 
 // List filters, kept in the URL so a filtered view survives a reload and can
 // be linked. Each maps to a query parameter of GET /api/games.

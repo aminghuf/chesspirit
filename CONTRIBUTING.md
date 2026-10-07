@@ -1,6 +1,6 @@
-# Contributing to Patzer
+# Contributing to Chesspirit
 
-Thanks for considering a contribution. Patzer is a small, opinionated project — please read this before opening a big PR.
+Thanks for considering a contribution. Chesspirit is a small, opinionated project — please read this before opening a big PR.
 
 ## What we want
 
@@ -14,15 +14,15 @@ Thanks for considering a contribution. Patzer is a small, opinionated project �
 - New top-level pages or major UX changes without a prior issue / discussion.
 - Pulling in heavy dependencies for tiny features.
 - Variants (chess960 / king-of-the-hill / 3check). The classifier and coach assume standard chess and would need real work to extend.
-- Cloud-hosted features. Patzer is local-first.
+- Cloud-hosted features. Chesspirit is local-first.
 
 ## Local dev
 
 Requirements: Node ≥ 20.11.
 
 ```bash
-git clone https://github.com/aminghuf/patzer.git
-cd patzer
+git clone https://github.com/aminghuf/chesspirit.git
+cd chesspirit
 npm install
 npm run setup   # downloads Stockfish 17 into ./bin/ (Windows, Linux, macOS)
 npm run dev

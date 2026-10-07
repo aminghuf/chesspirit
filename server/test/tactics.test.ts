@@ -7,7 +7,7 @@ import { Chess } from 'chess.js';
 
 // The module under test opens the real database on import, so point it at a
 // throwaway file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-tactics-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-tactics-'));
 process.env.DB_PATH = join(dir, 'tactics.db');
 
 type TacticsModule = typeof import('../src/chess/tactics.js');

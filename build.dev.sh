@@ -1,1 +1,1 @@
-sudo docker buildx build --load -t patzer_dev -f Dockerfile .
+sudo docker buildx build --load -t chesspirit_dev -f Dockerfile .

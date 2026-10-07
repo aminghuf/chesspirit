@@ -2,7 +2,7 @@
 //
 // Self-hosted apps have no way to tell you they're stale — you find out months
 // later when something you wanted was fixed in a release you never pulled. So
-// Patzer asks GitHub, at most once every six hours, whether there's a newer
+// Chesspirit asks GitHub, at most once every six hours, whether there's a newer
 // tag than the one it's running, and the UI shows a quiet nudge when there is.
 //
 // Rules this follows deliberately:
@@ -16,13 +16,13 @@
 
 import { getSetting, setSetting } from './db.js';
 
-const RELEASES_URL = 'https://api.github.com/repos/aminghuf/patzer/releases/latest';
+const RELEASES_URL = 'https://api.github.com/repos/aminghuf/chesspirit/releases/latest';
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6h
 const TIMEOUT_MS = 6000;
 const SETTING_ENABLED = 'update_check_enabled';
 // Keyed by repo: an answer cached from a different release feed (this project
 // used to follow SikamikanikoBG/patzer) must not be read as ours.
-const SETTING_CACHE = 'update_check_cache:aminghuf/patzer';
+const SETTING_CACHE = 'update_check_cache:aminghuf/chesspirit';
 
 export interface UpdateInfo {
   /** Latest version seen upstream, e.g. "7.11.0". Null if never successfully checked. */
@@ -102,7 +102,7 @@ export async function checkForUpdate(currentVersion: string, fetchImpl: FetchLik
     inFlight = (async (): Promise<UpdateInfo> => {
       try {
         const res = await fetchImpl(RELEASES_URL, {
-          headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
+          headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'chesspirit (+https://github.com/aminghuf/chesspirit)' },
           signal: AbortSignal.timeout(TIMEOUT_MS),
         });
         if (!res.ok) throw new Error(`github ${res.status}`);

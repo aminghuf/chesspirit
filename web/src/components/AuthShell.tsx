@@ -35,7 +35,7 @@ export default function AuthShell({ title, subtitle, children }: { title: string
             </Fragment>
           ))}
         </div>
-        {/* The login card is also where someone evaluating Patzer lands, so the
+        {/* The login card is also where someone evaluating Chesspirit lands, so the
             repo gets one quiet line here too. */}
         <div className="mt-2 flex justify-center">
           <GitHubStar />

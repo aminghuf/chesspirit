@@ -288,7 +288,7 @@ db.exec(`CREATE TABLE IF NOT EXISTS learn_progress (
 )`);
 
 // Tactic puzzles (Train → Puzzles): puzzles from the Lichess database that
-// ship with Patzer (see chess/tactics.ts). One row per puzzle you tried —
+// ship with Chesspirit (see chess/tactics.ts). One row per puzzle you tried —
 // only the first try is rated, so `solved` and the ratings are from that try —
 // and one puzzle rating per profile (Glicko-1, like the game ratings).
 db.exec(`CREATE TABLE IF NOT EXISTS tactics_attempts (

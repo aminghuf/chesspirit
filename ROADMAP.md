@@ -1,6 +1,6 @@
-# Patzer roadmap
+# Chesspirit roadmap
 
-A loose, opinionated list of where Patzer is headed. Items aren't promises — they're the maintainer's current view, and they shift. Open an issue / discussion if you want to nudge priority.
+A loose, opinionated list of where Chesspirit is headed. Items aren't promises — they're the maintainer's current view, and they shift. Open an issue / discussion if you want to nudge priority.
 
 ## Now
 
@@ -10,7 +10,7 @@ A loose, opinionated list of where Patzer is headed. Items aren't promises — t
 
 ## Soon
 
-- **Federated PvP over Nostr relays.** Play someone running *their own* Patzer with no shared instance: each install gets a keypair, challenges and moves are (encrypted) ephemeral events on two or three public relays, resume comes from the PGN persistence PvP already has. Nobody hosts a server, nobody moderates one, kid mode stays at home. Opt-in.
+- **Federated PvP over Nostr relays.** Play someone running *their own* Chesspirit with no shared instance: each install gets a keypair, challenges and moves are (encrypted) ephemeral events on two or three public relays, resume comes from the PGN persistence PvP already has. Nobody hosts a server, nobody moderates one, kid mode stays at home. Opt-in.
 - **Split `prompts.ts`** into `locales/*.ts`, `moves.ts`, `facts.ts` (same public API) — proposed by @fiedri in #17.
 - **Web component tests** — the vitest harness (7.10) covers the server; the React side has one pure-helper suite so far.
 

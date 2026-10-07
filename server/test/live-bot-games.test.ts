@@ -6,7 +6,7 @@ import { Chess } from 'chess.js';
 
 // The module under test opens the real database on import, so point it at a
 // throwaway file first. Everything else in this suite is pure.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-live-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-live-'));
 process.env.DB_PATH = join(dir, 'live.db');
 
 type LiveBotModule = typeof import('../src/chess/liveBotGames.js');

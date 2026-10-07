@@ -67,7 +67,7 @@ export default function GameReportPanel({ gameId, initial, onMomentJump, onGener
       const res = await fetch(`/api/games/${gameId}/review`, {
         method: 'POST',
         credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'patzer' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'chesspirit' },
         signal: ac.signal,
       });
       if (!res.ok || !res.body) {

@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Patzer",
+    "name": "Chesspirit",
     "tagline": "Dein privates Chess.com.",
     "home": "Start"
   },
@@ -38,7 +38,7 @@
     "betaHint": "Wird noch verfeinert — Rückmeldungen sind willkommen."
   },
   "setup": {
-    "title": "Willkommen bei Patzer",
+    "title": "Willkommen bei Chesspirit",
     "subtitle": "Richten wir deinen Schachserver ein. Dieser Assistent erscheint nur einmal.",
     "step1": "Admin-Konto erstellen",
     "step2": "Ollama verbinden (für den KI-Coach)",
@@ -54,7 +54,7 @@
     "passwordHint": "Mindestens 10 Zeichen.",
     "next": "Weiter",
     "llmHint": {
-      "docker_localhost": "Patzer läuft in Docker – dort ist „localhost“ der Container selbst, nicht dein Computer. Nimm http://host.docker.internal:11434 (bei Docker Desktop unter Windows und Mac eingebaut; unter Linux erst nach Einschalten der extra_hosts-Zeilen in docker-compose.yml) oder die Netzwerkadresse deines Computers, z. B. http://192.168.1.20:11434. Außerdem muss der KI-Server Verbindungen aus dem Netzwerk annehmen – bei Ollama: OLLAMA_HOST=0.0.0.0 setzen und Ollama neu starten.",
+      "docker_localhost": "Chesspirit läuft in Docker – dort ist „localhost“ der Container selbst, nicht dein Computer. Nimm http://host.docker.internal:11434 (bei Docker Desktop unter Windows und Mac eingebaut; unter Linux erst nach Einschalten der extra_hosts-Zeilen in docker-compose.yml) oder die Netzwerkadresse deines Computers, z. B. http://192.168.1.20:11434. Außerdem muss der KI-Server Verbindungen aus dem Netzwerk annehmen – bei Ollama: OLLAMA_HOST=0.0.0.0 setzen und Ollama neu starten.",
       "unreachable": "Unter dieser Adresse hat niemand geantwortet. Prüfe, ob der KI-Server läuft, ob Adresse und Port stimmen und ob er Verbindungen aus dem Netzwerk annimmt (bei Ollama: OLLAMA_HOST=0.0.0.0 setzen, dann neu starten). Auch eine Firewall auf diesem Computer kann den Port blockieren."
     }
   },
@@ -289,7 +289,7 @@
     },
     "regenerateReport": "Neu schreiben",
     "importedOf": "{{n}} neue Partien importiert ({{total}} gefunden)",
-    "importAllSlow": "Deine gesamte Historie wird importiert — bei Tausenden Partien kann das einige Minuten dauern. Du kannst Patzer währenddessen weiter nutzen.",
+    "importAllSlow": "Deine gesamte Historie wird importiert — bei Tausenden Partien kann das einige Minuten dauern. Du kannst Chesspirit währenddessen weiter nutzen.",
     "importScope": {
       "label": "Wie viele Partien importieren",
       "last": "Letzte {{n}}",
@@ -485,7 +485,7 @@
       "board": "Echtes Brett"
     },
     "moveSoundSetDesc": {
-      "classic": "Synthetisches Holzklopfen — die ursprünglichen Patzer-Töne.",
+      "classic": "Synthetisches Holzklopfen — die ursprünglichen Chesspirit-Töne.",
       "board": "Aufnahmen echter Figuren, die auf ein Holzbrett gesetzt werden."
     },
     "soundSet": "Töne für Schach & Partieende",
@@ -494,7 +494,7 @@
       "soft": "Weich"
     },
     "soundSetDesc": {
-      "classic": "Helle Glocken — die ursprünglichen Patzer-Töne.",
+      "classic": "Helle Glocken — die ursprünglichen Chesspirit-Töne.",
       "soft": "Warme Holz-Marimba-Töne, passend zu den Zug-Tönen."
     },
     "soundSetPreview": "Anhören",
@@ -503,11 +503,11 @@
     "autoReview": "Automatische Partieauswertung",
     "autoReviewDesc": "Die KI-Auswertung wird direkt nach Partieende geschrieben, ohne auf „Auswerten“ zu klicken.",
     "chessComSyncInterval": "Chess.com Auto-Sync",
-    "chessComSyncIntervalHelp": "Wie oft Patzer deine neuen Chess.com-Partien automatisch holt. „Aus“ lässt nur den manuellen Import zu.",
+    "chessComSyncIntervalHelp": "Wie oft Chesspirit deine neuen Chess.com-Partien automatisch holt. „Aus“ lässt nur den manuellen Import zu.",
     "chessComSyncOff": "Aus",
     "chessComSyncEvery": "Alle {{n}} Min.",
     "lichessSyncInterval": "Lichess Auto-Sync",
-    "lichessSyncIntervalHelp": "Wie oft Patzer deine neuen Lichess-Partien automatisch holt. „Aus“ lässt nur den manuellen Import zu.",
+    "lichessSyncIntervalHelp": "Wie oft Chesspirit deine neuen Lichess-Partien automatisch holt. „Aus“ lässt nur den manuellen Import zu.",
     "lichessSyncOff": "Aus",
     "lichessSyncEvery": "Alle {{n}} Min."
   },
@@ -648,7 +648,7 @@
     "engineBackendEnv": "Wird über die Umgebungsvariable ENGINE_BACKEND gesetzt — dieser Schalter wird ignoriert.",
     "engines": {
       "intro": "Partieanalyse und Engine-Varianten laufen auf der hier gewählten Engine. Bot-Partien nutzen immer das mitgelieferte Stockfish. Zusätzliche Engines werden aus ihren offiziellen Releases geladen und vor dem Start gegen eine festgelegte Prüfsumme geprüft.",
-      "bundled": "Mit Patzer mitgeliefert",
+      "bundled": "Mit Chesspirit mitgeliefert",
       "use": "Diese Engine verwenden",
       "inUse": "In Verwendung",
       "install": "Herunterladen",
@@ -657,7 +657,7 @@
       "remove": "Entfernen",
       "failed": "Installation fehlgeschlagen: {{error}}",
       "unavailable": {
-        "platform": "Downloads gibt es nur, wenn Patzer unter Linux läuft (z. B. in Docker).",
+        "platform": "Downloads gibt es nur, wenn Chesspirit unter Linux läuft (z. B. in Docker).",
         "arch": "Kein Build für den Prozessortyp dieses Servers.",
         "cpu": "Der Prozessor dieses Servers ist zu alt für diese Engine (benötigt AVX2 und BMI2)."
       },
@@ -843,7 +843,7 @@
     "mate": "Schachmatt! Gut gemacht.",
     "goodKeepGoing": "Gut! Weiter so.",
     "opponentMoves": "Dein Gegner antwortet …",
-    "opponentThinks": "Patzer überlegt …",
+    "opponentThinks": "Chesspirit überlegt …",
     "hintPiece": "Diese Figur macht den Zug.",
     "hintArrow": "Spiel den Zug, den der Pfeil zeigt.",
     "white": "Weiß",
@@ -883,7 +883,7 @@
       "draw": "Das ist jetzt Remis. Versuch es noch einmal.",
       "lost": "Dein Gegner hat eine Figur gewonnen – der Sieg ist weg. Versuch es noch einmal.",
       "limit": "Du hast alle {{limit}} Züge verbraucht. Versuch es noch einmal – es geht schneller.",
-      "engineDown": "Patzers Engine hat nicht geantwortet.",
+      "engineDown": "Chesspirits Engine hat nicht geantwortet.",
       "retryEngine": "Nochmal fragen",
       "skip": "Übung überspringen",
       "skipped": "Übersprungen – ohne die Engine lässt sich diese Übung nicht spielen. Mach mit der Lektion weiter.",
@@ -983,7 +983,7 @@
       "trainer": "Trainer"
     },
     "trainer": {
-      "intro": "Wähle eine Linie. Patzer spielt die Gegenseite, du findest deine Züge. Es zählt nur der Zug der Linie – jeder Zug, den du nicht findest, kommt in deiner täglichen Wiederholung wieder.",
+      "intro": "Wähle eine Linie. Chesspirit spielt die Gegenseite, du findest deine Züge. Es zählt nur der Zug der Linie – jeder Zug, den du nicht findest, kommt in deiner täglichen Wiederholung wieder.",
       "loadError": "Der Eröffnungstrainer konnte nicht geladen werden.",
       "reviewTitle": "Tägliche Wiederholung",
       "dueToday": "heute fällig",
@@ -1026,7 +1026,7 @@
       "missedCount_one": "{{count}} verpasst",
       "missedCount_other": "{{count}} verpasst",
       "yourMove": "Du bist dran — wie geht die Linie weiter?",
-      "opponentMove": "Patzer zieht …",
+      "opponentMove": "Chesspirit zieht …",
       "wrong": "Nicht der Zug dieser Linie – er kann trotzdem gut sein, aber hier geht es anders weiter. Noch ein Versuch!",
       "wrongAgain": "Das ist es auch nicht. Dieser Zug kommt in deine Wiederholung – spiel den Zug, den der Pfeil zeigt.",
       "showMove": "Zug zeigen",
@@ -1059,13 +1059,13 @@
       "branchCount_other": "{{count}} Abweichungen",
       "practiseBranches_one": "Die Abweichung üben",
       "practiseBranches_other": "Die {{count}} Abweichungen üben",
-      "practiseBranchesDesc": "Patzer verlässt die Hauptlinie: die anderen Züge, die dir begegnen werden, und ein paar verlockende, die du bestrafen kannst.",
+      "practiseBranchesDesc": "Chesspirit verlässt die Hauptlinie: die anderen Züge, die dir begegnen werden, und ein paar verlockende, die du bestrafen kannst.",
       "repertoireBranches_one": "Deine Gegner sind einmal anders von dieser Linie abgewichen – auch das kannst du üben: nach der Linie „Die Abweichung üben“ wählen.",
       "repertoireBranches_other": "Deine Gegner sind auf {{count}} Arten von dieser Linie abgewichen – auch das kannst du üben: nach der Linie „Die Abweichungen üben“ wählen.",
       "branchOf": "Abweichung {{i}} von {{n}}",
-      "branchText": "Patzer spielt {{move}} statt {{main}}. Wie geht es weiter?",
-      "branchTextNoMain": "Patzer spielt {{move}}. Wie geht es weiter?",
-      "branchTrap": "Patzer spielt {{move}} statt {{main}} – sieht verlockend aus, lässt sich aber bestrafen. Wie?",
+      "branchText": "Chesspirit spielt {{move}} statt {{main}}. Wie geht es weiter?",
+      "branchTextNoMain": "Chesspirit spielt {{move}}. Wie geht es weiter?",
+      "branchTrap": "Chesspirit spielt {{move}} statt {{main}} – sieht verlockend aus, lässt sich aber bestrafen. Wie?",
       "branchGames_one": "Aus deinen Partien (einmal).",
       "branchGames_other": "Aus deinen Partien ({{count}}-mal).",
       "branchPlayed_one": "Aus deinen Partien (einmal). Du hast mit {{played}} geantwortet – die Analyse kennt einen besseren Zug.",
@@ -1243,7 +1243,7 @@
     "createAccount": "Konto erstellen",
     "forgotPassword": "Passwort vergessen?",
     "signupTitle": "Erstelle dein Konto",
-    "signupSubtitle": "Tritt diesem Patzer-Server bei",
+    "signupSubtitle": "Tritt diesem Chesspirit-Server bei",
     "signupSubtitleInvite": "Dieser Server nimmt nur Eingeladene auf. Gib den Code ein, den du bekommen hast.",
     "haveInvite": "Ich habe eine Einladung",
     "inviteCode": "Einladungscode",
@@ -1381,21 +1381,21 @@
     "openSettings": "Trage eines unter Einstellungen → Verbindungen ein."
   },
   "update": {
-    "available": "Patzer {{latest}} ist erschienen — du verwendest {{current}}.",
+    "available": "Chesspirit {{latest}} ist erschienen — du verwendest {{current}}.",
     "whatsNew": "Was ist neu",
     "how": "Lade das neue Image herunter und erstelle den Container neu.",
     "dismiss": "Bis zur nächsten Version ausblenden",
     "checkTitle": "Nach Updates suchen",
-    "checkHelp": "Alle sechs Stunden fragt Patzer bei GitHub nach, ob es eine neuere Version gibt, und zeigt dann einen einzeiligen Hinweis an. Dabei wird nichts über dich oder deine Partien gesendet — es ist ein anonymer Abruf einer öffentlichen Seite. Schalte es aus, wenn dieser Rechner kein Internet hat oder du Updates lieber selbst im Blick behältst.",
+    "checkHelp": "Alle sechs Stunden fragt Chesspirit bei GitHub nach, ob es eine neuere Version gibt, und zeigt dann einen einzeiligen Hinweis an. Dabei wird nichts über dich oder deine Partien gesendet — es ist ein anonymer Abruf einer öffentlichen Seite. Schalte es aus, wenn dieser Rechner kein Internet hat oder du Updates lieber selbst im Blick behältst.",
     "upToDate": "Auf dem neuesten Stand",
     "newAvailable": "Version {{latest}} ist verfügbar"
   },
   "github": {
     "star": "Stern auf GitHub",
     "starred": "Stern vergeben",
-    "thanks": "Danke für deinen Stern für Patzer!",
-    "starTitle": "Gib Patzer einen Stern auf GitHub — das ist das einzige Dankeschön, um das das Projekt bittet",
-    "changelogCta": "Patzer ist kostenlos und selbst gehostet."
+    "thanks": "Danke für deinen Stern für Chesspirit!",
+    "starTitle": "Gib Chesspirit einen Stern auf GitHub — das ist das einzige Dankeschön, um das das Projekt bittet",
+    "changelogCta": "Chesspirit ist kostenlos und selbst gehostet."
   },
   "achievements": {
     "first_game": {

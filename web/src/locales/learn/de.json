@@ -254,7 +254,7 @@
   "notation": {
     "title": "Züge lesen",
     "desc": "Wie Schachzüge aufgeschrieben werden.",
-    "intro": "Schachspieler schreiben jeden Zug auf. Ein Zug ist der **Buchstabe der Figur** plus das **Feld**, auf das sie zieht: **K** König, **D** Dame, **T** Turm, **L** Läufer, **S** Springer. Bauern bekommen keinen Buchstaben. Schau zu: **e4** (Bauer nach e4), **e5**, **Sf3** (Springer nach f3).\nIn Patzers Zuglisten stehen die englischen Buchstaben: **Q** Dame, **R** Turm, **B** Läufer, **N** Springer (K bleibt K) – Sf3 heißt dort Nf3.",
+    "intro": "Schachspieler schreiben jeden Zug auf. Ein Zug ist der **Buchstabe der Figur** plus das **Feld**, auf das sie zieht: **K** König, **D** Dame, **T** Turm, **L** Läufer, **S** Springer. Bauern bekommen keinen Buchstaben. Schau zu: **e4** (Bauer nach e4), **e5**, **Sf3** (Springer nach f3).\nIn Chesspirits Zuglisten stehen die englischen Buchstaben: **Q** Dame, **R** Turm, **B** Läufer, **N** Springer (K bleibt K) – Sf3 heißt dort Nf3.",
     "intro_kid": "Jeder Schachzug hat einen kurzen Namen, wie ein Geheimcode! Ein großer Buchstabe sagt, welche Figur zieht (S Springer, L Läufer, T Turm, D Dame, K König), dann kommt das Feld. Bauern bekommen keinen Buchstaben: e4 heißt einfach, ein Bauer geht nach e4.",
     "target": "Beim Zug **Sc3** zieht ein Springer auf ein Feld. Tippe auf dieses Feld.",
     "target_kid": "Sc3: Der Springer springt auf … welches Feld? Tippe es an!",
@@ -296,7 +296,7 @@
     "intro": "Mit zwei Türmen ist Mattsetzen leicht: Ein Turm **sperrt** eine Reihe ab, der andere gibt auf der nächsten Reihe **Schach**. Der König muss jedes Mal zurückweichen, und die Türme steigen ihm hinterher wie auf einer Treppe – bis zum Matt am Rand.",
     "intro_kid": "Zwei Türme sind wie eine Treppe: Einer sperrt, der andere gibt Schach – Schritt für Schritt muss der König zurück, bis er am Rand festsitzt. Schachmatt!",
     "m1": "Mach es fertig: Matt in einem Zug mit den zwei Türmen.",
-    "play": "Jetzt spiel es gegen Patzer aus: Setze den schwarzen König mit deinen zwei Türmen matt. Tipp: Halte die Türme weit weg vom König, damit er sie nicht angreifen kann."
+    "play": "Jetzt spiel es gegen Chesspirit aus: Setze den schwarzen König mit deinen zwei Türmen matt. Tipp: Halte die Türme weit weg vom König, damit er sie nicht angreifen kann."
   },
   "queen-mate": {
     "title": "Matt mit Dame und König",
@@ -309,7 +309,7 @@
     "patt_stalemate": "Patt – also Remis",
     "patt_check": "Nur Schach",
     "patt_done": "Richtig – Patt! Der König steht nicht im Schach, hat aber keinen Zug. De8 oder Df8 wäre Matt gewesen.",
-    "play": "Jetzt du: Setze den schwarzen König mit Dame und König matt – Patzer verteidigt sich. Lass dir die Dame nicht nehmen und vermeide das Patt!"
+    "play": "Jetzt du: Setze den schwarzen König mit Dame und König matt – Chesspirit verteidigt sich. Lass dir die Dame nicht nehmen und vermeide das Patt!"
   },
   "rook-mate": {
     "title": "Matt mit Turm und König",
@@ -581,7 +581,7 @@
     "draw_yes": "Ja",
     "draw_no": "Nein, das ist Remis",
     "draw_done": "Richtig – bei bestem Spiel Remis. Schwarz hat die Opposition, und diesmal hat der Bauer keinen Reservezug: Der weiße König auf e3 steht ihm im Weg.",
-    "play": "Jetzt gewinn es selbst: Bring deinen König vor den Bauern, nimm die Opposition und wandle um. Patzer verteidigt sich."
+    "play": "Jetzt gewinn es selbst: Bring deinen König vor den Bauern, nimm die Opposition und wandle um. Chesspirit verteidigt sich."
   },
   "pawn-endgames": {
     "title": "Bauernendspiele",
@@ -686,7 +686,7 @@
     "desc": "Mit Turm und Bauer gewinnen: eine Brücke bauen.",
     "intro": "Die **Lucena-Stellung**: Dein Bauer steht auf der 7. Reihe, dein König vor ihm, und dein Turm auf der c-Linie hält den schwarzen König fern. Der schwarze Turm auf der a-Linie verhindert, dass dein König auf dieser Seite herauskommt. Wie kommt dein König also frei?",
     "bridge": "Die Antwort heißt **Brückenbau**. 1.Td1+ drängt den schwarzen König eine Linie weiter weg. 2.**Td4!** stellt den Turm auf die 4. Reihe. Jetzt läuft der König heraus, der schwarze Turm gibt weiter Schach – und wenn der König b5 erreicht, stellt sich der Turm auf **b4** dazwischen und beendet die Schachs. Nichts hält den Bauern mehr auf.",
-    "play": "Jetzt du: Gewinne die Lucena-Stellung und wandle den Bauern um – Patzer verteidigt sich. Tipp: Dränge den König zuerst mit einem Schach weg, dann bau die Brücke."
+    "play": "Jetzt du: Gewinne die Lucena-Stellung und wandle den Bauern um – Chesspirit verteidigt sich. Tipp: Dränge den König zuerst mit einem Schach weg, dann bau die Brücke."
   },
   "philidor": {
     "title": "Die Philidor-Stellung",

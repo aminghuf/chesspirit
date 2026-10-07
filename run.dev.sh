@@ -1,1 +1,1 @@
-sudo docker run -d -p 8800:8800 patzer_dev:latest
+sudo docker run -d -p 8800:8800 chesspirit_dev:latest

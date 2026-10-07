@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>patzer</Name>
-  <Repository>ghcr.io/aminghuf/patzer:latest</Repository>
-  <Registry>https://github.com/aminghuf/patzer/pkgs/container/patzer</Registry>
+  <Name>chesspirit</Name>
+  <Repository>ghcr.io/aminghuf/chesspirit:latest</Repository>
+  <Registry>https://github.com/aminghuf/chesspirit/pkgs/container/chesspirit</Registry>
   <Network>bridge</Network>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/aminghuf/patzer/discussions</Support>
-  <Project>https://github.com/aminghuf/patzer</Project>
-  <Changes>https://github.com/aminghuf/patzer/releases</Changes>
+  <Support>https://github.com/aminghuf/chesspirit/discussions</Support>
+  <Project>https://github.com/aminghuf/chesspirit</Project>
+  <Changes>https://github.com/aminghuf/chesspirit/releases</Changes>
   <ExtraSearchTerms>chess stockfish game review lichess chess.com ollama llm coach family kids</ExtraSearchTerms>
   <Overview>
-  Patzer is a self-hosted chess app: import your public Chess.com games (or play in the browser) and get a full Game Review computed by the bundled Stockfish - move classifications from Brilliant to Blunder, accuracy, estimated Elo, an eval graph, key moments and engine lines.
+  Chesspirit is a self-hosted chess app: import your public Chess.com games (or play in the browser) and get a full Game Review computed by the bundled Stockfish - move classifications from Brilliant to Blunder, accuracy, estimated Elo, an eval graph, key moments and engine lines.
 
   The AI coach is optional and points at your own Ollama or vLLM host, so nothing is sent to a cloud service. It is render-only: every chess fact is computed by Stockfish and chess.js, and the model is only allowed to phrase what it is given, which is why a small local model works without inventing pieces that are not on the board.
 
@@ -21,11 +21,11 @@
   </Overview>
   <Category>GameServers: HomeAutomation: Tools:</Category>
   <WebUI>http://[IP]:[PORT:8800]</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/aminghuf/patzer/main/docs/unraid/patzer.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/aminghuf/patzer/main/docs/unraid/patzer-icon.png</Icon>
-  <Config Name="WebUI Port" Target="8800" Default="8800" Mode="tcp" Description="Port Patzer listens on." Type="Port" Display="always" Required="true" Mask="false">8800</Config>
-  <Config Name="Data" Target="/app/data" Default="/mnt/user/appdata/patzer" Mode="rw" Description="Holds the SQLite database and the session secret. Back this up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/patzer</Config>
-  <Config Name="COOKIE_SECURE" Target="COOKIE_SECURE" Default="false" Mode="" Description="Set to true when you put Patzer behind a reverse proxy that terminates TLS." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <TemplateURL>https://raw.githubusercontent.com/aminghuf/chesspirit/main/docs/unraid/chesspirit.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/aminghuf/chesspirit/main/docs/unraid/chesspirit-icon.png</Icon>
+  <Config Name="WebUI Port" Target="8800" Default="8800" Mode="tcp" Description="Port Chesspirit listens on." Type="Port" Display="always" Required="true" Mask="false">8800</Config>
+  <Config Name="Data" Target="/app/data" Default="/mnt/user/appdata/chesspirit" Mode="rw" Description="Holds the SQLite database and the session secret. Back this up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/chesspirit</Config>
+  <Config Name="COOKIE_SECURE" Target="COOKIE_SECURE" Default="false" Mode="" Description="Set to true when you put Chesspirit behind a reverse proxy that terminates TLS." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
   <Config Name="STOCKFISH_PATH" Target="STOCKFISH_PATH" Default="" Mode="" Description="Optional. Leave empty - the image ships Stockfish." Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="LICHESS_EXPLORER_URL" Target="LICHESS_EXPLORER_URL" Default="" Mode="" Description="Optional. Point the Master games panel at a self-hosted lila-openingexplorer instead of the public one." Type="Variable" Display="advanced" Required="false" Mask="false"/>
 </Container>

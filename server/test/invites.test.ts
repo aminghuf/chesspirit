@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 // The routes open the real database on import, so point it at a throwaway
 // file first.
-const dir = mkdtempSync(join(tmpdir(), 'patzer-invites-'));
+const dir = mkdtempSync(join(tmpdir(), 'chesspirit-invites-'));
 process.env.DB_PATH = join(dir, 'invites.db');
 
 type InvitesModule = typeof import('../src/auth/invites.js');

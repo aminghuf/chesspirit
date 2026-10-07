@@ -36,7 +36,7 @@ interface Status {
 
 type Phase = 'play' | 'wrong' | 'solved' | 'revealed';
 
-const PREFS_KEY = 'patzer.puzzlePrefs';
+const PREFS_KEY = 'chesspirit.puzzlePrefs';
 interface Prefs { source: Source; theme: string; difficulty: string }
 
 function readPrefs(): Prefs {

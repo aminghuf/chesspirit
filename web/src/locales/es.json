@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Patzer",
+    "name": "Chesspirit",
     "tagline": "Tu propio Chess.com privado.",
     "home": "Inicio"
   },
@@ -35,7 +35,7 @@
     "close": "Cerrar"
   },
   "setup": {
-    "title": "Bienvenido a Patzer",
+    "title": "Bienvenido a Chesspirit",
     "subtitle": "Vamos a configurar tu servidor de ajedrez. Este proceso solo se realiza una vez.",
     "step1": "Crea tu cuenta de administrador",
     "step2": "Conecta Ollama (Para el Entrenador de IA)",
@@ -242,7 +242,7 @@
     },
     "regenerateReport": "Escribirlo de nuevo",
     "importedOf": "Importadas {{n}} partidas nuevas ({{total}} encontradas)",
-    "importAllSlow": "Importando todo tu historial — con miles de partidas puede tardar unos minutos. Mientras tanto puedes seguir usando Patzer.",
+    "importAllSlow": "Importando todo tu historial — con miles de partidas puede tardar unos minutos. Mientras tanto puedes seguir usando Chesspirit.",
     "importScope": {
       "label": "Cuántas partidas importar",
       "last": "Últimas {{n}}",
@@ -372,7 +372,7 @@
       "board": "Tablero real"
     },
     "moveSoundSetDesc": {
-      "classic": "Golpes de madera sintetizados: los sonidos originales de Patzer.",
+      "classic": "Golpes de madera sintetizados: los sonidos originales de Chesspirit.",
       "board": "Grabaciones de piezas reales colocadas sobre un tablero de madera."
     },
     "soundSet": "Sonidos de jaque y fin de partida",
@@ -381,7 +381,7 @@
       "soft": "Suave"
     },
     "soundSetDesc": {
-      "classic": "Campanas brillantes: los sonidos originales de Patzer.",
+      "classic": "Campanas brillantes: los sonidos originales de Chesspirit.",
       "soft": "Cálidas notas de marimba de madera, a juego con los sonidos de las jugadas."
     },
     "soundSetPreview": "Escuchar"
@@ -437,7 +437,7 @@
     "testEmailSent": "Correo de prueba enviado.",
     "engines": {
       "intro": "La revisión de partidas y las líneas del motor usan el motor elegido aquí. El juego contra el bot siempre usa el Stockfish incluido. Los motores adicionales se descargan de sus publicaciones oficiales y se comprueban con una suma de verificación fija antes de ejecutarse.",
-      "bundled": "Incluido con Patzer",
+      "bundled": "Incluido con Chesspirit",
       "use": "Usar este motor",
       "inUse": "En uso",
       "install": "Descargar",
@@ -446,7 +446,7 @@
       "remove": "Quitar",
       "failed": "La instalación falló: {{error}}",
       "unavailable": {
-        "platform": "Las descargas solo están disponibles cuando Patzer se ejecuta en Linux (p. ej., en Docker).",
+        "platform": "Las descargas solo están disponibles cuando Chesspirit se ejecuta en Linux (p. ej., en Docker).",
         "arch": "No hay versión para el tipo de procesador de este servidor.",
         "cpu": "El procesador de este servidor es demasiado antiguo para este motor (necesita AVX2 y BMI2)."
       },
@@ -739,7 +739,7 @@
     "createAccount": "Crear cuenta",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "signupTitle": "Crea tu cuenta",
-    "signupSubtitle": "Únete a este servidor de Patzer",
+    "signupSubtitle": "Únete a este servidor de Chesspirit",
     "signupDisabledNotice": "El registro está desactivado en este servidor. Pide a un administrador que cree una cuenta para ti.",
     "backToLogin": "Volver a iniciar sesión",
     "checkInboxTitle": "Confirma tu correo",
@@ -870,12 +870,12 @@
     "openSettings": "Añade uno en Ajustes → Conexiones."
   },
   "update": {
-    "available": "Patzer {{latest}} ya está disponible — estás usando {{current}}.",
+    "available": "Chesspirit {{latest}} ya está disponible — estás usando {{current}}.",
     "whatsNew": "Novedades",
     "how": "Descarga la nueva imagen y recrea el contenedor.",
     "dismiss": "Ocultar hasta la próxima versión",
     "checkTitle": "Buscar actualizaciones",
-    "checkHelp": "Cada seis horas Patzer pregunta a GitHub si hay una versión más reciente y muestra un aviso de una línea si la hay. No envía nada sobre ti ni sobre tus partidas: es una lectura anónima de una página pública. Desactívalo si esta máquina no tiene internet o si prefieres seguir las versiones por tu cuenta.",
+    "checkHelp": "Cada seis horas Chesspirit pregunta a GitHub si hay una versión más reciente y muestra un aviso de una línea si la hay. No envía nada sobre ti ni sobre tus partidas: es una lectura anónima de una página pública. Desactívalo si esta máquina no tiene internet o si prefieres seguir las versiones por tu cuenta.",
     "upToDate": "Actualizado",
     "newAvailable": "La versión {{latest}} está disponible"
   },
@@ -883,8 +883,8 @@
     "star": "Dar una estrella",
     "starred": "Con estrella",
     "thanks": "¡Gracias por la estrella!",
-    "starTitle": "Dale una estrella a Patzer en GitHub — es el único agradecimiento que el proyecto pide",
-    "changelogCta": "Patzer es gratuito y lo alojas tú."
+    "starTitle": "Dale una estrella a Chesspirit en GitHub — es el único agradecimiento que el proyecto pide",
+    "changelogCta": "Chesspirit es gratuito y lo alojas tú."
   },
   "connections": {
     "title": "Conexiones",

@@ -1,6 +1,6 @@
 // Loads the Learn section's content on demand: four level files plus the
 // lesson texts, which ride i18next as their own "learn" namespace. Kept out
-// of the main bundle — most visits to Patzer never open a lesson.
+// of the main bundle — most visits to Chesspirit never open a lesson.
 
 import type { Language } from '../lib/languages';
 import type { CourseDef, LessonDef, LevelDef, LevelId } from './types';
