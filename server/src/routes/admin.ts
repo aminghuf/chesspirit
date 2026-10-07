@@ -4,8 +4,6 @@ import { db, getSetting, setSetting } from '../db.js';
 import { updateCheckEnabled, setUpdateCheckEnabled } from '../updates.js';
 import { requireAdmin } from '../auth/middleware.js';
 import { hashPassword } from '../auth/passwords.js';
-import { connectionHint } from '../coach/connectionHint.js';
-import { testConnection, testModel, llmUrl, llmStats, llmProvider, deepseekApiKey, type LlmProvider } from '../coach/llm.js';
 import { StockfishEngine } from '../chess/stockfish.js';
 import { analysisDepth, analysisEngineId, engineBackend, MAX_ANALYSIS_DEPTH, MIN_ANALYSIS_DEPTH } from '../chess/engine.js';
 import { engineStatus, installedEnginePath, removeEngine, startInstall } from '../chess/engineStore.js';
@@ -222,19 +220,10 @@ router.delete('/invites/:id', (c) => {
 // ---- System settings ----
 
 router.get('/system', async (c) => {
-  const stats = llmStats();
   return c.json({
-    llm_provider: llmProvider(),
-    ollama_url: getSetting('ollama_url'),
-    ollama_model: getSetting('ollama_model'),
-    vllm_url: getSetting('vllm_url'),
-    vllm_model: getSetting('vllm_model'),
-    deepseek_url: getSetting('deepseek_url') ?? '',
-    deepseek_model: getSetting('deepseek_model') ?? '',
-    // The API key itself is never returned — only whether one is set (and
-    // whether an env var is supplying it, in which case the UI field is read-only).
-    deepseek_key_set: !!deepseekApiKey(),
-    deepseek_env_override: !!process.env.DEEPSEEK_API_KEY,
+    // Whether users other than admins may enter an Ollama/vLLM host of their
+    // own in Settings → Connections. There is no server-wide LLM (coach/llm.ts).
+    llm_user_hosts: getSetting('llm_user_hosts') === '1',
     stockfish_path: getSetting('stockfish_path'),
     // Which engine Game Review analysis runs on. The env var wins when set.
     engine_backend: engineBackend(),
@@ -242,13 +231,6 @@ router.get('/system', async (c) => {
     // 'stockfish' (bundled; local or hosted per engine_backend) or an installed engine's id.
     analysis_engine: analysisEngineId(),
     analysis_depth: analysisDepth(),
-    // Live runtime stats so admins can confirm which model the coach is
-    // actually calling (the saved setting vs. what runtime resolved to may
-    // diverge if the saved model isn't pulled on the Ollama host).
-    last_model_used: stats.lastModelUsed,
-    last_error: stats.lastError,
-    p95_ms: stats.p95Ms,
-    call_count: stats.count,
 
     // ---- Update check ----
     update_check_enabled: updateCheckEnabled(),
@@ -273,16 +255,7 @@ router.get('/system', async (c) => {
 });
 
 const systemSchema = z.object({
-  llm_provider: z.enum(['ollama', 'vllm', 'deepseek']).optional(),
-  ollama_url: z.string().url().or(z.literal('')).optional(),
-  ollama_model: z.string().optional(),
-  vllm_url: z.string().url().or(z.literal('')).optional(),
-  vllm_model: z.string().optional(),
-  deepseek_url: z.string().url().or(z.literal('')).optional(),
-  deepseek_model: z.string().optional(),
-  // Only written when a non-empty string is sent; empty/omitted leaves the
-  // stored key untouched (so re-saving the form doesn't wipe it).
-  deepseek_api_key: z.string().max(255).optional(),
+  llm_user_hosts: z.boolean().optional(),
   stockfish_path: z.string().optional(),
   engine_backend: z.enum(['local', 'chessapi']).optional(),
   analysis_engine: z.string().max(40).optional(),
@@ -320,14 +293,7 @@ router.patch('/system', async (c) => {
   const setStr = (k: string, v: string | undefined) => { if (v !== undefined) setSetting(k, v); };
   const setBool = (k: string, v: boolean | undefined) => { if (v !== undefined) setSetting(k, v ? '1' : '0'); };
 
-  setStr('llm_provider', d.llm_provider);
-  setStr('ollama_url', d.ollama_url);
-  setStr('ollama_model', d.ollama_model);
-  setStr('vllm_url', d.vllm_url);
-  setStr('vllm_model', d.vllm_model);
-  setStr('deepseek_url', d.deepseek_url);
-  setStr('deepseek_model', d.deepseek_model);
-  if (d.deepseek_api_key) setSetting('deepseek_api_key', d.deepseek_api_key);
+  setBool('llm_user_hosts', d.llm_user_hosts);
   setStr('stockfish_path', d.stockfish_path);
   setStr('engine_backend', d.engine_backend);
   setStr('analysis_engine', d.analysis_engine);
@@ -369,45 +335,6 @@ router.post('/test/email', async (c) => {
     html: '<p>This is a test email from your <b>Patzer</b> server. SMTP is working. ♟</p>',
   });
   return c.json({ ok: res.ok, error: res.error });
-});
-
-// ---- Health checks ----
-
-function bodyProvider(body: unknown): LlmProvider {
-  const p = body && typeof body === 'object' && 'provider' in body ? (body as { provider?: unknown }).provider : undefined;
-  if (p === 'ollama' || p === 'vllm' || p === 'deepseek') return p;
-  return llmProvider();
-}
-
-router.post('/test/ollama', async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const url = (body && typeof body === 'object' && 'url' in body && typeof body.url === 'string')
-    ? body.url
-    : llmUrl();
-  if (!url) return c.json({ ok: false, error: 'no_url_configured' });
-  const provider = bodyProvider(body);
-  const result = await testConnection(url, provider);
-  // The hint's how-to (port 11434, OLLAMA_HOST) is Ollama's.
-  if (result.ok || provider !== 'ollama') return c.json(result);
-  return c.json({ ...result, hint: connectionHint(url, result.error) });
-});
-
-router.post('/test/ollama-models', async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const url = (body && typeof body === 'object' && 'url' in body && typeof body.url === 'string')
-    ? body.url
-    : llmUrl();
-  if (!url) return c.json({ ok: false, error: 'no_url_configured' }, 400);
-  const provider = bodyProvider(body);
-  const tags = await testConnection(url, provider);
-  if (!tags.ok) return c.json({ ok: false, error: tags.error });
-  // Test each model serially with a 30s budget per model.
-  const results: Array<{ model: string; ok: boolean; latencyMs: number; sample?: string; error?: string }> = [];
-  for (const m of tags.models) {
-    const r = await testModel(url, m.name, 30_000, provider);
-    results.push({ model: m.name, ...r });
-  }
-  return c.json({ ok: true, results });
 });
 
 // ---- Extra analysis engines ----

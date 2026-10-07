@@ -24,7 +24,6 @@ process.env.DB_PATH = join(dir, 'llm.db');
 const DEEPSEEK_KEY = 'sk-test-123';
 
 type LlmModule = typeof import('../src/coach/llm.js');
-type Router = { request: (path: string, init?: RequestInit) => Response | Promise<Response> };
 
 interface Seen { method: string; path: string; auth?: string; body?: Record<string, unknown> }
 
@@ -103,8 +102,7 @@ async function startFake(kind: 'ollama' | 'vllm' | 'deepseek'): Promise<Fake> {
 
 let llm: LlmModule;
 let setSetting: (k: string, v: string) => void;
-let admin: Router;
-let adminCookie: string;
+let services: typeof import('../src/userServices.js');
 const fakes = {} as Record<'ollama' | 'vllm' | 'deepseek', Fake>;
 
 // Every spelling of the same server a user might paste into Admin → System.
@@ -112,11 +110,23 @@ function spellings(base: string): string[] {
   return [base, `${base}/`, `${base}/v1`, `${base}/v1/`];
 }
 
+// The LLM is per user: give user 1 (an admin, so Ollama/vLLM hosts are allowed)
+// this provider. DeepSeek's host is fixed in production; DEEPSEEK_URL points
+// it at the fake.
 function useProvider(p: 'ollama' | 'vllm' | 'deepseek', url: string): void {
-  setSetting('llm_provider', p);
-  setSetting(`${p}_url`, url);
-  setSetting(`${p}_model`, MODEL[p]);
+  if (p === 'deepseek') {
+    process.env.DEEPSEEK_URL = url;
+    services.setUserServices(1, { llm_provider: p, llm_url: null, llm_model: MODEL[p], llm_api_key: DEEPSEEK_KEY });
+  } else {
+    services.setUserServices(1, { llm_provider: p, llm_url: url || null, llm_model: MODEL[p], llm_api_key: null });
+  }
 }
+
+// Coach calls are made for a user (withLlmUser); these run as user 1.
+const chat = {
+  chatStream: (...a: Parameters<LlmModule['chatStream']>) => llm.withLlmUser(1, () => llm.chatStream(...a)),
+  chatJson: <T,>(...a: Parameters<LlmModule['chatJson']>) => llm.withLlmUser(1, () => llm.chatJson<T>(...a)),
+};
 
 beforeAll(async () => {
   fakes.ollama = await startFake('ollama');
@@ -125,11 +135,9 @@ beforeAll(async () => {
   const dbm = await import('../src/db.js');
   setSetting = dbm.setSetting;
   llm = await import('../src/coach/llm.js');
-  admin = (await import('../src/routes/admin.js')).default;
-  const { createSession, SESSION_COOKIE_NAME } = await import('../src/auth/sessions.js');
+  services = await import('../src/userServices.js');
   dbm.db.prepare(`INSERT INTO users (id, username, password_hash, role) VALUES (1, 'boss', 'x', 'admin')`).run();
   dbm.db.prepare(`INSERT INTO profiles (user_id, display_name) VALUES (1, 'Boss')`).run();
-  adminCookie = `${SESSION_COOKIE_NAME}=${encodeURIComponent(createSession(1))}`;
 });
 
 afterAll(async () => {
@@ -140,7 +148,6 @@ afterAll(async () => {
 
 beforeEach(() => {
   for (const f of Object.values(fakes)) f.seen.length = 0;
-  process.env.DEEPSEEK_API_KEY = DEEPSEEK_KEY;
 });
 
 const paths = (f: Fake) => f.seen.map((s) => `${s.method} ${s.path}`);
@@ -188,7 +195,7 @@ describe('vLLM', () => {
       it('streams the coach from /v1/chat/completions', async () => {
         useProvider('vllm', url());
         let text = '';
-        await llm.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
+        await chat.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
         expect(text).toBe('Develop your knight.');
         expect(paths(fakes.vllm).filter((p) => p.startsWith('POST'))).toEqual(['POST /v1/chat/completions']);
         expect(fakes.vllm.seen.find((s) => s.method === 'POST')!.body?.stream).toBe(true);
@@ -196,7 +203,7 @@ describe('vLLM', () => {
 
       it('writes JSON reviews through /v1/chat/completions', async () => {
         useProvider('vllm', url());
-        const out = await llm.chatJson<{ summary: string }>([{ role: 'user', content: 'review' }]);
+        const out = await chat.chatJson<{ summary: string }>([{ role: 'user', content: 'review' }]);
         expect(out).toEqual({ summary: 'ok' });
         const post = fakes.vllm.seen.find((s) => s.method === 'POST')!;
         expect(post.path).toBe('/v1/chat/completions');
@@ -213,30 +220,20 @@ describe('vLLM', () => {
 
 describe('DeepSeek', () => {
   it('lists models from /models with the Bearer key', async () => {
-    const r = await llm.testConnection(fakes.deepseek.url, 'deepseek');
+    const r = await llm.testConnection(fakes.deepseek.url, 'deepseek', DEEPSEEK_KEY);
     expect(r).toEqual({ ok: true, models: [{ name: MODEL.deepseek, size: 0 }] });
     expect(paths(fakes.deepseek)).toEqual(['GET /models']);
     expect(fakes.deepseek.seen[0]!.auth).toBe(`Bearer ${DEEPSEEK_KEY}`);
   });
 
   it('refuses to test without a key, and never calls out', async () => {
-    delete process.env.DEEPSEEK_API_KEY;
-    setSetting('deepseek_api_key', '');
     const r = await llm.testConnection(fakes.deepseek.url, 'deepseek');
     expect(r).toEqual({ ok: false, error: 'deepseek_api_key_missing' });
     expect(fakes.deepseek.seen).toHaveLength(0);
   });
 
-  it('falls back to the key saved in settings when the env var is unset', async () => {
-    delete process.env.DEEPSEEK_API_KEY;
-    setSetting('deepseek_api_key', DEEPSEEK_KEY);
-    const r = await llm.testConnection(fakes.deepseek.url, 'deepseek');
-    expect(r.ok).toBe(true);
-    setSetting('deepseek_api_key', '');
-  });
-
   it('tests a model on /chat/completions without vLLM-only fields', async () => {
-    const r = await llm.testModel(`${fakes.deepseek.url}/`, MODEL.deepseek, 5000, 'deepseek');
+    const r = await llm.testModel(`${fakes.deepseek.url}/`, MODEL.deepseek, 5000, 'deepseek', DEEPSEEK_KEY);
     expect(r).toMatchObject({ ok: true, sample: 'OK' });
     const req = fakes.deepseek.seen[0]!;
     expect(`${req.method} ${req.path}`).toBe('POST /chat/completions');
@@ -247,18 +244,17 @@ describe('DeepSeek', () => {
   it('streams the coach and writes JSON reviews', async () => {
     useProvider('deepseek', fakes.deepseek.url);
     let text = '';
-    await llm.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
+    await chat.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
     expect(text).toBe('Develop your knight.');
-    expect(await llm.chatJson([{ role: 'user', content: 'review' }])).toEqual({ summary: 'ok' });
+    expect(await chat.chatJson([{ role: 'user', content: 'review' }])).toEqual({ summary: 'ok' });
     expect(paths(fakes.deepseek).filter((p) => p.startsWith('POST'))).toEqual(['POST /chat/completions', 'POST /chat/completions']);
   });
 
   it('counts as configured only with a key', () => {
-    useProvider('deepseek', '');
-    expect(llm.llmConfigured()).toBe(true);
-    expect(llm.llmUrl()).toBe('https://api.deepseek.com');
-    delete process.env.DEEPSEEK_API_KEY;
-    expect(llm.llmConfigured()).toBe(false);
+    useProvider('deepseek', fakes.deepseek.url);
+    expect(llm.llmConfigured(1)).toBe(true);
+    services.setUserServices(1, { llm_api_key: null });
+    expect(llm.llmConfigured(1)).toBe(false);
   });
 });
 
@@ -270,9 +266,9 @@ describe('Ollama', () => {
       expect(await llm.testModel(url, MODEL.ollama, 5000, 'ollama')).toMatchObject({ ok: true, sample: 'OK' });
       useProvider('ollama', url);
       let text = '';
-      await llm.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
+      await chat.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; });
       expect(text).toBe('Develop your knight.');
-      expect(await llm.chatJson([{ role: 'user', content: 'review' }])).toEqual({ summary: 'ok' });
+      expect(await chat.chatJson([{ role: 'user', content: 'review' }])).toEqual({ summary: 'ok' });
       expect(new Set(paths(fakes.ollama))).toEqual(new Set(['GET /api/tags', 'POST /api/chat']));
       expect(fakes.ollama.seen.every((s) => s.auth === undefined)).toBe(true);
     });
@@ -280,49 +276,70 @@ describe('Ollama', () => {
 
   it('is not configured without a URL', () => {
     useProvider('ollama', '');
-    expect(llm.llmConfigured()).toBe(false);
+    expect(llm.llmConfigured(1)).toBe(false);
   });
 });
 
-describe('switching providers keeps each one\'s settings', () => {
-  it('reads the URL and model of the selected provider only', () => {
-    setSetting('ollama_url', fakes.ollama.url);
-    setSetting('vllm_url', `${fakes.vllm.url}/`);
-    setSetting('ollama_model', MODEL.ollama);
-    setSetting('vllm_model', MODEL.vllm);
-    setSetting('llm_provider', 'vllm');
-    expect([llm.llmUrl(), llm.llmModel()]).toEqual([fakes.vllm.url, MODEL.vllm]);
-    setSetting('llm_provider', 'ollama');
-    expect([llm.llmUrl(), llm.llmModel()]).toEqual([fakes.ollama.url, MODEL.ollama]);
+// Each user brings their own LLM (Settings → Connections); there is no
+// server-wide one to fall back on.
+describe('whose LLM answers', () => {
+  beforeAll(async () => {
+    const { db } = await import('../src/db.js');
+    db.prepare(`INSERT INTO users (id, username, password_hash, role) VALUES (2, 'kid', 'x', 'user')`).run();
+    db.prepare(`INSERT INTO profiles (user_id, display_name) VALUES (2, 'Kid')`).run();
+  });
+
+  afterAll(() => setSetting('llm_user_hosts', '0'));
+
+  it('is nobody\'s by default: one user\'s model is not another\'s', async () => {
+    useProvider('ollama', fakes.ollama.url);
+    expect(llm.llmConfigured(1)).toBe(true);
+    expect(llm.llmConfigured(2)).toBe(false);
+    await expect(llm.withLlmUser(2, () => llm.chatStream([{ role: 'user', content: 'hi' }], () => {}))).rejects.toThrow('llm_not_configured');
+    // And a call made for no user at all has no model either.
+    await expect(llm.chatStream([{ role: 'user', content: 'hi' }], () => {})).rejects.toThrow('llm_not_configured');
+    expect(fakes.ollama.seen).toHaveLength(0);
+  });
+
+  it('uses a user\'s own DeepSeek key, on DeepSeek\'s own host', () => {
+    delete process.env.DEEPSEEK_URL;
+    services.setUserServices(2, { llm_provider: 'deepseek', llm_api_key: 'sk-kid' });
+    expect(llm.activeLlm(2)).toEqual({ provider: 'deepseek', url: 'https://api.deepseek.com', model: 'deepseek-chat', apiKey: 'sk-kid' });
+    services.setUserServices(2, { llm_api_key: null });
+    expect(llm.llmConfigured(2)).toBe(false);
+  });
+
+  it('takes a user\'s own Ollama host only when an admin allows it, and calls it for that user', async () => {
+    services.setUserServices(2, { llm_provider: 'ollama', llm_url: `${fakes.ollama.url}/`, llm_model: MODEL.ollama });
+    expect(llm.llmConfigured(2)).toBe(false);
+    setSetting('llm_user_hosts', '1');
+    expect(llm.activeLlm(2)).toMatchObject({ provider: 'ollama', url: fakes.ollama.url, model: MODEL.ollama });
+    let text = '';
+    await llm.withLlmUser(2, () => llm.chatStream([{ role: 'user', content: 'hi' }], (t) => { text += t; }));
+    expect(text).toBe('Develop your knight.');
   });
 });
 
-// The buttons in Admin → System, through the real admin router.
-describe('Admin → System test buttons', () => {
-  async function post(path: string, body: unknown) {
-    const res = await admin.request(path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Cookie: adminCookie },
-      body: JSON.stringify(body),
-    });
-    return { status: res.status, body: await res.json() as Record<string, unknown> };
-  }
+// An install upgraded from the server-wide LLM keeps its coach — for admins.
+describe('moving the old server-wide LLM to the admins', () => {
+  it('copies it to admins without their own, skips other users, and clears the old settings', async () => {
+    const { getSetting } = await import('../src/db.js');
+    services.setUserServices(1, { llm_provider: null, llm_url: null, llm_model: null, llm_api_key: null });
+    services.setUserServices(2, { llm_provider: null, llm_url: null, llm_model: null, llm_api_key: null });
+    setSetting('llm_provider', 'deepseek');
+    setSetting('deepseek_api_key', 'sk-old-shared');
+    setSetting('deepseek_model', 'deepseek-reasoner');
+    setSetting('llm_moved_to_users', '0');
 
-  for (const spell of ['', '/v1']) {
-    it(`"Test" and "Test ALL models" work for vLLM (<server>${spell})`, async () => {
-      const url = fakes.vllm.url + spell;
-      const t = await post('/test/ollama', { url, provider: 'vllm' });
-      expect(t.body).toMatchObject({ ok: true, models: [{ name: MODEL.vllm }] });
-      const all = await post('/test/ollama-models', { url, provider: 'vllm' });
-      expect(all.body).toMatchObject({ ok: true, results: [{ model: MODEL.vllm, ok: true, sample: 'OK' }] });
-      expect(paths(fakes.vllm)).toEqual(['GET /v1/models', 'GET /v1/models', 'POST /v1/chat/completions']);
-    });
-  }
+    services.moveServerLlmToAdmins();
+    expect(services.getUserServices(1)).toMatchObject({ llm_provider: 'deepseek', llm_api_key: 'sk-old-shared', llm_model: 'deepseek-reasoner' });
+    expect(services.getUserServices(2).llm_provider).toBeNull();
+    expect(getSetting('deepseek_api_key')).toBeNull();
 
-  it('"Test ALL models" works for Ollama and DeepSeek', async () => {
-    const o = await post('/test/ollama-models', { url: fakes.ollama.url, provider: 'ollama' });
-    expect(o.body).toMatchObject({ ok: true, results: [{ model: MODEL.ollama, ok: true }] });
-    const d = await post('/test/ollama-models', { url: fakes.deepseek.url, provider: 'deepseek' });
-    expect(d.body).toMatchObject({ ok: true, results: [{ model: MODEL.deepseek, ok: true }] });
+    // Once only: a key the admin later removes does not come back.
+    services.setUserServices(1, { llm_api_key: null });
+    setSetting('deepseek_api_key', 'sk-again');
+    services.moveServerLlmToAdmins();
+    expect(services.getUserServices(1).llm_api_key).toBeNull();
   });
 });

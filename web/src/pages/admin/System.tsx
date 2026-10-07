@@ -4,27 +4,15 @@ import { CheckCircle2, AlertCircle, Save, Sparkles, Cpu, Loader2, FlaskConical, 
 import { api } from '../../api';
 
 interface SysSettings {
-  llm_provider?: 'ollama' | 'vllm' | 'deepseek';
-  ollama_url: string | null;
-  ollama_model: string | null;
-  vllm_url?: string | null;
-  vllm_model?: string | null;
-  deepseek_url?: string | null;
-  deepseek_model?: string | null;
-  deepseek_key_set?: boolean;
-  deepseek_env_override?: boolean;
   stockfish_path: string | null;
   engine_backend?: 'local' | 'chessapi';
   engine_backend_env_override?: boolean;
   /** 'stockfish' (bundled) or the id of an installed engine. */
   analysis_engine?: string;
   analysis_depth?: number;
-  last_model_used?: string | null;
-  last_error?: string | null;
-  p95_ms?: number | null;
-  call_count?: number;
   // signup + email (v7.7.0)
   update_check_enabled?: boolean;
+  llm_user_hosts?: boolean;
   signup_mode?: SignupMode;
   require_email_verification?: boolean;
   notify_admin_on_signup?: boolean;
@@ -56,6 +44,7 @@ const SIGNUP_MODES: readonly SignupMode[] = ['open', 'invite', 'closed'];
 
 interface MailState {
   update_check_enabled: boolean;
+  llm_user_hosts: boolean;
   signup_mode: SignupMode;
   require_email_verification: boolean;
   notify_admin_on_signup: boolean;
@@ -69,21 +58,13 @@ interface MailState {
 
 export default function AdminSystem() {
   const { t } = useTranslation();
-  const [s, setS] = useState<SysSettings>({ llm_provider: 'ollama', ollama_url: '', ollama_model: '', vllm_url: '', vllm_model: '', stockfish_path: '', engine_backend: 'local', analysis_engine: 'stockfish', analysis_depth: 16 });
-  const [runtime, setRuntime] = useState<{ last_model_used: string | null; last_error: string | null; p95_ms: number | null; call_count: number } | null>(null);
-  const [models, setModels] = useState<string[]>([]);
-  const [loadingModels, setLoadingModels] = useState(false);
-  const [ollamaStatus, setOllamaStatus] = useState<{ ok: boolean; msg: string; hint?: string } | null>(null);
+  const [s, setS] = useState<SysSettings>({ stockfish_path: '', engine_backend: 'local', analysis_engine: 'stockfish', analysis_depth: 16 });
   const [stockfishStatus, setStockfishStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [engines, setEngines] = useState<EngineInfo[]>([]);
   const [saved, setSaved] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-  const [allTesting, setAllTesting] = useState(false);
-  const [allResults, setAllResults] = useState<Array<{ model: string; ok: boolean; latencyMs: number; sample?: string; error?: string }> | null>(null);
-
   // Signup + email (v7.7.0)
   const [mail, setMail] = useState<MailState>({
-    update_check_enabled: true,
+    update_check_enabled: true, llm_user_hosts: false,
     signup_mode: 'open', require_email_verification: false, notify_admin_on_signup: true,
     public_base_url: '', smtp_host: '', smtp_port: '', smtp_secure: false, smtp_user: '', smtp_from: '',
   });
@@ -96,35 +77,18 @@ export default function AdminSystem() {
   const [testTo, setTestTo] = useState('');
   const [testStatus, setTestStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [testing, setTesting] = useState(false);
-  // DeepSeek (cloud LLM) — the API key is a secret, handled like the SMTP
-  // password: never returned by the API, only "is one set" + "env override".
-  const [deepseekKey, setDeepseekKey] = useState('');
-  const [deepseekKeySet, setDeepseekKeySet] = useState(false);
-  const [deepseekEnvOverride, setDeepseekEnvOverride] = useState(false);
-
   function loadSettings() {
     return api.get<SysSettings>('/api/admin/system').then((d) => {
       setS({
-        llm_provider: d.llm_provider === 'vllm' ? 'vllm' : d.llm_provider === 'deepseek' ? 'deepseek' : 'ollama',
-        ollama_url: d.ollama_url ?? '', ollama_model: d.ollama_model ?? '',
-        vllm_url: d.vllm_url ?? '', vllm_model: d.vllm_model ?? '',
-        deepseek_url: d.deepseek_url ?? '', deepseek_model: d.deepseek_model ?? '',
-        deepseek_key_set: !!d.deepseek_key_set,
-        deepseek_env_override: !!d.deepseek_env_override,
         stockfish_path: d.stockfish_path ?? '',
         engine_backend: d.engine_backend === 'chessapi' ? 'chessapi' : 'local',
         engine_backend_env_override: !!d.engine_backend_env_override,
         analysis_engine: d.analysis_engine ?? 'stockfish',
         analysis_depth: d.analysis_depth ?? 16,
       });
-      setRuntime({
-        last_model_used: d.last_model_used ?? null,
-        last_error: d.last_error ?? null,
-        p95_ms: d.p95_ms ?? null,
-        call_count: d.call_count ?? 0,
-      });
       setMail({
         update_check_enabled: d.update_check_enabled ?? true,
+        llm_user_hosts: d.llm_user_hosts ?? false,
         signup_mode: d.signup_mode ?? 'open',
         require_email_verification: d.require_email_verification ?? false,
         notify_admin_on_signup: d.notify_admin_on_signup ?? true,
@@ -139,10 +103,6 @@ export default function AdminSystem() {
       setSmtpEnvOverride(!!d.smtp_env_override);
       setEmailEnabled(!!d.email_enabled);
       setSmtpPass('');
-      setDeepseekKeySet(!!d.deepseek_key_set);
-      setDeepseekEnvOverride(!!d.deepseek_env_override);
-      setDeepseekKey('');
-      setHydrated(true);
     });
   }
 
@@ -151,6 +111,7 @@ export default function AdminSystem() {
     try {
       await api.patch('/api/admin/system', {
         update_check_enabled: mail.update_check_enabled,
+        llm_user_hosts: mail.llm_user_hosts,
         signup_mode: mail.signup_mode,
         require_email_verification: mail.require_email_verification,
         notify_admin_on_signup: mail.notify_admin_on_signup,
@@ -179,24 +140,7 @@ export default function AdminSystem() {
     } finally { setTesting(false); }
   }
 
-  const provider = s.llm_provider ?? 'ollama';
   const engineId = s.analysis_engine ?? 'stockfish';
-  const activeUrl = provider === 'vllm' ? (s.vllm_url ?? '') : provider === 'deepseek' ? (s.deepseek_url ?? '') : (s.ollama_url ?? '');
-  const activeModel = provider === 'vllm' ? (s.vllm_model ?? '') : provider === 'deepseek' ? (s.deepseek_model ?? '') : (s.ollama_model ?? '');
-  // DeepSeek's URL is optional — empty means the official https://api.deepseek.com.
-  const activeUrlForTest = provider === 'deepseek' ? (activeUrl || 'https://api.deepseek.com') : activeUrl;
-  const providerLabel = (p: string) => (p === 'ollama' ? 'Ollama' : p === 'vllm' ? 'vLLM' : 'DeepSeek');
-  const urlLabel = provider === 'vllm' ? t('admin.vllmUrl') : provider === 'deepseek' ? t('admin.deepseekUrl') : t('admin.ollamaUrl');
-  const urlPlaceholder = provider === 'vllm' ? 'http://localhost:8000' : provider === 'deepseek' ? 'https://api.deepseek.com' : 'http://localhost:11434';
-  const modelLabel = provider === 'vllm' ? t('admin.vllmModel') : provider === 'deepseek' ? t('admin.deepseekModel') : t('admin.ollamaModel');
-  const modelPlaceholder = provider === 'vllm' ? 'Qwen3.8-27B' : provider === 'deepseek' ? 'deepseek-chat' : 'gemma3:27b';
-  function setActiveUrl(v: string) {
-    setS((cur) => provider === 'vllm' ? { ...cur, vllm_url: v } : provider === 'deepseek' ? { ...cur, deepseek_url: v } : { ...cur, ollama_url: v });
-  }
-  function setActiveModel(v: string) {
-    setS((cur) => provider === 'vllm' ? { ...cur, vllm_model: v } : provider === 'deepseek' ? { ...cur, deepseek_model: v } : { ...cur, ollama_model: v });
-  }
-
   useEffect(() => { void loadSettings(); }, []);
 
   function loadEngines() {
@@ -223,38 +167,6 @@ export default function AdminSystem() {
     await loadEngines();
   }
 
-  // Auto-load models on first load, provider switch, and whenever the user
-  // pastes a different URL for the currently-selected provider.
-  useEffect(() => {
-    if (!hydrated) return;
-    setModels([]); setOllamaStatus(null); setAllResults(null);
-    if (activeUrl) void fetchModels(activeUrl, /* silent */ true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, provider, activeUrl]);
-
-  async function fetchModels(url: string, silent = false) {
-    if (!url) return;
-    setLoadingModels(true);
-    if (!silent) setOllamaStatus(null);
-    try {
-      const r = await api.post<{ ok: boolean; models?: { name: string }[]; error?: string; hint?: string }>('/api/admin/test/ollama', { url, provider });
-      if (r.ok) {
-        const ns = (r.models ?? []).map((m) => m.name).sort();
-        setModels(ns);
-        setOllamaStatus({ ok: true, msg: t('admin.modelsFound', { count: ns.length }) });
-        if (!activeModel && ns[0]) setActiveModel(ns[0]!);
-      } else {
-        setModels([]);
-        setOllamaStatus({ ok: false, msg: r.error ?? t('admin.connectionFailed'), hint: r.hint });
-      }
-    } catch (e) {
-      setModels([]);
-      setOllamaStatus({ ok: false, msg: (e as Error).message });
-    } finally {
-      setLoadingModels(false);
-    }
-  }
-
   async function testStockfish() {
     setStockfishStatus(null);
     const r = await api.post<{ ok: boolean; name?: string; error?: string }>('/api/admin/test/stockfish', { path: s.stockfish_path });
@@ -262,30 +174,12 @@ export default function AdminSystem() {
   }
 
   async function save() {
-    await api.patch('/api/admin/system', {
-      ...s,
-      // Only send the API key when the admin typed a new one — empty leaves the
-      // stored secret untouched (same contract as the SMTP password).
-      ...(deepseekKey ? { deepseek_api_key: deepseekKey } : {}),
-    });
-    if (deepseekKey) { setDeepseekKeySet(true); setDeepseekKey(''); }
+    await api.patch('/api/admin/system', s);
     // This is the button people reach for. It used to save only the coach and
     // engine fields, so a changed signup mode was silently lost unless "Save
     // email settings" further down was clicked instead.
     await saveMail();
     setSaved(true); setTimeout(() => setSaved(false), 1500);
-  }
-
-  async function testAllModels() {
-    if (!activeUrlForTest) return;
-    setAllTesting(true); setAllResults(null);
-    try {
-      const r = await api.post<{ ok: boolean; results?: Array<{ model: string; ok: boolean; latencyMs: number; sample?: string; error?: string }>; error?: string }>(
-        '/api/admin/test/ollama-models', { url: activeUrlForTest, provider }
-      );
-      if (r.ok && r.results) setAllResults(r.results);
-      else setAllResults([{ model: 'all', ok: false, latencyMs: 0, error: r.error ?? 'failed' }]);
-    } finally { setAllTesting(false); }
   }
 
   return (
@@ -295,129 +189,21 @@ export default function AdminSystem() {
         <p className="mt-1 text-sm text-ink-500">{t('admin.system_intro')}</p>
       </header>
 
+      {/* The coach's model is each user's own (Settings → Connections); the
+          only thing left for an admin to decide is who may use a custom host. */}
       <section className="card overflow-hidden">
         <div className="flex items-center gap-3 border-b border-ink-100 bg-ink-50/60 px-5 py-3 dark:border-ink-700 dark:bg-ink-900/40">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-500/15 text-accent-600">
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="font-semibold">{t('admin.ollamaConfig')}</h2>
-            <p className="text-xs text-ink-500">{t('admin.llmDesc')}</p>
+            <h2 className="font-semibold">{t('admin.coachModel')}</h2>
+            <p className="text-xs text-ink-500">{t('admin.coachModelIntro')}</p>
           </div>
         </div>
         <div className="space-y-4 p-5">
-          <div className="inline-flex rounded-xl border border-ink-200 p-1 dark:border-ink-700">
-            {(['ollama', 'vllm', 'deepseek'] as const).map((p) => (
-              <button
-                key={p}
-                onClick={() => setS({ ...s, llm_provider: p })}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  provider === p ? 'bg-accent-500 text-white' : 'text-ink-500 hover:text-ink-700 dark:hover:text-ink-200'
-                }`}
-              >
-                {providerLabel(p)}
-              </button>
-            ))}
-          </div>
-          <div>
-            <label className="label mb-1 block">{urlLabel}</label>
-            <div className="flex gap-2">
-              <input className="input" value={activeUrl} onChange={(e) => setActiveUrl(e.target.value)} placeholder={urlPlaceholder} />
-              <button onClick={() => fetchModels(activeUrlForTest)} className="btn-secondary text-sm" disabled={!activeUrlForTest || loadingModels}>
-                {loadingModels ? <Loader2 className="h-4 w-4 animate-spin" /> : t('common.test')}
-              </button>
-            </div>
-            {ollamaStatus && (
-              <div className={`mt-2 flex items-center gap-1 text-sm ${ollamaStatus.ok ? 'text-accent-600' : 'text-bad'}`}>
-                {ollamaStatus.ok ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                {ollamaStatus.msg}
-              </div>
-            )}
-            {ollamaStatus?.hint && <p className="mt-1 text-xs text-ink-500">{t(`setup.llmHint.${ollamaStatus.hint}`)}</p>}
-          </div>
-          {provider === 'deepseek' && (
-            <div>
-              <label className="label mb-1 block">{t('admin.deepseekKey')}</label>
-              <input className="input" type="password" autoComplete="new-password" value={deepseekKey}
-                onChange={(e) => setDeepseekKey(e.target.value)} placeholder={deepseekKeySet ? '••••••••' : 'sk-…'} />
-              {deepseekEnvOverride ? (
-                <p className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"><AlertCircle className="h-3.5 w-3.5" /> {t('admin.deepseekKeyEnv')}</p>
-              ) : deepseekKeySet && !deepseekKey ? (
-                <p className="mt-1 text-xs text-ink-400">{t('admin.deepseekKeySaved')}</p>
-              ) : (
-                <p className="mt-1 text-xs text-ink-400">{t('admin.deepseekKeyHint')}</p>
-              )}
-            </div>
-          )}
-          <div>
-            <label className="label mb-1 block">{modelLabel}</label>
-            <button onClick={testAllModels} disabled={!activeUrlForTest || allTesting} className="btn-secondary text-xs">
-            {allTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FlaskConical className="h-3.5 w-3.5" />}
-            {t('admin.testAllModels')}
-          </button>
-          {allResults && (
-            <div className="overflow-hidden rounded-xl border border-ink-200 dark:border-ink-700">
-              <table className="w-full text-xs">
-                <thead className="bg-ink-50 text-[11px] uppercase tracking-wider text-ink-500 dark:bg-ink-900">
-                  <tr>
-                    <th className="px-3 py-2 text-start">{t('admin.colModel')}</th>
-                    <th className="px-3 py-2 text-start">{t('admin.colStatus')}</th>
-                    <th className="px-3 py-2 text-end">{t('admin.colLatency')}</th>
-                    <th className="px-3 py-2 text-start">{t('admin.colSample')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allResults.map((r) => (
-                    <tr key={r.model} className="border-t border-ink-100 dark:border-ink-800">
-                      <td className="px-3 py-2 font-mono">{r.model}</td>
-                      <td className="px-3 py-2">
-                        {r.ok ? <span className="inline-flex items-center gap-1 text-accent-600"><CheckCircle2 className="h-3 w-3" />{t('admin.ok')}</span>
-                          : <span className="inline-flex items-center gap-1 text-bad"><AlertCircle className="h-3 w-3" />{t('admin.fail')}</span>}
-                      </td>
-                      <td className="px-3 py-2 text-end font-mono text-ink-500">{r.latencyMs}ms</td>
-                      <td className="px-3 py-2 truncate text-ink-500" title={r.sample ?? r.error ?? ''}>{r.sample ?? r.error ?? ''}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          {loadingModels ? (
-              <div className="flex h-10 items-center gap-2 rounded-xl bg-ink-100 px-3 text-sm text-ink-500 dark:bg-ink-800">
-                <Loader2 className="h-4 w-4 animate-spin" /> {t('admin.loadingModels', { provider: providerLabel(provider) })}
-              </div>
-            ) : models.length > 0 ? (
-              <select className="input" value={activeModel} onChange={(e) => setActiveModel(e.target.value)}>
-                {models.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-            ) : (
-              <div className="space-y-1">
-                <input className="input" value={activeModel} onChange={(e) => setActiveModel(e.target.value)} placeholder={modelPlaceholder} />
-                <p className="text-xs text-ink-400">{t('admin.noModels')}</p>
-              </div>
-            )}
-          </div>
-          {/* Runtime panel — shows the model the coach actually called last, so
-              admins can verify the saved setting is being honored. Updates only
-              after at least one coach call has fired since server boot. */}
-          {runtime && (
-            <div className="rounded-xl border border-ink-200 bg-ink-50/50 p-3 text-xs dark:border-ink-700 dark:bg-ink-900/30">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="font-semibold uppercase tracking-wide text-ink-500">{t('admin.runtime')}</span>
-                <button onClick={() => void loadSettings()} className="text-ink-500 hover:text-ink-700 dark:hover:text-ink-200">{t('admin.refresh')}</button>
-              </div>
-              <div className="grid grid-cols-[7rem_1fr] gap-y-1">
-                <span className="text-ink-500">{t('admin.lastModel')}</span>
-                <span className="font-mono">{runtime.last_model_used ?? <span className="text-ink-400">{t('admin.noCoachCall')}</span>}</span>
-                <span className="text-ink-500">{t('admin.coachCalls')}</span>
-                <span className="font-mono">{runtime.call_count} {runtime.p95_ms != null && <span className="text-ink-400">(p95 {runtime.p95_ms}ms)</span>}</span>
-                {runtime.last_error && (<>
-                  <span className="text-ink-500">{t('admin.lastError')}</span>
-                  <span className="font-mono text-bad">{runtime.last_error}</span>
-                </>)}
-              </div>
-            </div>
-          )}
+          <ToggleRow checked={mail.llm_user_hosts} onChange={(v) => setMail({ ...mail, llm_user_hosts: v })}
+            label={t('admin.llmUserHosts')} hint={t('admin.llmUserHostsHint')} />
         </div>
       </section>
 

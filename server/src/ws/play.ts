@@ -469,7 +469,7 @@ async function handleBotConnection(ws: WebSocket, user: AuthedUser) {
             // LLM being configured + user setting; never fires for routine moves.
             if (
               user.profile.coach_behavior === 'always_on_pedagogical' &&
-              llmConfigured() &&
+              llmConfigured(user.id) &&
               (result.classification === 'blunder' || result.classification === 'mistake')
             ) {
               try {

@@ -376,7 +376,7 @@
     "title": "Coach",
     "askExplain": "Why was this move {{cls}}?",
     "askHint": "Give me a hint",
-    "notConfigured": "AI Coach is not configured. Ask an admin to set up Ollama in Admin → System.",
+    "notConfigured": "The AI coach is not set up for your account. Add your own model in Settings → Connections.",
     "thinking": "The coach is thinking…",
     "tts": "Read aloud",
     "ttsStop": "Stop",
@@ -665,7 +665,11 @@
       "depth": "Analysis depth",
       "depthHelp": "How deep the engine searches each position in a game review. Higher is stronger but slower; 16 is a good default. Applies to new reviews, including automatic ones.",
       "singleLine": "Gives one line per position: no alternative engine lines, and “Great” and some “Brilliant” moves can't be detected."
-    }
+    },
+    "llmUserHosts": "Let every user enter an Ollama or vLLM address",
+    "llmUserHostsHint": "Off: only admins can use an Ollama or vLLM address; other users can add a DeepSeek key. On: this server will send requests to whatever address a user types — fine at home, not on a server with strangers.",
+    "coachModel": "AI coach",
+    "coachModelIntro": "There is no shared model. Each user adds their own in Settings → Connections and pays for their own use."
   },
   "palette": {
     "switchLanguage": "Switch to",
@@ -727,44 +731,54 @@
     "wrong": "Not quite — the engine prefers",
     "tabs": {
       "mine": "From your games",
-      "puzzles": "Puzzles"
+      "coordinates": "Coordinates",
+      "notation": "Notation"
     },
-    "puzzles": {
-      "intro": "Tactic puzzles from the Lichess puzzle database, chosen to match your puzzle rating. The first try counts: solve it and your rating goes up.",
-      "loadError": "Couldn't load a puzzle.",
-      "allDone": "You've tried every puzzle here – impressive!",
-      "yourRating": "Your puzzle rating",
-      "solvedOf": "{{solved}} of {{played}} solved",
-      "provisional": "Still settling in – it moves a lot in your first puzzles.",
-      "watch": "Watch your opponent’s move …",
-      "findWhite": "White to move. Find the best move!",
-      "findBlack": "Black to move. Find the best move!",
-      "wrong": "Not the best move – the board went back. Try again!",
-      "solved": "Solved!",
-      "solvedLate": "Solved – but not at the first try, so it counts as not solved.",
-      "showing": "Here is the solution …",
-      "shownDone": "That was the solution.",
-      "notRated": "This puzzle already counts as not solved – but finish it anyway.",
-      "hint": "Hint",
-      "hintMove": "Show the move",
-      "solution": "Show solution",
-      "tryIt": "Try it yourself",
-      "next": "Next puzzle",
-      "puzzleRating": "Puzzle rating {{rating}}",
-      "onLichess": "On lichess.org",
-      "credit": "Puzzles from the Lichess puzzle database (CC0):",
-      "rules": "A wrong move, a hint or the solution and the puzzle counts as not solved. Every puzzle comes only once.",
-      "themes": {
-        "all": "All",
-        "mate": "Checkmate",
-        "fork": "Fork",
-        "pin": "Pin & skewer",
-        "discovered": "Discovered attack",
-        "sacrifice": "Sacrifice",
-        "hanging": "Hanging & trapped pieces",
-        "defence": "Defence",
-        "endgame": "Endgame"
-      }
+    "coords": {
+      "title": "Coordinate trainer",
+      "intro": "Learn the names of the squares until you no longer have to count them out. You get 30 seconds — how many can you find?",
+      "modeFind": "Find the square",
+      "modeName": "Name the square",
+      "sideWhite": "As White",
+      "sideBlack": "As Black",
+      "showCoords": "Show coordinates on the board",
+      "start": "Start",
+      "again": "Play again",
+      "taskFind": "Click this square",
+      "taskName": "Which square is lit up?",
+      "inputPlaceholder": "e.g. e4",
+      "time": "Time",
+      "score": "Score",
+      "mistakes": "Mistakes",
+      "best": "Best",
+      "done": "Time's up!",
+      "doneScore": "{{score}} squares in 30 seconds",
+      "newBest": "New best!"
+    },
+    "notation": {
+      "title": "Notation trainer",
+      "intro": "A move is played on the board. Write it the way it goes on a scoresheet — c4, Qe4, Nxf7+.",
+      "whitePlayed": "White just moved — write the move",
+      "blackPlayed": "Black just moved — write the move",
+      "flip": "Flip board",
+      "placeholder": "e.g. Nf3",
+      "check": "Check",
+      "showAnswer": "Show answer",
+      "next": "Next move",
+      "correct": "Correct!",
+      "wrong": "Not quite — it was",
+      "answer": "The move was",
+      "caseHint": "Pieces get a capital letter (K, Q, R, B, N); files are small letters (a–h).",
+      "score": "Correct",
+      "streak": "Streak",
+      "bestStreak": "Best streak",
+      "legendTitle": "How moves are written",
+      "legendPieces": "K king · Q queen · R rook · B bishop · N knight. A pawn gets no letter: e4.",
+      "legendCapture": "x is a capture: Bxe5. A pawn capture starts with its file: exd5.",
+      "legendCheck": "+ is check and # is checkmate. You may leave them out here.",
+      "legendCastle": "O-O is castling short, O-O-O is castling long.",
+      "legendPromo": "=Q is a promotion: e8=Q.",
+      "legendDisambig": "When two of the same piece could go there, add the file or rank it came from: Nbd2, R1e2."
     }
   },
   "learn": {
@@ -1147,7 +1161,13 @@
     "lines": "Lines",
     "depthLabel": "depth",
     "moves": "Moves",
-    "startPos": "Start"
+    "startPos": "Start",
+    "engines": {
+      "local": "Local Stockfish",
+      "chessapi": "Stockfish API"
+    },
+    "chessapiNote": "Uses the hosted Stockfish at chess-api.com: the position is sent there, and depth stops at 18.",
+    "chessapiFellBack": "the API did not answer, so the local engine did"
   },
   "home": {
     "greeting": "Hi, {{name}}!",
@@ -1355,7 +1375,10 @@
     "games_other": "{{count}} master games",
     "white": "White",
     "draw": "Draw",
-    "black": "Black"
+    "black": "Black",
+    "tokenNeeded": "Lichess now asks for an API token before it shows master games.",
+    "tokenRejected": "Lichess refused your API token.",
+    "openSettings": "Add one in Settings → Connections."
   },
   "update": {
     "available": "Patzer {{latest}} is out — you are running {{current}}.",
@@ -1565,5 +1588,36 @@
     },
     "loadingOnline": "Fetching puzzles from Hugging Face…",
     "noneFoundOnline": "No puzzle with this theme near your rating turned up in the online sample yet. Try again in a moment, pick a wider difficulty, or use the database on this server for rare themes."
+  },
+  "connections": {
+    "title": "Connections",
+    "desc": "Your own AI model for the coach and your own Lichess token. You pay your provider for what you use. Both are stored on this server and never shown again.",
+    "llm": "AI model for the coach",
+    "none": "None — coach off",
+    "llmHelp": "The coach runs on your own account.",
+    "sourceOwn": "Your model is set up.",
+    "sourceNone": "No model yet, so the coach is off for you.",
+    "apiKey": "API key",
+    "apiKeyHelp": "Create one at platform.deepseek.com. You pay DeepSeek for what your coach uses.",
+    "keySaved": "A key is saved. Type a new one to replace it.",
+    "url": "Server address",
+    "model": "Model",
+    "lichessToken": "Lichess API token",
+    "lichessTokenHelp": "Lichess asks for a token before it shows master-game statistics. Create one (no permissions needed) at",
+    "tokenSaved": "A token is saved. Type a new one to replace it. Manage tokens at",
+    "save": "Save connections",
+    "saved": "Saved",
+    "test": "Test the model",
+    "testOk": "Connected — {{n}} models available.",
+    "removeKey": "Remove key",
+    "removeToken": "Remove token",
+    "error": {
+      "generic": "That did not work. Check the values and try again.",
+      "invalid_input": "One of the values is not valid. A Lichess token is 10 or more letters, digits or underscores.",
+      "invalid_llm_url": "That address is not a valid http or https URL.",
+      "llm_hosts_not_allowed": "This server only allows DeepSeek for personal models. An admin can allow Ollama and vLLM in Admin → System.",
+      "llm_not_configured": "Save a provider and its key or address first.",
+      "deepseek_api_key_missing": "Add an API key first."
+    }
   }
 }

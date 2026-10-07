@@ -31,6 +31,7 @@ import { startChessComSync } from './autoImport.js';
 import learnRoutes from './routes/learn.js';
 import { attachPlayWebSocket } from './ws/play.js';
 import { attachLobbyWebSocket } from './ws/lobby.js';
+import { moveServerLlmToAdmins } from './userServices.js';
 
 const app = new Hono();
 app.use('*', logger());
@@ -150,6 +151,10 @@ if (existsSync(WEB_DIST)) {
 }
 
 import type { Server } from 'node:http';
+
+// The LLM is per user now; an install upgraded from a server-wide one keeps
+// its coach for the admins (userServices.ts).
+moveServerLlmToAdmins();
 
 const server = serve({ fetch: app.fetch, port: config.port, hostname: config.host }, (info) => {
   console.log(`[chess] listening on http://${info.address}:${info.port}`);

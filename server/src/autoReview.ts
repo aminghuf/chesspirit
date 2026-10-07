@@ -44,10 +44,6 @@ export function kickAutoReview(): void {
 }
 
 async function sweep(): Promise<void> {
-  // No LLM configured means there is nothing to write — leave the review for
-  // whenever the operator wires one up (the manual Review button still works).
-  if (!llmConfigured()) return;
-
   const rows = db.prepare(`
     SELECT g.id AS game_id, g.pgn, g.user_id, g.user_color,
            a.depth, a.accuracy_white, a.accuracy_black,
@@ -64,6 +60,10 @@ async function sweep(): Promise<void> {
   `).all() as ReviewRow[];
 
   for (const row of rows) {
+    // No LLM for this user (neither their own nor the server's) means there
+    // is nothing to write — leave the review for whenever one is wired up
+    // (the manual Review button still works).
+    if (!llmConfigured(row.user_id)) continue;
     const profile = db.prepare('SELECT language, audience FROM profiles WHERE user_id = ?').get(row.user_id) as
       | { language: Language; audience: Audience }
       | undefined;

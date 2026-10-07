@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ConnectionsSettings from '../components/ConnectionsSettings';
 import { LANGUAGES, type Language } from '../lib/languages';
 import { Volume2, Save, User as UserIcon, Palette, Sparkles, Type, Check, Smile, RefreshCw } from 'lucide-react';
 import { api } from '../api';
@@ -211,6 +212,9 @@ export default function Settings() {
           </div>
         </div>
       </section>
+
+      {/* Connections — the user's own LLM and Lichess token; saves itself. */}
+      <ConnectionsSettings />
 
       {/* Automation — background jobs the user can turn on/off or pace. */}
       <section className="card overflow-hidden">

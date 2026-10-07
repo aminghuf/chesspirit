@@ -32,13 +32,19 @@ export interface ExplorerStats {
 
 export type ExplorerResult =
   | { ok: true; stats: ExplorerStats; cached: boolean }
-  | { ok: false; reason: 'unavailable' | 'invalid_fen'; cached: boolean };
+  | { ok: false; reason: 'unavailable' | 'invalid_fen' | 'auth_required'; cached: boolean };
 
 const DEFAULT_BASE = 'https://explorer.lichess.ovh';
 const MAX_ENTRIES = 2000;
 const NEGATIVE_TTL_MS = 60_000;
 const TIMEOUT_MS = 6000;
 const MAX_MOVES = 6;
+// Lichess answers 401 to requests without an API token. Once it has said so,
+// don't ask again without one for a while — it would be one refused request
+// per ply for every user who has no token.
+const ANON_BLOCK_MS = 10 * 60_000;
+let anonBlockedUntil = 0;
+let authLogged = false;
 
 type Entry = { stats: ExplorerStats } | { failedAt: number };
 const cache = new Map<string, Entry>();
@@ -104,7 +110,11 @@ export function parseLichess(body: unknown): ExplorerStats | null {
 /** Injectable for tests. */
 export type FetchLike = (url: string, init: RequestInit) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
-export async function masterStats(fen: string, fetchImpl: FetchLike = fetch): Promise<ExplorerResult> {
+/** `token` is a Lichess API token (the asking user's, see userServices.ts),
+ *  sent as a Bearer header. A 401/403 comes back as 'auth_required' — with no
+ *  token that means "add one", with a token that it was refused. It is not
+ *  remembered per position: the next user's token may well be good. */
+export async function masterStats(fen: string, fetchImpl: FetchLike = fetch, token: string | null = null): Promise<ExplorerResult> {
   const key = positionKey(fen);
   if (!key) return { ok: false, reason: 'invalid_fen', cached: false };
 
@@ -115,12 +125,27 @@ export async function masterStats(fen: string, fetchImpl: FetchLike = fetch): Pr
     cache.delete(key);
   }
 
+  if (!token && Date.now() < anonBlockedUntil) return { ok: false, reason: 'auth_required', cached: true };
+
   const url = `${baseUrl()}/masters?fen=${encodeURIComponent(key + ' 0 1')}&moves=${MAX_MOVES}&topGames=0`;
+  let res: Awaited<ReturnType<FetchLike>>;
   try {
-    const res = await fetchImpl(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
+    const headers: Record<string, string> = { Accept: 'application/json', 'User-Agent': 'patzer (+https://github.com/aminghuf/patzer)' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    res = await fetchImpl(url, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) });
+  } catch {
+    remember(key, { failedAt: Date.now() });
+    return { ok: false, reason: 'unavailable', cached: false };
+  }
+  if (res.status === 401 || res.status === 403) {
+    if (!token) anonBlockedUntil = Date.now() + ANON_BLOCK_MS;
+    if (!authLogged) {
+      authLogged = true;
+      console.warn(`[explorer] ${baseUrl()} answered ${res.status}: the opening explorer needs a Lichess API token (Settings → Connections, or LICHESS_EXPLORER_TOKEN)`);
+    }
+    return { ok: false, reason: 'auth_required', cached: false };
+  }
+  try {
     if (!res.ok) throw new Error(`upstream ${res.status}`);
     const stats = parseLichess(await res.json());
     if (!stats) throw new Error('unparseable');
@@ -133,4 +158,4 @@ export async function masterStats(fen: string, fetchImpl: FetchLike = fetch): Pr
 }
 
 /** Test hook. */
-export function clearExplorerCache() { cache.clear(); }
+export function clearExplorerCache() { cache.clear(); anonBlockedUntil = 0; }

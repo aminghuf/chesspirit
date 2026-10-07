@@ -75,9 +75,8 @@ beforeAll(async () => {
 
   const dbm = await import('../src/db.js');
   const url = `http://127.0.0.1:${(llm.address() as AddressInfo).port}`;
-  dbm.setSetting('llm_provider', 'vllm');
-  dbm.setSetting('vllm_url', url);
-  dbm.setSetting('vllm_model', 'coach-model');
+  // Non-admins may use their own vLLM host only when an admin allows it.
+  dbm.setSetting('llm_user_hosts', '1');
 
   coaching = await import('../src/coach/coaching.js');
   memory = await import('../src/coach/memory.js');
@@ -91,6 +90,8 @@ beforeAll(async () => {
   dbm.db.prepare(`INSERT INTO users (id, username, password_hash, role) VALUES (1, 'kasparov', 'x', 'user'), (2, 'newbie', 'x', 'user')`).run();
   dbm.db.prepare(`INSERT INTO profiles (user_id, display_name, language, audience) VALUES (1, 'K', 'en', 'beginner'), (2, 'N', 'en', 'beginner')`).run();
   cookie = `${SESSION_COOKIE_NAME}=${encodeURIComponent(createSession(1))}`;
+  // The LLM is each user's own (coach/llm.ts): player 1 points at the fake.
+  (await import('../src/userServices.js')).setUserServices(1, { llm_provider: 'vllm', llm_url: url, llm_model: 'coach-model' });
 
   // Player 1 has played Black into the same trap in four games, and plays
   // the endgame far worse than the opening.

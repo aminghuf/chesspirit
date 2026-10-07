@@ -107,7 +107,6 @@ describe('ru locale', () => {
     'achievements.first_lesson.', 'achievements.eager_student.', 'achievements.star_collector.',
     'admin.deepseek', 'admin.engineBackendNote', 'setup.llmHint', 'review.importError.import_in_progress',
     'insights.moveQuality', 'insights.brilliantMoves', 'insights.noBrilliant', 'insights.vsOpponent',
-    'train.tabs.', 'train.puzzles.',
   ];
 
   it('has every key that en has, and nothing else', () => {

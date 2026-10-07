@@ -6,6 +6,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### The coach's AI model is now each user's own
+
+- **Changed: there is no server-wide AI model any more.** Each user adds
+  their own in the new *Settings → Connections* and pays their provider for
+  their own use; the coach, Game Review and automatic reviews run on it. A
+  user who hasn't added one has no coach — the engine facts still show as
+  plain text. Keys are stored on the server and never sent back to the
+  browser.
+- **Any user can add a DeepSeek API key.** An Ollama or vLLM address is
+  open to admins, and to everyone else once an admin switches on *Let every
+  user enter an Ollama or vLLM address* in *Admin → System* — off by
+  default, because the server then sends requests to any address a user
+  types.
+- **Upgrading:** the model that was configured in *Admin → System* moves,
+  once, to the admin accounts as their own, and the old server-wide settings
+  are cleared. Other users start without a coach until they add a model.
+  The setup wizard's Ollama address becomes the first admin's own model. The
+  `DEEPSEEK_API_KEY` variable is read only for that one-time move;
+  `DEEPSEEK_URL` can point DeepSeek users at a proxy.
+- **Removed:** the coach section of *Admin → System* (provider, addresses,
+  key, "Test all models", runtime stats).
+
+### Lichess token for Master games
+
+- **Fixed: "Lichess master database unreachable right now".** Lichess now
+  answers the opening explorer with 401 unless the request carries an API
+  token. Each user can add theirs in *Settings → Connections* (an operator
+  can set `LICHESS_EXPLORER_TOKEN` for everyone), and the Master games panel
+  now says that a token is needed, or that it was refused, instead of
+  claiming Lichess is down. Without a token the server stops asking for ten
+  minutes at a time rather than once per move.
+
+### Lab
+
+- **The engine follows the board.** Every move, FEN or change of depth is
+  analysed automatically, as in Game Review; the Analyze button is gone.
+- **A board the height of the window**, with an eval bar, laid out like
+  Game Review: everything else sits in a rail beside it.
+- **New: Local Stockfish or the Stockfish API.** The engine panel can send
+  the position to the hosted Stockfish at chess-api.com instead of the
+  server's own engine. If the API doesn't answer, the local engine does, and
+  the result says so.
+
+### Train: coordinates and notation
+
+- **New: Coordinates.** Thirty seconds to learn the names of the squares, in
+  two directions: a name is shown and you click the square, or a square
+  lights up and you type its name. Play it from White's or Black's side,
+  with or without coordinates on the board; your best score is kept per
+  mode on this device.
+- **New: Notation.** A move is played on the board and you write it the way
+  a scoresheet has it — c4, Qe4, Nxf7+, O-O. Check and mate marks are
+  optional, castling may be written with zeros, and wrong capitals ("nf3")
+  get their own hint. A short key to the notation sits next to the board.
+- **Removed: the Puzzles tab in Train.** It duplicated the Puzzles page,
+  which the empty "From your games" screen now links to.
+
 ### Game Review: three columns and a bigger board
 
 - **The board uses the height of the window.** On a desktop it is now at

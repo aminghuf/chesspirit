@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { BookOpen, Loader2 } from 'lucide-react';
 import { api } from '../api';
 
@@ -20,6 +21,10 @@ interface ExplorerMove {
 
 interface ExplorerResponse {
   available: boolean;
+  /** Why not: 'auth_required' = Lichess wants an API token (has_token says
+   *  whether the user's own was sent and refused). */
+  reason?: 'unavailable' | 'auth_required';
+  has_token?: boolean;
   white?: number;
   draws?: number;
   black?: number;
@@ -86,7 +91,13 @@ export default function ExplorerPanel({ fen, onPreview }: { fen: string; onPrevi
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('review.linesFetching', { defaultValue: 'fetching…' })}
             </div>
           )}
-          {data && !data.available && (
+          {data && !data.available && data.reason === 'auth_required' && (
+            <div className="py-1 text-chesscom-500">
+              {data.has_token ? t('explorer.tokenRejected') : t('explorer.tokenNeeded')}{' '}
+              <Link to="/settings" className="underline underline-offset-2">{t('explorer.openSettings')}</Link>
+            </div>
+          )}
+          {data && !data.available && data.reason !== 'auth_required' && (
             <div className="py-1 text-chesscom-400">{t('explorer.unavailable', { defaultValue: 'Lichess master database unreachable right now.' })}</div>
           )}
           {data?.available && total === 0 && (

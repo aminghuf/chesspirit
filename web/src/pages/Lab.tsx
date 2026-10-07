@@ -1,15 +1,17 @@
-// Lab — a position sandbox with on-demand Stockfish analysis. Drop a FEN,
-// shuffle pieces, click Analyze, browse top-N candidate lines. Designed for
-// the "what does the engine think about this?" moment after a game.
+// Lab — a position sandbox with the engine always on. Drop a FEN or move the
+// pieces and the top-N candidate lines follow every position, as they do in
+// Game Review. Designed for the "what does the engine think about this?"
+// moment after a game. Laid out like the analyzer: the board takes the height
+// of the window and everything else sits in a rail beside it.
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from '@tanstack/react-query';
 import { Chess } from 'chess.js';
 import {
-  Microscope, RotateCcw, FlipVertical2, Wand2, Loader2,
+  Microscope, RotateCcw, FlipVertical2, Loader2,
 } from 'lucide-react';
 import ChessBoard from '../components/ChessBoard';
+import EvalBar from '../components/EvalBar';
 import ThreatPanel from '../components/ThreatPanel';
 import ExplorerPanel from '../components/ExplorerPanel';
 import { api } from '../api';
@@ -28,7 +30,14 @@ interface AnalyzeResponse {
   fen: string;
   depth: number;
   lines: AnalyzeLine[];
+  /** What answered — the hosted engine falls back to the local one. */
+  engine?: Engine;
 }
+
+// 'local' = the server's own Stockfish; 'chessapi' = the hosted Stockfish at
+// chess-api.com (the position is sent there).
+type Engine = 'local' | 'chessapi';
+const ENGINE_KEY = 'lab.engine';
 
 interface HistoryEntry {
   fen: string;       // FEN AFTER this move
@@ -61,13 +70,54 @@ export default function Lab() {
 
   const [depth, setDepth] = useState(12);
   const [lines, setLines] = useState(5);
+  const [engine, setEngineState] = useState<Engine>(() => {
+    try { return localStorage.getItem(ENGINE_KEY) === 'chessapi' ? 'chessapi' : 'local'; } catch { return 'local'; }
+  });
+  const setEngine = (e: Engine) => {
+    setEngineState(e);
+    try { localStorage.setItem(ENGINE_KEY, e); } catch { /* ignore */ }
+  };
 
   const fen = chessRef.current.fen();
   const turn = chessRef.current.turn() === 'w' ? 'white' : 'black';
 
-  const analyze = useMutation({
-    mutationFn: () => api.post<AnalyzeResponse>('/api/analyze/position', { fen, depth, lines }),
-  });
+  // The engine follows the board: every new position (and every change of
+  // depth, line count or engine) is analysed after a short pause, so a quick
+  // run of moves asks once, for the last one.
+  const [result, setResult] = useState<AnalyzeResponse | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    let handle = 0;
+    setAnalyzeError(false);
+    setAnalyzing(true);
+    const ask = (triesLeft: number) => {
+      api.post<AnalyzeResponse>('/api/analyze/position', { fen, depth, lines, engine })
+        .then((r) => { if (!cancelled) { setResult(r); setAnalyzing(false); } })
+        .catch((e) => {
+          if (cancelled) return;
+          // 429: the engine is still on the previous position — wait for it
+          // rather than giving up.
+          if ((e as { status?: number }).status === 429 && triesLeft > 0) {
+            handle = window.setTimeout(() => ask(triesLeft - 1), 800);
+            return;
+          }
+          setAnalyzeError(true); setAnalyzing(false);
+        });
+    };
+    handle = window.setTimeout(() => ask(20), 400);
+    return () => { cancelled = true; window.clearTimeout(handle); };
+  }, [fen, depth, lines, engine]);
+  // Lines for an earlier position say nothing about this one.
+  const current = result && result.fen === fen ? result : null;
+  const topLine = current?.lines[0];
+  // White's point of view, for the eval bar and the threat probe.
+  const evalCpWhite = (() => {
+    if (!topLine) return 0;
+    const cp = topLine.mate != null ? (topLine.mate > 0 ? 10000 : -10000) : (topLine.cp ?? 0);
+    return turn === 'white' ? cp : -cp;
+  })();
 
   function bump() { setTick((k) => k + 1); }
 
@@ -95,7 +145,6 @@ export default function Lab() {
     chessRef.current = new Chess();
     setHistory([]);
     setHistoryIndex(0);
-    analyze.reset();
     bump();
   }
 
@@ -111,8 +160,7 @@ export default function Lab() {
       chessRef.current = test;
       setHistory([]);
       setHistoryIndex(0);
-      analyze.reset();
-      setFenError(null);
+        setFenError(null);
       bump();
     } catch (e) {
       setFenError(e instanceof Error ? e.message : t('lab.invalidFen', { defaultValue: 'Invalid FEN' }));
@@ -130,7 +178,6 @@ export default function Lab() {
     }
     chessRef.current = replay;
     setHistoryIndex(index);
-    analyze.reset();
     bump();
   }
 
@@ -138,99 +185,112 @@ export default function Lab() {
     onMove(uci);
   }
 
-  const result = analyze.data;
   const arrows = useMemo(() => {
-    if (!result || result.lines.length === 0) return [];
-    const best = result.lines[0];
-    if (!best) return [];
-    return [{ orig: best.uci.slice(0, 2), dest: best.uci.slice(2, 4), brush: 'paleBlue' as const }];
-  }, [result]);
+    if (!topLine) return [];
+    return [{ orig: topLine.uci.slice(0, 2), dest: topLine.uci.slice(2, 4), brush: 'paleBlue' as const }];
+  }, [topLine]);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-5">
-      <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="page-h1 flex items-center gap-2">
-            <Microscope className="h-6 w-6 text-board-dark" />
-            {t('lab.title', { defaultValue: 'Lab' })}
-          </h1>
-          <p className="page-sub">
-            {t('lab.subtitle', { defaultValue: 'A sandbox board with Stockfish on tap.' })}
-          </p>
-        </div>
-        <div className="text-xs text-chesscom-500">
-          {turn === 'white'
-            ? t('lab.whiteToMove', { defaultValue: 'White to move' })
-            : t('lab.blackToMove', { defaultValue: 'Black to move' })}
-        </div>
-      </header>
-
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div className="mx-auto max-w-7xl lg:max-w-none">
+      {/* Workspace as in Game Review: on lg+ the row is as tall as the window
+          minus the app chrome, the board fills that height, and the rail
+          scrolls inside itself. */}
+      <div className="flex flex-col gap-4 lg:h-[calc(100vh-7.5rem)] lg:min-h-[26rem] lg:flex-row lg:overflow-hidden">
         {/* Board pane */}
-        <section className="space-y-3">
-          <div className={`mx-auto w-full max-w-[640px] board-theme-${user?.profile.board_theme ?? 'green'}`}>
-            <ChessBoard
-              key={tick === 0 ? 'init' : 'live'}
-              fen={fen}
-              orientation={orientation}
-              turnColor={turn}
-              movable
-              onMove={onMove}
-              arrows={arrows as never}
-              resetKey={tick}
-            />
-          </div>
-
-          <div className="card space-y-2 p-3">
-            <div className="flex items-center gap-2">
-              <input
-                value={fenInput}
-                onChange={(e) => setFenInput(e.target.value)}
-                placeholder={t('lab.fenPlaceholder', { defaultValue: 'Paste a FEN…' })}
-                className="input flex-1 font-mono text-xs"
-                spellCheck={false}
+        <section className="mx-auto w-full min-w-0 lg:mx-0 lg:flex lg:flex-1 lg:items-start lg:justify-center">
+          <div className="relative flex items-stretch justify-center gap-2 lg:w-full">
+            <EvalBar cp={evalCpWhite} orientation={orientation} />
+            <div className={`relative aspect-square w-full min-w-0 board-theme-${user?.profile.board_theme ?? 'green'} lg:max-w-[calc(100vh-7.5rem)]`}>
+              <ChessBoard
+                key={tick === 0 ? 'init' : 'live'}
+                fen={fen}
+                orientation={orientation}
+                turnColor={turn}
+                movable
+                onMove={onMove}
+                arrows={arrows as never}
+                resetKey={tick}
               />
-              <button onClick={setFromFen} className="btn-secondary text-sm">
-                {t('lab.setFen', { defaultValue: 'Set' })}
-              </button>
-            </div>
-            {fenError && <div className="text-xs text-mistake">{fenError}</div>}
-            <div className="flex flex-wrap items-center gap-2">
-              <button onClick={resetBoard} className="btn-ghost text-sm">
-                <RotateCcw className="h-4 w-4" />
-                {t('lab.reset', { defaultValue: 'Reset' })}
-              </button>
-              <button onClick={flip} className="btn-ghost text-sm">
-                <FlipVertical2 className="h-4 w-4" />
-                {t('lab.flip', { defaultValue: 'Flip board' })}
-              </button>
-              <div className="ms-auto font-mono text-[11px] tabular-nums text-chesscom-400">
-                {fen}
-              </div>
             </div>
           </div>
         </section>
 
-        {/* Analysis pane */}
-        <aside className="space-y-3">
+        {/* Rail */}
+        <aside className="min-w-0 space-y-3 lg:min-h-0 lg:w-[380px] lg:shrink-0 lg:overflow-y-auto lg:pe-1">
+          <header className="flex items-end justify-between gap-2">
+            <div>
+              <h1 className="page-h1 flex items-center gap-2">
+                <Microscope className="h-6 w-6 text-board-dark" />
+                {t('lab.title', { defaultValue: 'Lab' })}
+              </h1>
+              <p className="page-sub">
+                {t('lab.subtitle', { defaultValue: 'A sandbox board with Stockfish on tap.' })}
+              </p>
+            </div>
+            <div className="shrink-0 text-xs text-chesscom-500">
+              {turn === 'white'
+                ? t('lab.whiteToMove', { defaultValue: 'White to move' })
+                : t('lab.blackToMove', { defaultValue: 'Black to move' })}
+            </div>
+          </header>
+
+        <div className="card space-y-2 p-3">
+          <div className="flex items-center gap-2">
+            <input
+              value={fenInput}
+              onChange={(e) => setFenInput(e.target.value)}
+              placeholder={t('lab.fenPlaceholder', { defaultValue: 'Paste a FEN…' })}
+              className="input flex-1 font-mono text-xs"
+              spellCheck={false}
+            />
+            <button onClick={setFromFen} className="btn-secondary text-sm">
+              {t('lab.setFen', { defaultValue: 'Set' })}
+            </button>
+          </div>
+          {fenError && <div className="text-xs text-mistake">{fenError}</div>}
+          <div className="flex flex-wrap items-center gap-2">
+            <button onClick={resetBoard} className="btn-ghost text-sm">
+              <RotateCcw className="h-4 w-4" />
+              {t('lab.reset', { defaultValue: 'Reset' })}
+            </button>
+            <button onClick={flip} className="btn-ghost text-sm">
+              <FlipVertical2 className="h-4 w-4" />
+              {t('lab.flip', { defaultValue: 'Flip board' })}
+            </button>
+            <div className="ms-auto font-mono text-[11px] tabular-nums text-chesscom-400">
+              {fen}
+            </div>
+          </div>
+        </div>
+
+
           <div className="card p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-chesscom-500">
                 {t('lab.engine', { defaultValue: 'Engine analysis' })}
               </h2>
-              <button
-                onClick={() => analyze.mutate()}
-                disabled={analyze.isPending}
-                className="btn-primary text-sm"
-              >
-                {analyze.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-                {analyze.isPending
-                  ? t('lab.analyzing', { defaultValue: 'Analyzing…' })
-                  : t('lab.analyze', { defaultValue: 'Analyze' })}
-              </button>
+              {analyzing && (
+                <span className="flex items-center gap-1.5 text-xs text-chesscom-500">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {t('lab.analyzing', { defaultValue: 'Analyzing…' })}
+                </span>
+              )}
             </div>
 
             <div className="space-y-3">
+              <div>
+                <div className="grid grid-cols-2 gap-1 rounded-lg bg-chesscom-100 p-1 text-sm dark:bg-chesscom-900">
+                  {(['local', 'chessapi'] as const).map((e) => (
+                    <button key={e} type="button" onClick={() => setEngine(e)}
+                      className={`rounded-md px-2 py-1.5 font-medium transition-colors ${engine === e
+                        ? 'bg-white text-chesscom-900 shadow-soft dark:bg-chesscom-700 dark:text-chesscom-100'
+                        : 'text-chesscom-500 hover:text-chesscom-900 dark:hover:text-chesscom-100'}`}>
+                      {t(`lab.engines.${e}`)}
+                    </button>
+                  ))}
+                </div>
+                {engine === 'chessapi' && <p className="mt-1 text-[11px] text-chesscom-400">{t('lab.chessapiNote')}</p>}
+              </div>
               <Slider
                 label={t('lab.depth', { defaultValue: 'Depth' })}
                 value={depth}
@@ -248,38 +308,31 @@ export default function Lab() {
             </div>
           </div>
 
-          {analyze.isPending ? (
-            <div className="card flex items-center gap-2 p-4 text-sm text-chesscom-500">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t('lab.crunching', { defaultValue: 'Crunching positions…' })}
-            </div>
-          ) : result && result.lines.length > 0 ? (
+          {current && current.lines.length > 0 ? (
             <div className="card divide-y divide-chesscom-100 dark:divide-chesscom-700">
-              {result.lines.map((line, i) => (
+              {current.lines.map((line, i) => (
                 <LineRow key={i} line={line} rank={i + 1} onPlay={playLineMove} />
               ))}
               <div className="px-3 py-1.5 text-end text-[11px] text-chesscom-400">
-                {t('lab.depthLabel', { defaultValue: 'depth' })} {result.depth}
+                {current.engine && <>{t(`lab.engines.${current.engine}`)} · </>}
+                {t('lab.depthLabel', { defaultValue: 'depth' })} {current.depth}
+                {engine === 'chessapi' && current.engine === 'local' && <> · {t('lab.chessapiFellBack')}</>}
               </div>
             </div>
-          ) : analyze.isError ? (
+          ) : analyzeError ? (
             <div className="card p-4 text-sm text-mistake">
               {t('lab.analyzeError', { defaultValue: 'Analysis failed. Is Stockfish configured?' })}
             </div>
           ) : (
-            <div className="card p-4 text-center text-sm text-chesscom-500">
-              {t('lab.idlePrompt', { defaultValue: 'Click Analyze to see what Stockfish thinks.' })}
+            <div className="card flex items-center gap-2 p-4 text-sm text-chesscom-500">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t('lab.crunching', { defaultValue: 'Crunching positions…' })}
             </div>
           )}
 
           <ThreatPanel
             fen={fen}
-            currentCpWhite={(() => {
-              const top = analyze.data?.lines?.[0];
-              if (!top || analyze.data?.fen !== fen) return 0;
-              const cp = top.mate != null ? (top.mate > 0 ? 10000 : -10000) : (top.cp ?? 0);
-              return turn === 'white' ? cp : -cp;
-            })()}
+            currentCpWhite={evalCpWhite}
           />
 
           <ExplorerPanel fen={fen} />

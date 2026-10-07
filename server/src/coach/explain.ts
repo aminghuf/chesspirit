@@ -1,4 +1,4 @@
-import { chatStream } from "./llm.js";
+import { chatStream, withLlmUser } from "./llm.js";
 import { systemPrompt } from "./locales.js";
 import { correctionNote, explainMovePrompt, hintPrompt } from "./facts.js";
 import { contradiction, explainCoaching, fallbackText, hintCoaching, type CoachAction } from "./coaching.js";
@@ -49,12 +49,24 @@ async function generate(sys: string, usr: string, opts: RunOpts): Promise<string
 /** Strip a reasoning model's <think> block, which isn't part of the answer. */
 const clean = (t: string) => t.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 
-export async function coachExplain(
+// Both entry points run inside withLlmUser, so the model that answers is the
+// asking user's own when they have one (see llm.ts).
+export function coachExplain(
   params: ExplainParams,
   userId: number,
   lang: Language,
   aud: Audience,
   opts: RunOpts = {},
+): Promise<CoachAnswer> {
+  return withLlmUser(userId, () => explainFor(params, userId, lang, aud, opts));
+}
+
+async function explainFor(
+  params: ExplainParams,
+  userId: number,
+  lang: Language,
+  aud: Audience,
+  opts: RunOpts,
 ): Promise<CoachAnswer> {
   // The move is the user's own when they're the one asking about their game
   // (Play), or in Game Review when the move belongs to their colour.
@@ -93,7 +105,7 @@ export async function coachExplain(
 
 /** A hint streams straight through: it names no move and passes no verdict,
  *  so there is nothing for it to contradict. */
-export async function coachHint(
+export function coachHint(
   fen: string,
   history: string[],
   userId: number,
@@ -101,6 +113,18 @@ export async function coachHint(
   aud: Audience,
   onChunk: (t: string) => void | Promise<void>,
   opts: RunOpts = {},
+): Promise<{ actions: CoachAction[] }> {
+  return withLlmUser(userId, () => hintFor(fen, history, userId, lang, aud, onChunk, opts));
+}
+
+async function hintFor(
+  fen: string,
+  history: string[],
+  userId: number,
+  lang: Language,
+  aud: Audience,
+  onChunk: (t: string) => void | Promise<void>,
+  opts: RunOpts,
 ): Promise<{ actions: CoachAction[] }> {
   const coaching = await hintCoaching(fen, userId, lang, aud);
   const sys = systemPrompt(aud, lang);

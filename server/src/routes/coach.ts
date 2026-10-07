@@ -10,7 +10,8 @@ const router = new Hono();
 router.use('*', requireAuth);
 
 router.get('/status', (c) => {
-  return c.json({ configured: llmConfigured() });
+  // Per user: each one brings their own model (Settings → Connections).
+  return c.json({ configured: llmConfigured(c.get('user').id) });
 });
 
 const explainSchema = z.object({

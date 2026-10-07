@@ -376,7 +376,7 @@
     "title": "Coach",
     "askExplain": "Warum war dieser Zug „{{cls}}“?",
     "askHint": "Gib mir einen Tipp",
-    "notConfigured": "Der KI-Coach ist nicht eingerichtet. Bitte einen Admin, Ollama unter Admin → System einzurichten.",
+    "notConfigured": "Der KI-Coach ist für dein Konto nicht eingerichtet. Trage unter Einstellungen → Verbindungen dein eigenes Modell ein.",
     "thinking": "Der Coach denkt nach…",
     "tts": "Vorlesen",
     "ttsStop": "Stopp",
@@ -665,7 +665,11 @@
       "depth": "Analysetiefe",
       "depthHelp": "Wie tief die Engine jede Stellung einer Partieanalyse durchsucht. Höher ist stärker, aber langsamer; 16 ist ein guter Standard. Gilt für neue Analysen, auch automatische.",
       "singleLine": "Liefert eine Variante pro Stellung: keine alternativen Engine-Varianten, und „Großartig“ sowie manche „Brillant“-Züge werden nicht erkannt."
-    }
+    },
+    "llmUserHosts": "Allen Nutzern eine Ollama- oder vLLM-Adresse erlauben",
+    "llmUserHostsHint": "Aus: Nur Admins können eine Ollama- oder vLLM-Adresse nutzen; andere Nutzer können einen DeepSeek-Schlüssel eintragen. An: Dieser Server schickt Anfragen an jede Adresse, die ein Nutzer eingibt – zu Hause in Ordnung, auf einem Server mit Fremden nicht.",
+    "coachModel": "KI-Coach",
+    "coachModelIntro": "Es gibt kein gemeinsames Modell. Jeder Nutzer trägt unter Einstellungen → Verbindungen sein eigenes ein und zahlt den eigenen Verbrauch."
   },
   "palette": {
     "switchLanguage": "Wechseln zu",
@@ -727,44 +731,54 @@
     "wrong": "Nicht ganz — die Engine bevorzugt",
     "tabs": {
       "mine": "Aus deinen Partien",
-      "puzzles": "Taktikaufgaben"
+      "coordinates": "Koordinaten",
+      "notation": "Notation"
     },
-    "puzzles": {
-      "intro": "Taktikaufgaben aus der Lichess-Puzzle-Datenbank, passend zu deiner Puzzle-Wertung ausgesucht. Der erste Versuch zählt: Löst du sie, steigt deine Wertung.",
-      "loadError": "Die Aufgabe konnte nicht geladen werden.",
-      "allDone": "Du hast jede Aufgabe hier versucht – beeindruckend!",
-      "yourRating": "Deine Puzzle-Wertung",
-      "solvedOf": "{{solved}} von {{played}} gelöst",
-      "provisional": "Noch nicht eingependelt – in den ersten Aufgaben bewegt sie sich stark.",
-      "watch": "Schau dir den Zug deines Gegners an …",
-      "findWhite": "Weiß am Zug. Finde den besten Zug!",
-      "findBlack": "Schwarz am Zug. Finde den besten Zug!",
-      "wrong": "Nicht der beste Zug – das Brett ist zurückgesprungen. Versuch es noch einmal!",
-      "solved": "Gelöst!",
-      "solvedLate": "Gelöst – aber nicht im ersten Versuch, deshalb zählt sie als nicht gelöst.",
-      "showing": "Hier kommt die Lösung …",
-      "shownDone": "Das war die Lösung.",
-      "notRated": "Diese Aufgabe zählt schon als nicht gelöst – spiel sie trotzdem zu Ende.",
-      "hint": "Tipp",
-      "hintMove": "Zug zeigen",
-      "solution": "Lösung zeigen",
-      "tryIt": "Selbst nachspielen",
-      "next": "Nächste Aufgabe",
-      "puzzleRating": "Aufgaben-Wertung {{rating}}",
-      "onLichess": "Auf lichess.org",
-      "credit": "Aufgaben aus der Lichess-Puzzle-Datenbank (CC0):",
-      "rules": "Ein falscher Zug, ein Tipp oder die Lösung – dann zählt die Aufgabe als nicht gelöst. Jede Aufgabe kommt nur einmal.",
-      "themes": {
-        "all": "Alle",
-        "mate": "Matt",
-        "fork": "Gabel",
-        "pin": "Fesselung & Spieß",
-        "discovered": "Abzugsangriff",
-        "sacrifice": "Opfer",
-        "hanging": "Hängende & gefangene Figuren",
-        "defence": "Verteidigung",
-        "endgame": "Endspiel"
-      }
+    "coords": {
+      "title": "Koordinatentrainer",
+      "intro": "Lerne die Namen der Felder, bis du nicht mehr abzählen musst. Du hast 30 Sekunden – wie viele findest du?",
+      "modeFind": "Feld finden",
+      "modeName": "Feld benennen",
+      "sideWhite": "Als Weiß",
+      "sideBlack": "Als Schwarz",
+      "showCoords": "Koordinaten auf dem Brett anzeigen",
+      "start": "Start",
+      "again": "Noch einmal",
+      "taskFind": "Klicke auf dieses Feld",
+      "taskName": "Welches Feld leuchtet?",
+      "inputPlaceholder": "z. B. e4",
+      "time": "Zeit",
+      "score": "Punkte",
+      "mistakes": "Fehler",
+      "best": "Bestwert",
+      "done": "Die Zeit ist um!",
+      "doneScore": "{{score}} Felder in 30 Sekunden",
+      "newBest": "Neuer Bestwert!"
+    },
+    "notation": {
+      "title": "Notationstrainer",
+      "intro": "Auf dem Brett wird ein Zug gespielt. Schreibe ihn so, wie er auf dem Partieformular steht – c4, Qe4, Nxf7+.",
+      "whitePlayed": "Weiß hat gezogen – schreibe den Zug",
+      "blackPlayed": "Schwarz hat gezogen – schreibe den Zug",
+      "flip": "Brett drehen",
+      "placeholder": "z. B. Nf3",
+      "check": "Prüfen",
+      "showAnswer": "Lösung zeigen",
+      "next": "Nächster Zug",
+      "correct": "Richtig!",
+      "wrong": "Nicht ganz – es war",
+      "answer": "Der Zug war",
+      "caseHint": "Figuren bekommen einen Großbuchstaben (K, Q, R, B, N); Linien sind Kleinbuchstaben (a–h).",
+      "score": "Richtig",
+      "streak": "Serie",
+      "bestStreak": "Beste Serie",
+      "legendTitle": "So schreibt man Züge",
+      "legendPieces": "K König · Q Dame · R Turm · B Läufer · N Springer. Ein Bauer bekommt keinen Buchstaben: e4.",
+      "legendCapture": "x bedeutet Schlagen: Bxe5. Schlägt ein Bauer, steht seine Linie vorn: exd5.",
+      "legendCheck": "+ ist Schach und # ist Matt. Hier darfst du beides weglassen.",
+      "legendCastle": "O-O ist die kurze Rochade, O-O-O die lange.",
+      "legendPromo": "=Q ist eine Umwandlung: e8=Q.",
+      "legendDisambig": "Könnten zwei gleiche Figuren dorthin ziehen, kommt die Linie oder Reihe des Startfelds dazu: Nbd2, R1e2."
     }
   },
   "learn": {
@@ -1147,7 +1161,13 @@
     "lines": "Varianten",
     "depthLabel": "Tiefe",
     "moves": "Züge",
-    "startPos": "Start"
+    "startPos": "Start",
+    "engines": {
+      "local": "Lokales Stockfish",
+      "chessapi": "Stockfish-API"
+    },
+    "chessapiNote": "Nutzt das gehostete Stockfish von chess-api.com: Die Stellung wird dorthin geschickt, und die Tiefe endet bei 18.",
+    "chessapiFellBack": "die API hat nicht geantwortet, also hat die lokale Engine gerechnet"
   },
   "home": {
     "greeting": "Hallo, {{name}}!",
@@ -1355,7 +1375,10 @@
     "games_other": "{{count}} Meisterpartien",
     "white": "Weiß",
     "draw": "Remis",
-    "black": "Schwarz"
+    "black": "Schwarz",
+    "tokenNeeded": "Lichess verlangt jetzt ein API-Token, bevor es Meisterpartien zeigt.",
+    "tokenRejected": "Lichess hat dein API-Token abgelehnt.",
+    "openSettings": "Trage eines unter Einstellungen → Verbindungen ein."
   },
   "update": {
     "available": "Patzer {{latest}} ist erschienen — du verwendest {{current}}.",
@@ -1565,5 +1588,36 @@
     },
     "loadingOnline": "Lade Aufgaben von Hugging Face…",
     "noneFoundOnline": "In der Online-Stichprobe ist noch keine Aufgabe mit diesem Thema in deiner Wertungsnähe aufgetaucht. Versuch es gleich noch einmal, wähle eine andere Schwierigkeit oder nutze für seltene Themen die Datenbank auf diesem Server."
+  },
+  "connections": {
+    "title": "Verbindungen",
+    "desc": "Dein eigenes KI-Modell für den Coach und dein eigenes Lichess-Token. Was du verbrauchst, zahlst du an deinen Anbieter. Beides wird auf diesem Server gespeichert und nie wieder angezeigt.",
+    "llm": "KI-Modell für den Coach",
+    "none": "Keines – Coach aus",
+    "llmHelp": "Der Coach läuft über dein eigenes Konto.",
+    "sourceOwn": "Dein Modell ist eingerichtet.",
+    "sourceNone": "Noch kein Modell, der Coach ist für dich aus.",
+    "apiKey": "API-Schlüssel",
+    "apiKeyHelp": "Erstelle einen auf platform.deepseek.com. Was dein Coach verbraucht, zahlst du an DeepSeek.",
+    "keySaved": "Ein Schlüssel ist gespeichert. Gib einen neuen ein, um ihn zu ersetzen.",
+    "url": "Serveradresse",
+    "model": "Modell",
+    "lichessToken": "Lichess-API-Token",
+    "lichessTokenHelp": "Lichess verlangt ein Token, bevor es Meisterpartien-Statistiken zeigt. Erstelle eines (ohne Berechtigungen) unter",
+    "tokenSaved": "Ein Token ist gespeichert. Gib ein neues ein, um es zu ersetzen. Tokens verwaltest du unter",
+    "save": "Verbindungen speichern",
+    "saved": "Gespeichert",
+    "test": "Modell testen",
+    "testOk": "Verbunden – {{n}} Modelle verfügbar.",
+    "removeKey": "Schlüssel entfernen",
+    "removeToken": "Token entfernen",
+    "error": {
+      "generic": "Das hat nicht geklappt. Prüfe die Angaben und versuche es noch einmal.",
+      "invalid_input": "Eine der Angaben ist ungültig. Ein Lichess-Token besteht aus mindestens 10 Buchstaben, Ziffern oder Unterstrichen.",
+      "invalid_llm_url": "Diese Adresse ist keine gültige http- oder https-URL.",
+      "llm_hosts_not_allowed": "Dieser Server erlaubt für eigene Modelle nur DeepSeek. Ein Admin kann Ollama und vLLM unter Admin → System freigeben.",
+      "llm_not_configured": "Speichere zuerst einen Anbieter mit Schlüssel oder Adresse.",
+      "deepseek_api_key_missing": "Trage zuerst einen API-Schlüssel ein."
+    }
   }
 }

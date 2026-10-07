@@ -287,7 +287,7 @@
     "title": "Entrenador",
     "askExplain": "¿Por qué esta jugada fue {{cls}}?",
     "askHint": "Dame una pista",
-    "notConfigured": "El entrenador de IA no está configurado. Pide a un administrador que configure Ollama en Administración → Sistema.",
+    "notConfigured": "El entrenador de IA no está configurado para tu cuenta. Añade tu propio modelo en Ajustes → Conexiones.",
     "thinking": "El entrenador está pensando…",
     "tts": "Leer en voz alta",
     "ttsStop": "Detener",
@@ -454,7 +454,11 @@
       "depth": "Profundidad de análisis",
       "depthHelp": "Hasta qué profundidad busca el motor en cada posición de una revisión. Más alto es más fuerte pero más lento; 16 es un buen valor. Se aplica a las revisiones nuevas, incluidas las automáticas.",
       "singleLine": "Da una sola línea por posición: no hay líneas alternativas, y no se detectan las jugadas «Gran jugada» ni algunas «Brillante»."
-    }
+    },
+    "llmUserHosts": "Permitir a todos los usuarios una dirección de Ollama o vLLM",
+    "llmUserHostsHint": "Desactivado: solo los administradores pueden usar una dirección de Ollama o vLLM; los demás pueden añadir una clave de DeepSeek. Activado: este servidor enviará peticiones a cualquier dirección que escriba un usuario; bien en casa, no en un servidor con desconocidos.",
+    "coachModel": "Entrenador de IA",
+    "coachModelIntro": "No hay un modelo compartido. Cada usuario añade el suyo en Ajustes → Conexiones y paga su propio uso."
   },
   "palette": {
     "switchLanguage": "Cambiar a",
@@ -506,7 +510,58 @@
     "nextPuzzle": "Siguiente problema",
     "openInReview": "Abrir esta posición en el análisis completo",
     "correct": "¡Correcto!",
-    "wrong": "Casi — el motor prefiere"
+    "wrong": "Casi — el motor prefiere",
+    "tabs": {
+      "mine": "De tus partidas",
+      "coordinates": "Coordenadas",
+      "notation": "Notación"
+    },
+    "coords": {
+      "title": "Entrenador de coordenadas",
+      "intro": "Aprende los nombres de las casillas hasta que ya no tengas que contarlas. Tienes 30 segundos: ¿cuántas encuentras?",
+      "modeFind": "Encuentra la casilla",
+      "modeName": "Nombra la casilla",
+      "sideWhite": "Con blancas",
+      "sideBlack": "Con negras",
+      "showCoords": "Mostrar coordenadas en el tablero",
+      "start": "Empezar",
+      "again": "Otra vez",
+      "taskFind": "Haz clic en esta casilla",
+      "taskName": "¿Qué casilla está iluminada?",
+      "inputPlaceholder": "p. ej. e4",
+      "time": "Tiempo",
+      "score": "Puntos",
+      "mistakes": "Errores",
+      "best": "Récord",
+      "done": "¡Se acabó el tiempo!",
+      "doneScore": "{{score}} casillas en 30 segundos",
+      "newBest": "¡Nuevo récord!"
+    },
+    "notation": {
+      "title": "Entrenador de notación",
+      "intro": "Se juega una jugada en el tablero. Escríbela como se anota en la planilla: c4, Qe4, Nxf7+.",
+      "whitePlayed": "Las blancas han jugado: escribe la jugada",
+      "blackPlayed": "Las negras han jugado: escribe la jugada",
+      "flip": "Girar el tablero",
+      "placeholder": "p. ej. Nf3",
+      "check": "Comprobar",
+      "showAnswer": "Mostrar respuesta",
+      "next": "Siguiente jugada",
+      "correct": "¡Correcto!",
+      "wrong": "No del todo: era",
+      "answer": "La jugada era",
+      "caseHint": "Las piezas llevan mayúscula (K, Q, R, B, N); las columnas van en minúscula (a–h).",
+      "score": "Aciertos",
+      "streak": "Racha",
+      "bestStreak": "Mejor racha",
+      "legendTitle": "Cómo se escriben las jugadas",
+      "legendPieces": "K rey · Q dama · R torre · B alfil · N caballo. El peón no lleva letra: e4.",
+      "legendCapture": "x es una captura: Bxe5. Si captura un peón, primero va su columna: exd5.",
+      "legendCheck": "+ es jaque y # es jaque mate. Aquí puedes omitirlos.",
+      "legendCastle": "O-O es el enroque corto, O-O-O el largo.",
+      "legendPromo": "=Q es una coronación: e8=Q.",
+      "legendDisambig": "Si dos piezas iguales pueden ir a esa casilla, se añade la columna o la fila de origen: Nbd2, R1e2."
+    }
   },
   "insights": {
     "title": "Estadísticas",
@@ -623,7 +678,13 @@
     "lines": "Líneas",
     "depthLabel": "profundidad",
     "moves": "Jugadas",
-    "startPos": "Posición inicial"
+    "startPos": "Posición inicial",
+    "engines": {
+      "local": "Stockfish local",
+      "chessapi": "API de Stockfish"
+    },
+    "chessapiNote": "Usa el Stockfish alojado en chess-api.com: la posición se envía allí y la profundidad llega hasta 18.",
+    "chessapiFellBack": "la API no respondió, así que calculó el motor local"
   },
   "home": {
     "greeting": "¡Hola, {{name}}!",
@@ -803,7 +864,10 @@
     "games_other": "{{count}} partidas de maestros",
     "white": "Blancas",
     "draw": "Tablas",
-    "black": "Negras"
+    "black": "Negras",
+    "tokenNeeded": "Lichess ahora pide un token de API antes de mostrar partidas de maestros.",
+    "tokenRejected": "Lichess ha rechazado tu token de API.",
+    "openSettings": "Añade uno en Ajustes → Conexiones."
   },
   "update": {
     "available": "Patzer {{latest}} ya está disponible — estás usando {{current}}.",
@@ -821,5 +885,36 @@
     "thanks": "¡Gracias por la estrella!",
     "starTitle": "Dale una estrella a Patzer en GitHub — es el único agradecimiento que el proyecto pide",
     "changelogCta": "Patzer es gratuito y lo alojas tú."
+  },
+  "connections": {
+    "title": "Conexiones",
+    "desc": "Tu propio modelo de IA para el entrenador y tu propio token de Lichess. Lo que uses lo pagas a tu proveedor. Se guardan en este servidor y no se vuelven a mostrar.",
+    "llm": "Modelo de IA para el entrenador",
+    "none": "Ninguno: entrenador apagado",
+    "llmHelp": "El entrenador funciona con tu propia cuenta.",
+    "sourceOwn": "Tu modelo está configurado.",
+    "sourceNone": "Aún no hay modelo, así que el entrenador está apagado para ti.",
+    "apiKey": "Clave de API",
+    "apiKeyHelp": "Crea una en platform.deepseek.com. Lo que consuma tu entrenador lo pagas tú a DeepSeek.",
+    "keySaved": "Hay una clave guardada. Escribe una nueva para sustituirla.",
+    "url": "Dirección del servidor",
+    "model": "Modelo",
+    "lichessToken": "Token de API de Lichess",
+    "lichessTokenHelp": "Lichess pide un token antes de mostrar las estadísticas de partidas de maestros. Crea uno (sin permisos) en",
+    "tokenSaved": "Hay un token guardado. Escribe uno nuevo para sustituirlo. Gestiona tus tokens en",
+    "save": "Guardar conexiones",
+    "saved": "Guardado",
+    "test": "Probar el modelo",
+    "testOk": "Conectado: {{n}} modelos disponibles.",
+    "removeKey": "Quitar clave",
+    "removeToken": "Quitar token",
+    "error": {
+      "generic": "No ha funcionado. Revisa los valores e inténtalo de nuevo.",
+      "invalid_input": "Uno de los valores no es válido. Un token de Lichess tiene 10 o más letras, cifras o guiones bajos.",
+      "invalid_llm_url": "Esa dirección no es una URL http o https válida.",
+      "llm_hosts_not_allowed": "Este servidor solo permite DeepSeek para modelos personales. Un administrador puede permitir Ollama y vLLM en Administración → Sistema.",
+      "llm_not_configured": "Guarda primero un proveedor con su clave o dirección.",
+      "deepseek_api_key_missing": "Añade primero una clave de API."
+    }
   }
 }

@@ -1,4 +1,6 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { getSetting } from '../db.js';
+import { getUserServices, isAdminUser } from '../userServices.js';
 
 export type LlmProvider = 'ollama' | 'vllm' | 'deepseek';
 
@@ -9,81 +11,70 @@ export type LlmProvider = 'ollama' | 'vllm' | 'deepseek';
 // to the tokenizer's chat template; non-thinking models/templates ignore it.
 const VLLM_NO_THINK = { chat_template_kwargs: { enable_thinking: false } };
 
-// DeepSeek is a hosted OpenAI-compatible API. It's the "cloud LLM" option
-// alongside local Ollama / self-hosted vLLM. Unlike the local providers, its
-// URL has a sensible default and the API key is the real "configured" signal.
+// DeepSeek is a hosted OpenAI-compatible API — the "cloud LLM" option
+// alongside local Ollama / self-hosted vLLM. Its host is fixed: a user only
+// supplies a key. DEEPSEEK_URL lets the operator point every DeepSeek user at
+// a proxy instead (and lets the tests point at a fake).
 const DEEPSEEK_BASE = 'https://api.deepseek.com';
+function deepseekBase(): string {
+  return (process.env.DEEPSEEK_URL || DEEPSEEK_BASE).replace(/\/+$/, '');
+}
 
 export interface LlmModel { name: string; size: number; details?: { parameter_size?: string } }
 
-export function llmProvider(): LlmProvider {
-  const p = getSetting('llm_provider');
-  if (p === 'vllm') return 'vllm';
-  if (p === 'deepseek') return 'deepseek';
-  return 'ollama';
+// ---- Whose LLM? --------------------------------------------------------
+//
+// There is no server-wide LLM. Each user brings their own (Settings →
+// Connections, stored in user_services): their key, their bill. A user who
+// hasn't added one has no coach — the engine facts still show as plain text.
+
+export interface LlmConfig {
+  provider: LlmProvider;
+  url: string;
+  model: string;
+  apiKey: string | null;
 }
 
-// DeepSeek API key — env wins (Docker secrets), DB setting as fallback. Never
-// returned to the client; the admin surface only reports whether one is set.
-export function deepseekApiKey(): string | null {
-  return process.env.DEEPSEEK_API_KEY || getSetting('deepseek_api_key') || null;
+// A user-supplied Ollama/vLLM URL makes this server send requests to a host
+// of that user's choosing — fine in a household, an SSRF door on an instance
+// with strangers on it. Admins may always use one; everyone else only once an
+// admin opts in. DeepSeek (a fixed host) is open to every user.
+export function userLlmHostsAllowed(userId: number): boolean {
+  return getSetting('llm_user_hosts') === '1' || isAdminUser(userId);
 }
 
-// Ollama, vLLM and DeepSeek are configured independently (own URL + model
-// each), so switching the provider toggle doesn't clobber whichever one you
-// aren't currently using — e.g. an Ollama box for quick local models, a vLLM
-// server for a bigger one, and DeepSeek for a cloud model, configured once each.
-export function llmUrl(): string | null {
-  const p = llmProvider();
-  const url = p === 'vllm' ? getSetting('vllm_url')
-    : p === 'deepseek' ? (getSetting('deepseek_url') || DEEPSEEK_BASE)
-    : getSetting('ollama_url');
-  return url ? url.replace(/\/$/, '') : null;
+export function userLlm(userId: number): LlmConfig | null {
+  const s = getUserServices(userId);
+  if (s.llm_provider === 'deepseek') {
+    if (!s.llm_api_key) return null;
+    return { provider: 'deepseek', url: deepseekBase(), model: s.llm_model || 'deepseek-chat', apiKey: s.llm_api_key };
+  }
+  if (s.llm_provider === 'ollama' || s.llm_provider === 'vllm') {
+    if (!s.llm_url || !userLlmHostsAllowed(userId)) return null;
+    const model = s.llm_model || (s.llm_provider === 'ollama' ? 'gemma3:1b' : '');
+    return { provider: s.llm_provider, url: s.llm_url.replace(/\/+$/, ''), model, apiKey: null };
+  }
+  return null;
 }
 
-// Whether the currently-selected LLM is actually usable. For DeepSeek the URL
-// always resolves to a default, so the API key is what makes it "configured";
-// the other two are configured once they have a URL.
-export function llmConfigured(): boolean {
-  if (llmProvider() === 'deepseek') return !!deepseekApiKey();
-  return !!llmUrl();
+// The user a coach call is being made for. Set once where a request or a
+// background job knows its user (withLlmUser) so the prompt-building layers in
+// between don't each have to pass an id down to chatStream/chatJson.
+const llmUser = new AsyncLocalStorage<number>();
+export function withLlmUser<T>(userId: number | null | undefined, fn: () => T): T {
+  return userId ? llmUser.run(userId, fn) : fn();
 }
 
-export function llmModel(): string {
-  const p = llmProvider();
-  if (p === 'vllm') return getSetting('vllm_model') || '';
-  if (p === 'deepseek') return getSetting('deepseek_model') || 'deepseek-chat';
-  return getSetting('ollama_model') || 'gemma3:1b';
+/** The LLM to use for `userId` (default: the user of the current coach call).
+ *  Null when that user has none — and always when there is no user. */
+export function activeLlm(userId: number | null | undefined = llmUser.getStore()): LlmConfig | null {
+  return userId ? userLlm(userId) : null;
 }
 
-/** Comma-separated CSV of fallback models, tried in order on 404 / model-not-found. */
-export function llmFallbackModels(): string[] {
-  const csv = getSetting('ollama_fallback_models') ?? '';
-  return csv.split(',').map((s) => s.trim()).filter(Boolean);
+/** Whether the coach can answer for `userId` (default: the current call's user). */
+export function llmConfigured(userId?: number | null): boolean {
+  return !!activeLlm(userId ?? undefined);
 }
-
-// Module-level: which models we've already verified are pulled/served this
-// server lifetime. Avoids hitting the models endpoint on every call.
-const verifiedModels = new Set<string>();
-// p95 latency ring buffer for the admin /system surface.
-const latencyRing: number[] = [];
-const LATENCY_RING_MAX = 50;
-function recordLatency(ms: number): void {
-  latencyRing.push(ms);
-  if (latencyRing.length > LATENCY_RING_MAX) latencyRing.shift();
-}
-export function llmStats(): { count: number; p95Ms: number | null; lastError: string | null; lastModelUsed: string | null } {
-  const sorted = [...latencyRing].sort((a, b) => a - b);
-  const p95Idx = Math.floor(sorted.length * 0.95);
-  return {
-    count: sorted.length,
-    p95Ms: sorted.length ? Math.round(sorted[Math.min(p95Idx, sorted.length - 1)]!) : null,
-    lastError,
-    lastModelUsed,
-  };
-}
-let lastError: string | null = null;
-let lastModelUsed: string | null = null;
 
 // OpenAI-compatible providers (vLLM, DeepSeek) speak the same dialect; these
 // helpers centralize the two places they differ — where the API root is and
@@ -104,22 +95,22 @@ export function openAiRoot(url: string, provider: OpenAiLike): string {
 function openAiEndpoint(base: string, provider: OpenAiLike, path: 'models' | 'chat/completions' = 'chat/completions'): string {
   return `${openAiRoot(base, provider)}/${path}`;
 }
-function openAiHeaders(provider: OpenAiLike): Record<string, string> {
+function openAiHeaders(provider: OpenAiLike, apiKey: string | null): Record<string, string> {
   const h: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (provider === 'deepseek') h.Authorization = `Bearer ${deepseekApiKey() ?? ''}`;
+  if (provider === 'deepseek') h.Authorization = `Bearer ${apiKey ?? ''}`;
   return h;
 }
 
-/** List models available on the configured host, normalized across providers.
- *  Ollama exposes its native `/api/tags`; vLLM (`/v1/models`) and DeepSeek
+/** List models available on a host, normalized across providers. Ollama
+ *  exposes its native `/api/tags`; vLLM (`/v1/models`) and DeepSeek
  *  (`/models`) expose the OpenAI-compatible list (one entry per served model). */
-export async function testConnection(url: string, provider: LlmProvider = llmProvider()): Promise<{ ok: true; models: LlmModel[] } | { ok: false; error: string }> {
+export async function testConnection(url: string, provider: LlmProvider, apiKey: string | null = null): Promise<{ ok: true; models: LlmModel[] } | { ok: false; error: string }> {
   const base = url.replace(/\/$/, '');
   try {
     if (provider === 'vllm' || provider === 'deepseek') {
-      if (provider === 'deepseek' && !deepseekApiKey()) return { ok: false, error: 'deepseek_api_key_missing' };
+      if (provider === 'deepseek' && !apiKey) return { ok: false, error: 'deepseek_api_key_missing' };
       const res = await fetch(openAiEndpoint(base, provider, 'models'), {
-        headers: provider === 'deepseek' ? { Authorization: `Bearer ${deepseekApiKey() ?? ''}` } : undefined,
+        headers: provider === 'deepseek' ? { Authorization: `Bearer ${apiKey ?? ''}` } : undefined,
         signal: AbortSignal.timeout(8000),
       });
       if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
@@ -135,50 +126,21 @@ export async function testConnection(url: string, provider: LlmProvider = llmPro
   }
 }
 
-/** Check whether a given model is available on the configured host. Caches
- *  positive results so repeated calls are cheap. Returns false on any error
- *  (caller falls back to next model). */
-export async function ensureModel(model: string): Promise<boolean> {
-  if (verifiedModels.has(model)) return true;
-  const url = llmUrl();
-  if (!url) return false;
-  const res = await testConnection(url);
-  if (!res.ok) return false;
-  const ok = res.models.some((m) => m.name === model || m.name.split(':')[0] === model.split(':')[0]);
-  if (ok) verifiedModels.add(model);
-  return ok;
-}
-
-/** Resolve which model to use, walking the fallback chain. Returns the first
- *  model that's actually present; falls back to the configured default if
- *  none of the fallback list is present (the call will then fail loudly,
- *  which is the right surface — admin needs to know to pull/serve a model). */
-export async function resolveModel(preferred?: string): Promise<string> {
-  const want = preferred ?? llmModel();
-  if (await ensureModel(want)) return want;
-  for (const m of llmFallbackModels()) {
-    if (await ensureModel(m)) return m;
-  }
-  return want;
-}
-
 export interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string }
 
 interface ChatOpts {
   model?: string; temperature?: number; topP?: number; numPredict?: number;
-  signal?: AbortSignal; hardTimeoutMs?: number; idleTimeoutMs?: number; fallback?: boolean;
+  signal?: AbortSignal; hardTimeoutMs?: number; idleTimeoutMs?: number;
 }
 
 // Streams response chunks. Calls `onChunk` per token batch.
 // Hard timeout (default 120s) and idle timeout (default 30s) ensure silent
 // failures (model loading forever, network hung) become loud errors.
 export async function chatStream(messages: ChatMessage[], onChunk: (text: string) => void, opts: ChatOpts = {}): Promise<void> {
-  if (!llmConfigured()) throw new Error('llm_not_configured');
-  const url = llmUrl()!;
-  const provider = llmProvider();
-  const model = (opts.fallback === false) ? (opts.model ?? llmModel()) : await resolveModel(opts.model);
-  lastModelUsed = model;
-  const _started = Date.now();
+  const cfg = activeLlm();
+  if (!cfg) throw new Error('llm_not_configured');
+  const { url, provider } = cfg;
+  const model = opts.model ?? cfg.model;
   const hardMs = opts.hardTimeoutMs ?? 120_000;
   const idleMs = opts.idleTimeoutMs ?? 30_000;
 
@@ -204,7 +166,7 @@ export async function chatStream(messages: ChatMessage[], onChunk: (text: string
       if (provider === 'vllm') Object.assign(body, VLLM_NO_THINK);
       const res = await fetch(openAiEndpoint(url, provider), {
         method: 'POST',
-        headers: openAiHeaders(provider),
+        headers: openAiHeaders(provider, cfg.apiKey),
         body: JSON.stringify(body),
         signal: ac.signal,
       });
@@ -282,14 +244,10 @@ export async function chatStream(messages: ChatMessage[], onChunk: (text: string
         }
       }
     }
-  } catch (err) {
-    lastError = err instanceof Error ? err.message : String(err);
-    throw err;
   } finally {
     clearTimeout(hardTimer);
     if (idleTimer) clearTimeout(idleTimer);
     opts.signal?.removeEventListener('abort', onAbort);
-    recordLatency(Date.now() - _started);
   }
 }
 
@@ -300,14 +258,12 @@ export async function chatStream(messages: ChatMessage[], onChunk: (text: string
 // parse defensively.
 export async function chatJson<T = unknown>(
   messages: ChatMessage[],
-  opts: { model?: string; temperature?: number; numPredict?: number; signal?: AbortSignal; timeoutMs?: number; fallback?: boolean } = {},
+  opts: { model?: string; temperature?: number; numPredict?: number; signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<T> {
-  if (!llmConfigured()) throw new Error('llm_not_configured');
-  const url = llmUrl()!;
-  const provider = llmProvider();
-  const model = (opts.fallback === false) ? (opts.model ?? llmModel()) : await resolveModel(opts.model);
-  lastModelUsed = model;
-  const _started = Date.now();
+  const cfg = activeLlm();
+  if (!cfg) throw new Error('llm_not_configured');
+  const { url, provider } = cfg;
+  const model = opts.model ?? cfg.model;
   const timeoutMs = opts.timeoutMs ?? 180_000;
 
   const ac = new AbortController();
@@ -326,7 +282,7 @@ export async function chatJson<T = unknown>(
       if (provider === 'vllm') Object.assign(body, VLLM_NO_THINK);
       const res = await fetch(openAiEndpoint(url, provider), {
         method: 'POST',
-        headers: openAiHeaders(provider),
+        headers: openAiHeaders(provider, cfg.apiKey),
         body: JSON.stringify(body),
         signal: ac.signal,
       });
@@ -361,13 +317,9 @@ export async function chatJson<T = unknown>(
     } catch (err) {
       throw new Error(`llm_bad_json: ${(err as Error).message}: ${cleaned.slice(0, 200)}`);
     }
-  } catch (err) {
-    lastError = err instanceof Error ? err.message : String(err);
-    throw err;
   } finally {
     clearTimeout(timer);
     opts.signal?.removeEventListener('abort', onAbort);
-    recordLatency(Date.now() - _started);
   }
 }
 
@@ -375,7 +327,7 @@ export async function chatJson<T = unknown>(
  *  reply was not valid JSON" addendum, which small models respond to well. */
 export async function chatJsonRetry<T = unknown>(
   messages: ChatMessage[],
-  opts: { model?: string; temperature?: number; numPredict?: number; signal?: AbortSignal; timeoutMs?: number; fallback?: boolean } = {},
+  opts: { model?: string; temperature?: number; numPredict?: number; signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<T> {
   try {
     return await chatJson<T>(messages, opts);
@@ -391,7 +343,7 @@ export async function chatJsonRetry<T = unknown>(
 }
 
 // Quick smoke test of a single model — sends a tiny prompt and reports timing.
-export async function testModel(url: string, model: string, timeoutMs = 30_000, provider: LlmProvider = llmProvider()): Promise<{ ok: boolean; latencyMs: number; sample?: string; error?: string }> {
+export async function testModel(url: string, model: string, timeoutMs: number, provider: LlmProvider, apiKey: string | null = null): Promise<{ ok: boolean; latencyMs: number; sample?: string; error?: string }> {
   const base = url.replace(/\/$/, '');
   const start = Date.now();
   try {
@@ -405,7 +357,7 @@ export async function testModel(url: string, model: string, timeoutMs = 30_000, 
       if (provider === 'vllm') Object.assign(body, VLLM_NO_THINK);
       const res = await fetch(openAiEndpoint(base, provider), {
         method: 'POST',
-        headers: openAiHeaders(provider),
+        headers: openAiHeaders(provider, apiKey),
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(timeoutMs),
       });

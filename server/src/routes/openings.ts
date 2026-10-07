@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { Chess } from 'chess.js';
 import { db } from '../db.js';
 import { requireAuth } from '../auth/middleware.js';
+import { lichessExplorerToken } from '../userServices.js';
 import { SCORING_VERSION } from '../chess/classifier.js';
 import { lookupOpeningByEpd, fenToEpd } from '../chess/openings.js';
 import { masterStats } from '../chess/explorer.js';
@@ -178,10 +179,14 @@ router.get('/tree', (c) => {
 router.get('/explorer', async (c) => {
   const fen = c.req.query('fen') ?? '';
   if (fen.length < 10 || fen.length > 120) return c.json({ error: 'invalid_fen' }, 400);
-  const result = await masterStats(fen);
+  // Lichess wants an API token for this; each user brings their own.
+  const token = lichessExplorerToken(c.get('user').id);
+  const result = await masterStats(fen, fetch, token);
   if (!result.ok) {
     if (result.reason === 'invalid_fen') return c.json({ error: 'invalid_fen' }, 400);
-    return c.json({ available: false, cached: result.cached });
+    // `reason` lets the panel tell "Lichess is down" from "add a token"
+    // (auth_required, and `has_token` says whether one was sent and refused).
+    return c.json({ available: false, cached: result.cached, reason: result.reason, has_token: !!token });
   }
   c.header('Cache-Control', 'private, max-age=3600');
   return c.json({ available: true, cached: result.cached, ...result.stats });

@@ -162,6 +162,9 @@ export class ChessApiEngine implements AnalysisEngine {
 
   constructor(private readonly fetchImpl: FetchLike = fetch) {}
 
+  /** True once the API failed and the local engine took over. */
+  get fellBack(): boolean { return this.fallback !== null; }
+
   static async test(fetchImpl: FetchLike = fetch): Promise<{ ok: true; name: string } | { ok: false; error: string }> {
     const e = new ChessApiEngine(fetchImpl);
     try {

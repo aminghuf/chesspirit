@@ -37,7 +37,7 @@
 // Output is cached in `analyses.prose_json`, keyed by (scoring_version,
 // prose_version, language, audience). Re-runs only when one of those changes.
 
-import { chatJsonRetry } from './llm.js';
+import { chatJsonRetry, withLlmUser } from './llm.js';
 import { systemPrompt, sanToNatural, pvToNaturalSan, verdictPhrase, boardPiecesNatural } from './prompts.js';
 import { explainCoaching } from './coaching.js';
 import { cpToWinPct } from '../chess/classifier.js';
@@ -673,8 +673,13 @@ function fallbackOpening(name: string, language: Language): string {
   return reviewText(language).fallbackOpening(name);
 }
 
-/** Build the full Game Review. Emits onProgress events as steps complete. */
-export async function buildGameReview(args: BuildReviewArgs): Promise<GameReview> {
+/** Build the full Game Review. Emits onProgress events as steps complete.
+ *  Written by the LLM of the user the review is for (llm.ts). */
+export function buildGameReview(args: BuildReviewArgs): Promise<GameReview> {
+  return withLlmUser(args.userId, () => buildReview(args));
+}
+
+async function buildReview(args: BuildReviewArgs): Promise<GameReview> {
   const total = totalSteps(args);
   let done = 0;
   const fire = (step: ProgressEvent['step'], extra?: Partial<ProgressEvent>) => {

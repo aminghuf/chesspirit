@@ -1,16 +1,18 @@
-// Tactic Trainer — solve puzzles extracted from your own analyzed games.
-// The point: chess.com puzzles are generic. Patzer's are *yours* — every
-// position is a real moment from your own play where you missed something.
-// A second tab (?tab=puzzles) has general puzzles for when you've run out of
-// your own, or have no analyzed games yet (components/TacticsPuzzles.tsx).
+// Train — three drills behind tabs (?tab=…):
+//   - From your games: puzzles extracted from your own analyzed games. The
+//     point: chess.com puzzles are generic. Patzer's are *yours* — every
+//     position is a real moment from your own play where you missed something.
+//   - Coordinates: name the squares (components/CoordinateTrainer.tsx).
+//   - Notation: write the move that was just played (components/NotationTrainer.tsx).
+// General puzzles live on their own page, /puzzles.
 
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Target, RotateCcw, ArrowRight, Lightbulb, Check, X, Trophy, BookOpen, Zap } from 'lucide-react';
-import BetaBadge from '../components/BetaBadge';
-import TacticsPuzzles from '../components/TacticsPuzzles';
+import { Target, RotateCcw, ArrowRight, Lightbulb, Check, X, Trophy, BookOpen, Puzzle as PuzzleIcon, Grid3x3, PenLine } from 'lucide-react';
+import CoordinateTrainer from '../components/CoordinateTrainer';
+import NotationTrainer from '../components/NotationTrainer';
 import ChessBoard from '../components/ChessBoard';
 import { api } from '../api';
 import { useAuth } from '../state/auth';
@@ -35,42 +37,53 @@ interface Puzzle {
 
 interface Stats { total: number; solved: number; failed: number; accuracy: number }
 
+type Tab = 'mine' | 'coordinates' | 'notation';
+
 export default function Train() {
   const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') === 'puzzles' ? 'puzzles' : 'mine';
-  const setTab = (next: 'mine' | 'puzzles') => setParams(next === 'puzzles' ? { tab: 'puzzles' } : {}, { replace: true });
+  const raw = params.get('tab');
+  const tab: Tab = raw === 'coordinates' || raw === 'notation' ? raw : 'mine';
+  const setTab = (next: Tab) => setParams(next === 'mine' ? {} : { tab: next }, { replace: true });
   const tabClass = (active: boolean) => `tab-pill flex items-center gap-1.5 ${active ? 'is-active' : ''}`;
 
   return (
     <div className="mx-auto max-w-5xl space-y-4">
-      <div role="tablist" className="flex gap-1 border-b border-chesscom-200 dark:border-chesscom-700">
+      <div role="tablist" className="flex flex-wrap gap-1 border-b border-chesscom-200 dark:border-chesscom-700">
         <button role="tab" aria-selected={tab === 'mine'} onClick={() => setTab('mine')} className={tabClass(tab === 'mine')}>
           <Target className="h-4 w-4" /> {t('train.tabs.mine')}
         </button>
-        <button role="tab" aria-selected={tab === 'puzzles'} onClick={() => setTab('puzzles')} className={tabClass(tab === 'puzzles')}>
-          <Zap className="h-4 w-4" /> {t('train.tabs.puzzles')}
-          <BetaBadge />
+        <button role="tab" aria-selected={tab === 'coordinates'} onClick={() => setTab('coordinates')} className={tabClass(tab === 'coordinates')}>
+          <Grid3x3 className="h-4 w-4" /> {t('train.tabs.coordinates')}
+        </button>
+        <button role="tab" aria-selected={tab === 'notation'} onClick={() => setTab('notation')} className={tabClass(tab === 'notation')}>
+          <PenLine className="h-4 w-4" /> {t('train.tabs.notation')}
         </button>
       </div>
-      {tab === 'puzzles' ? (
+      {tab === 'coordinates' && (
         <>
           <header>
-            <h1 className="page-h1 flex items-center gap-2"><Zap className="h-6 w-6 text-gold-600" />{t('train.tabs.puzzles')}</h1>
-            <p className="page-sub">{t('train.puzzles.intro')}</p>
+            <h1 className="page-h1 flex items-center gap-2"><Grid3x3 className="h-6 w-6 text-board-dark" />{t('train.coords.title')}</h1>
+            <p className="page-sub">{t('train.coords.intro')}</p>
           </header>
-          <TacticsPuzzles />
-          <footer className="pt-2 text-center text-xs text-chesscom-400">
-            {t('train.puzzles.credit')}{' '}
-            <a href="https://database.lichess.org/#puzzles" target="_blank" rel="noreferrer noopener" className="underline underline-offset-2 hover:text-chesscom-600 dark:hover:text-chesscom-200">database.lichess.org</a>
-          </footer>
+          <CoordinateTrainer />
         </>
-      ) : <FromYourGames onPuzzles={() => setTab('puzzles')} />}
+      )}
+      {tab === 'notation' && (
+        <>
+          <header>
+            <h1 className="page-h1 flex items-center gap-2"><PenLine className="h-6 w-6 text-board-dark" />{t('train.notation.title')}</h1>
+            <p className="page-sub">{t('train.notation.intro')}</p>
+          </header>
+          <NotationTrainer />
+        </>
+      )}
+      {tab === 'mine' && <FromYourGames />}
     </div>
   );
 }
 
-function FromYourGames({ onPuzzles }: { onPuzzles: () => void }) {
+function FromYourGames() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
@@ -137,7 +150,7 @@ function FromYourGames({ onPuzzles }: { onPuzzles: () => void }) {
           <div className="text-base font-semibold">{t('train.allClear', { defaultValue: "Nothing to train — you're caught up." })}</div>
           <p className="max-w-md text-sm text-chesscom-500">{t('train.allClearDesc', { defaultValue: 'Play more games and analyze them to unlock new puzzles. Every blunder you fix here is a pattern you stop repeating in real games.' })}</p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
-            <button onClick={onPuzzles} className="btn-primary text-sm"><Zap className="h-4 w-4" /> {t('train.tabs.puzzles')}</button>
+            <Link to="/puzzles" className="btn-primary text-sm"><PuzzleIcon className="h-4 w-4" /> {t('puzzles.nav')}</Link>
             <Link to="/play" className="btn-secondary text-sm">{t('home.playTitle')}</Link>
             <Link to="/review" className="btn-secondary text-sm">{t('review.title')}</Link>
           </div>

@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { setCookie } from 'hono/cookie';
 import { z } from 'zod';
 import { db, userCount, setSetting } from '../db.js';
+import { setUserServices } from '../userServices.js';
 import { config } from '../config.js';
 import { hashPassword } from '../auth/passwords.js';
 import { createSession, SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from '../auth/sessions.js';
@@ -106,11 +107,12 @@ router.post('/init', async (c) => {
     throw err;
   }
 
-  if (ollama_url) setSetting('ollama_url', ollama_url);
-  if (ollama_model) setSetting('ollama_model', ollama_model);
   setSetting('default_language', language);
 
   if (userId === null) return c.json({ error: 'init_failed' }, 500);
+  // The Ollama host from the wizard becomes the admin's own model — there is
+  // no server-wide one (coach/llm.ts). Other users add theirs in Settings.
+  if (ollama_url) setUserServices(userId, { llm_provider: 'ollama', llm_url: ollama_url, llm_model: ollama_model || null });
   const cookie = createSession(userId);
   setCookie(c, SESSION_COOKIE_NAME, cookie, {
     httpOnly: true,

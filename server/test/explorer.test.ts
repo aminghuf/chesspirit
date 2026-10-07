@@ -15,15 +15,17 @@ const LICHESS_BODY = {
   opening: { eco: 'B00', name: "King's Pawn Game" },
 };
 
-function fakeFetch(handler: (url: string) => { status: number; body?: unknown } | Error): { fetch: FetchLike; calls: string[] } {
+function fakeFetch(handler: (url: string) => { status: number; body?: unknown } | Error): { fetch: FetchLike; calls: string[]; auth: (string | undefined)[] } {
   const calls: string[] = [];
-  const fetch: FetchLike = async (url) => {
+  const auth: (string | undefined)[] = [];
+  const fetch: FetchLike = async (url, init) => {
     calls.push(url);
+    auth.push((init.headers as Record<string, string> | undefined)?.Authorization);
     const r = handler(url);
     if (r instanceof Error) throw r;
     return { ok: r.status >= 200 && r.status < 300, status: r.status, json: async () => r.body };
   };
-  return { fetch, calls };
+  return { fetch, calls, auth };
 }
 
 beforeEach(() => clearExplorerCache());
@@ -70,10 +72,29 @@ describe('masterStats', () => {
   });
 
   it('degrades to unavailable on HTTP errors, and negative-caches for a while', async () => {
-    const f = fakeFetch(() => ({ status: 401 }));
+    const f = fakeFetch(() => ({ status: 503 }));
     expect(await masterStats(E4, f.fetch)).toEqual({ ok: false, reason: 'unavailable', cached: false });
     expect(await masterStats(E4, f.fetch)).toEqual({ ok: false, reason: 'unavailable', cached: true });
     expect(f.calls).toHaveLength(1);
+  });
+
+  // Lichess answers 401 to a request without an API token.
+  it('reports a 401 as auth_required, and stops asking without a token', async () => {
+    const f = fakeFetch(() => ({ status: 401 }));
+    expect(await masterStats(E4, f.fetch)).toEqual({ ok: false, reason: 'auth_required', cached: false });
+    expect(await masterStats(E4, f.fetch)).toEqual({ ok: false, reason: 'auth_required', cached: true });
+    expect(f.calls).toHaveLength(1);
+    expect(f.auth).toEqual([undefined]);
+  });
+
+  it('sends a token as a Bearer header, and one user\'s refusal does not block the next', async () => {
+    const f = fakeFetch(() => ({ status: 401 }));
+    await masterStats(E4, f.fetch); // no token: refused, and remembered
+    expect(await masterStats(E4, f.fetch, 'lip_bad')).toEqual({ ok: false, reason: 'auth_required', cached: false });
+    const ok = fakeFetch(() => ({ status: 200, body: LICHESS_BODY }));
+    expect(await masterStats(E4, ok.fetch, 'lip_good')).toMatchObject({ ok: true, cached: false });
+    expect(f.auth).toEqual([undefined, 'Bearer lip_bad']);
+    expect(ok.auth).toEqual(['Bearer lip_good']);
   });
 
   it('degrades on network errors / timeouts and on unparseable bodies', async () => {

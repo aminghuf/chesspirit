@@ -423,6 +423,18 @@ if (getSetting('allow_signup') === null) setSetting('allow_signup', '1');
 // Auto-expire any active goal whose week elapsed while the server was down.
 db.prepare(`UPDATE goals SET status='expired' WHERE status='active' AND completes_at < datetime('now')`).run();
 
+// Per-user LLM and Lichess token (userServices.ts). Kept off `profiles`,
+// which is sent to the browser whole — these columns are secrets.
+db.exec(`CREATE TABLE IF NOT EXISTS user_services (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  llm_provider TEXT CHECK(llm_provider IN ('ollama','vllm','deepseek')),
+  llm_url TEXT,
+  llm_model TEXT,
+  llm_api_key TEXT,
+  lichess_token TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+)`);
+
 // Cleanup expired sessions on startup
 db.prepare(`DELETE FROM sessions WHERE expires_at < datetime('now')`).run();
 // Sweep stale challenges on startup. Pending challenges older than 15 minutes

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { Chess } from 'chess.js';
 import { db } from '../db.js';
 import { requireAuth } from '../auth/middleware.js';
-import { analysisDepth, createAnalysisEngine } from '../chess/engine.js';
+import { analysisDepth, ChessApiEngine, createAnalysisEngine } from '../chess/engine.js';
 import {
   classifyByWpDrop, refineClassification, normalizeEval, cpToWinPct,
   cpLossForPly, cpLossForAcpl, moveAccuracy, estimateElo, estimateGamePerformance, BOOK_PLIES,
@@ -57,6 +57,9 @@ const positionSchema = z.object({
   fen: z.string().min(10),
   depth: z.number().int().min(8).max(22).default(16),
   lines: z.number().int().min(1).max(5).default(3),
+  // The Lab lets the user pick: this machine's Stockfish or the hosted one at
+  // chess-api.com. Omitted = whatever Game Review is set to use.
+  engine: z.enum(['local', 'chessapi']).optional(),
 });
 
 export interface AnalysisRow {
@@ -168,7 +171,7 @@ router.post('/position', async (c) => {
   const body = await c.req.json().catch(() => null);
   const parsed = positionSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: 'invalid_input' }, 400);
-  const { fen, depth, lines } = parsed.data;
+  const { fen, depth, lines, engine: wanted } = parsed.data;
 
   // chess.js throws on invalid FEN. We trust its parser as the FEN validator
   // since we'll need a Chess instance to convert UCI → SAN anyway.
@@ -182,7 +185,7 @@ router.post('/position', async (c) => {
   if (positionInflight.has(user.id)) return c.json({ error: 'already_analyzing' }, 429);
 
   const work = (async () => {
-    const engine = createAnalysisEngine();
+    const engine = createAnalysisEngine(wanted);
     try {
       await engine.start();
       await engine.setOption('Threads', '2');
@@ -216,6 +219,9 @@ router.post('/position', async (c) => {
         fen,
         depth: result.depth || depth,
         lines: linesOut,
+        // What actually answered: the hosted engine hands over to the local
+        // one when it can't be reached.
+        engine: engine instanceof ChessApiEngine && !engine.fellBack ? 'chessapi' : 'local',
       };
     } finally {
       await engine.quit();

@@ -147,7 +147,7 @@ volumes:
 
 You'll want, optionally:
 
-- **For the AI Coach:** an [Ollama](https://ollama.com) or [vLLM](https://docs.vllm.ai) server reachable from the Patzer container (pick the provider in *Admin → System*). The wizard validates the URL and lists available models for you. Patzer accepts loopback / RFC1918 / `*.local` / `host.docker.internal` Ollama hosts only — public-Internet model proxies aren't supported here. The one hosted exception is DeepSeek, which you opt into with an API key in *Admin → System*.
+- **For the AI Coach:** each user adds their own model in *Settings → Connections* and pays for their own use — there is no shared, server-wide model. Any user can add a [DeepSeek](https://platform.deepseek.com) API key. An [Ollama](https://ollama.com) or [vLLM](https://docs.vllm.ai) server reachable from the Patzer container works too: for admins always (the setup wizard saves the one you enter as the first admin's own), and for other users once an admin switches it on in *Admin → System*.
 - **For Game Review on your own games:** a Chess.com and/or Lichess username (entered later in *Settings*).
 
 To use a different host port, run with `-p 9000:8800` (or set `HOST_PORT=9000` if you're using `docker compose`).
@@ -250,15 +250,15 @@ All user-facing configuration is done **through the UI** and persisted in SQLite
 | `DB_PATH` | `./data/chess.db` | SQLite database file |
 | `STOCKFISH_PATH` | (auto) | Override Stockfish binary path |
 | `LICHESS_EXPLORER_URL` | `https://explorer.lichess.ovh` | Opening-explorer upstream for the *Master games* panel (a self-hosted `lila-openingexplorer` works) |
+| `LICHESS_EXPLORER_TOKEN` | (none) | A Lichess API token for the *Master games* panel, used for anyone who has not added their own in *Settings → Connections*. Lichess refuses explorer requests without one |
 | `UPDATE_CHECK` | `1` | Set to `0` to disable the six-hourly "a newer release exists" check for the whole deployment (there's also a toggle in *Admin → System*) |
 | `SESSION_SECRET` | (auto-generated) | Cookie signing secret. Persisted on first run. |
 | `COOKIE_SECURE`  | `false` | Set to `true` when terminating TLS at a reverse proxy so session cookies are flagged `Secure`. |
 | `ENGINE_BACKEND` | `local` | `chessapi` sends Game Review positions to the hosted chess-api.com engine instead of the bundled Stockfish (also a toggle in *Admin → System*; the env var wins over the UI setting, and while it is set analysis stays on Stockfish even if another engine is selected there) |
 | `CHESSCOM_SYNC_MINUTES` | `15` | Default Chess.com auto-sync interval (minutes) applied when a profile's setting is first created. The live interval is per-profile under *Settings → Automation* (Lichess has its own too); `0` makes auto-sync opt-in |
-| `DEEPSEEK_API_KEY` | (none) | DeepSeek key for the coach; wins over the key saved in *Admin → System* (handy with Docker secrets) |
 
-System settings (coach provider and model, the analysis engine and its default depth, Stockfish path override, who can sign up) live in *Admin → System*; invites in *Admin → Users*. Engines downloaded there are stored in `engines/` next to the database, so they survive image updates as long as the data volume does; downloads are available when Patzer runs on Linux (the Docker image), and bot play always uses the bundled Stockfish.
-Per-profile settings (language, audience, coach behavior, TTS voice, sound sets, Chess.com / Lichess usernames) live in *Settings*, alongside the *Automation* section: a toggle to write the AI review automatically when a game finishes, and a per-site auto-sync interval for Chess.com and Lichess.
+System settings (the analysis engine and its default depth, Stockfish path override, who can sign up, whether users may enter their own Ollama/vLLM address) live in *Admin → System*; invites in *Admin → Users*. Engines downloaded there are stored in `engines/` next to the database, so they survive image updates as long as the data volume does; downloads are available when Patzer runs on Linux (the Docker image), and bot play always uses the bundled Stockfish.
+Per-profile settings (language, audience, coach behavior, TTS voice, sound sets, Chess.com / Lichess usernames) live in *Settings*, alongside the *Automation* section: a toggle to write the AI review automatically when a game finishes, and a per-site auto-sync interval for Chess.com and Lichess. *Settings → Connections* holds each user's own coach model and Lichess API token; both are stored on the server and never sent back to the browser.
 
 ## How move classification works
 
