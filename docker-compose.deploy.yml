@@ -14,6 +14,11 @@ services:
       - NODE_ENV=production
       # The site is HTTPS-only, so the session cookie must never travel over http.
       - COOKIE_SECURE=true
+      # chesspirit.app is the public instance: landing page and try-it for
+      # visitors, absolute share links, and Umami page counts.
+      - PUBLIC_SITE=true
+      - PUBLIC_BASE_URL=https://chesspirit.app
+      - UMAMI_WEBSITE_ID=be82493e-30f2-4af2-b594-977464ad7d34
     # The host has 2 CPUs and 4 GB shared with other services; any signed-up
     # user can start engine analysis, so cap what one container may take.
     cpus: 1.5

@@ -29,6 +29,9 @@ import planRoutes from './routes/plan.js';
 import achievementsRoutes from './routes/achievements.js';
 import { startChessComSync } from './autoImport.js';
 import learnRoutes from './routes/learn.js';
+import shareRoutes from './routes/share.js';
+import tryRoutes from './routes/try.js';
+import { renderIndexHtml } from './share/html.js';
 import { attachPlayWebSocket } from './ws/play.js';
 import { attachLobbyWebSocket } from './ws/lobby.js';
 import { moveServerLlmToAdmins } from './userServices.js';
@@ -54,12 +57,16 @@ app.use('*', async (c, next) => {
       "img-src 'self' data:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self'",
+      // cloud.umami.is only when the operator set UMAMI_WEBSITE_ID (a public
+      // site); a self-hosted server never loads or talks to it.
+      config.umamiWebsiteId ? "script-src 'self' https://cloud.umami.is" : "script-src 'self'",
       // api.github.com is the star count behind the "Star on GitHub" link added
       // in 7.13.0. Without it the browser blocks the request and logs a CSP
       // violation on every page load; the link still works, the number never
       // appears. One read-only, unauthenticated GET.
-      "connect-src 'self' https://api.github.com",
+      config.umamiWebsiteId
+        ? "connect-src 'self' https://api.github.com https://cloud.umami.is https://api-gateway.umami.dev"
+        : "connect-src 'self' https://api.github.com",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "form-action 'self'",
@@ -114,6 +121,8 @@ app.route('/api/openings', openingsRoutes);
 app.route('/api/plan', planRoutes);
 app.route('/api/achievements', achievementsRoutes);
 app.route('/api/learn', learnRoutes);
+app.route('/api/share', shareRoutes);
+app.route('/api/try', tryRoutes);
 
 // In production, serve the built web app
 import { existsSync, readFileSync } from 'node:fs';
@@ -145,6 +154,10 @@ if (existsSync(WEB_DIST)) {
     }
     const ext = extname(path);
     const mime = MIME[ext] ?? 'application/octet-stream';
+    // The app shell gets the analytics tag (public site only) and, for a
+    // shared review, the Open Graph tags that make a pasted link unfurl
+    // with its card.
+    if (path === '/index.html') return c.html(renderIndexHtml(abs, c));
     const body = readFileSync(abs);
     return c.body(body, 200, { 'Content-Type': mime });
   });

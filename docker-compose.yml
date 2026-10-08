@@ -1,12 +1,12 @@
 services:
-  patzer:
+  chesspirit:
     # Pulls the released image from GitHub Container Registry by default
     # (published on every version tag by .github/workflows/release.yml). To
     # build from local source instead, uncomment `build: .` and run
     # `docker compose build`.
     image: ghcr.io/aminghuf/chesspirit:latest
     # build: .
-    container_name: patzer
+    container_name: chesspirit
     restart: unless-stopped
     ports:
       - "${HOST_PORT:-8800}:8800"
@@ -17,7 +17,7 @@ services:
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
     volumes:
-      - patzer-data:/app/data
+      - chesspirit-data:/app/data
     environment:
       - NODE_ENV=production
       # Analysis engine backend. `local` (default) uses the bundled Stockfish
@@ -45,4 +45,4 @@ services:
         max-file: "3"
 
 volumes:
-  patzer-data:
+  chesspirit-data:

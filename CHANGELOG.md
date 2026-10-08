@@ -6,6 +6,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Public site, try-it and shared reviews
+
+- **New: a landing page for public instances** (`PUBLIC_SITE=true`, as on
+  chesspirit.app). Logged-out visitors see what Chesspirit does, a comparison
+  with Chess.com's free plan (with its source and date), a language switcher,
+  and the ways in: log in or register here, or install it with `docker run`,
+  a `curl` one-liner (the new `install.sh`) or from source. A household
+  server is unchanged: its visitors still go straight to the login form.
+- **New: review a game without an account** (`/try`, public instances only).
+  Type a public Chess.com or Lichess username, pick one of the last ten
+  games, and get the full engine review. One analysis at a time, a short
+  queue, five per hour per address, at `TRY_DEPTH` (default 14). A game
+  someone already reviewed opens instantly.
+- **New: shareable reviews.** *Share review* on an analysed game makes a
+  public link and a 1200×630 PNG card (accuracy, the game's best moment, the
+  move you missed, a small chesspirit.app mark). The link carries
+  `?utm_source=share` and unfurls with the card. The page replays the game
+  and turns your costliest mistake into a puzzle. *Stop sharing* deletes it.
+- **Analytics only where the operator asks for it:** set `UMAMI_WEBSITE_ID`
+  and the server adds the Umami script and opens the CSP to it. Unset, as on
+  every self-hosted server, nothing is added.
+
+### Housekeeping
+
+- **LICENSE keeps Patzer's copyright notice** next to Chesspirit's, as the
+  MIT license requires; the README has an *Origins & credits* section.
+- **The Docker examples say `chesspirit`** (container `chesspirit`, volume
+  `chesspirit-data`). **Upgrading:** an existing install keeps its data in
+  the old `patzer-data` volume; keep that name or copy it across once, see
+  the FAQ.
+
 ### Sign-up
 
 - **Fixed: "Require email verification" could be skipped by leaving the email

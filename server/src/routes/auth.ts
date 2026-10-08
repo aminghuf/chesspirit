@@ -186,6 +186,7 @@ router.get('/config', (c) => {
   return c.json({
     signup_enabled: mode !== 'closed', signup_mode: mode,
     email_enabled: isMailerConfigured(), email_required: signupNeedsEmail(),
+    public_site: config.publicSite,
   });
 });
 

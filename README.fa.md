@@ -38,6 +38,14 @@
 
 <div dir="rtl">
 
+## امتحان کنید
+
+**[chesspirit.app/try](https://chesspirit.app/try)** — نام کاربری عمومی Chess.com یا Lichess را وارد کنید، یکی از ده بازی آخر را انتخاب کنید و حدود یک دقیقه بعد تحلیل کامل را ببینید. بدون حساب کاربری. هر تحلیل یک پیوند قابل اشتراک دارد.
+
+## ریشه‌ها و قدردانی
+
+Chesspirit به‌عنوان فورکی از **[Patzer](https://github.com/SikamikanikoBG/patzer)** ساختهٔ [SikamikanikoBG](https://github.com/SikamikanikoBG) (با مجوز MIT) شروع شد و از نسخهٔ 7.0.0 (اکتبر ۲۰۲۶) به‌طور مستقل همین‌جا توسعه می‌یابد. اعلان حق نشر Patzer در کنار اعلان Chesspirit در [LICENSE](LICENSE) حفظ شده، تاریخچه‌اش در [changelog](CHANGELOG.md) آمده (از 7.18.0 به پایین) و همهٔ کسانی که به هر دو پروژه کد فرستاده‌اند در [CONTRIBUTORS.md](CONTRIBUTORS.md) هستند. سپاس.
+
 ## چرا Chesspirit
 
 - **بازی‌هایتان در خانه می‌ماند.** یک کانتینر Docker روی Raspberry Pi، NAS یا یک لپ‌تاپ قدیمی. بدون ابر، بدون تله‌متری، بدون تبلیغ برای خرید اشتراک.
@@ -117,8 +125,8 @@ Chesspirit نسخه‌ای کوچک و خودمیزبان از همان کاره
 ```bash
 docker run -d \
   -p 8800:8800 \
-  -v patzer-data:/app/data \
-  --name patzer \
+  -v chesspirit-data:/app/data \
+  --name chesspirit \
   ghcr.io/aminghuf/chesspirit:latest
 ```
 
@@ -132,14 +140,14 @@ docker run -d \
 services:
   chesspirit:
     image: ghcr.io/aminghuf/chesspirit:latest
-    container_name: patzer
+    container_name: chesspirit
     restart: unless-stopped
     ports:
       - "8800:8800"
     volumes:
-      - patzer-data:/app/data
+      - chesspirit-data:/app/data
 volumes:
-  patzer-data:
+  chesspirit-data:
 ```
 
 </div>

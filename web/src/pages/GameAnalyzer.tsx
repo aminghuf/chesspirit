@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Sparkles, Settings as SettingsIcon, Copy, Download, Check, ListOrdered, FileText, X, Star, Share2, FlipVertical2, NotebookPen, Search, Loader2, Undo2, GitBranch } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Sparkles, Settings as SettingsIcon, Copy, Download, Check, ListOrdered, FileText, X, Star, Share2, FlipVertical2, NotebookPen, Search, Loader2, Undo2, GitBranch, Image as ImageIcon } from 'lucide-react';
+import ShareReviewDialog from '../components/ShareReviewDialog';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import EvalBar from '../components/EvalBar';
@@ -784,6 +785,7 @@ export default function GameAnalyzer() {
 function GameMetaToolbar({ gameId, bookmarked, notes, onFlip, onShare, linkCopied }: { gameId: number; bookmarked: boolean; notes: string; onFlip: () => void; onShare: () => void; linkCopied: boolean }) {
   const { t } = useTranslation();
   const [showNotes, setShowNotes] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [draft, setDraft] = useState(notes);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   useEffect(() => { setDraft(notes); }, [notes]);
@@ -817,6 +819,9 @@ function GameMetaToolbar({ gameId, bookmarked, notes, onFlip, onShare, linkCopie
           {linkCopied ? <Check className="h-3.5 w-3.5 text-board-dark" /> : <Share2 className="h-3.5 w-3.5" />}
           {linkCopied ? t('common.copied') : t('review.share', { defaultValue: 'Share position' })}
         </button>
+        <button onClick={() => setSharing(true)} className="btn-ghost px-2 py-1 text-xs" title={t('share.dialogTitle')}>
+          <ImageIcon className="h-3.5 w-3.5" /> {t('share.shareReview')}
+        </button>
         <button
           onClick={() => setShowNotes((s) => !s)}
           className={`btn-ghost ms-auto px-2 py-1 text-xs ${showNotes ? 'text-chesscom-900 dark:text-chesscom-100' : ''}`}
@@ -827,6 +832,7 @@ function GameMetaToolbar({ gameId, bookmarked, notes, onFlip, onShare, linkCopie
           {notes && !showNotes && <span className="ms-0.5 inline-block h-1.5 w-1.5 rounded-full bg-gold-500" />}
         </button>
       </div>
+      {sharing && <ShareReviewDialog gameId={gameId} onClose={() => setSharing(false)} />}
       {showNotes && (
         <div className="border-t border-chesscom-200 p-2 dark:border-chesscom-700">
           <textarea

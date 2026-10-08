@@ -40,6 +40,8 @@ RUN npm ci --omit=dev --workspace=server
 
 # Copy built artifacts from builder
 COPY --from=builder /app/server/dist ./server/dist
+# Fonts for the PNG share cards (server/src/share/card.ts).
+COPY server/assets ./server/assets
 COPY --from=builder /app/web/dist ./web/dist
 
 # CHANGELOG is read at runtime by /api/meta/changelog
