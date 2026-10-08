@@ -2,9 +2,12 @@ import { WebSocketServer, type WebSocket } from 'ws';
 import type { Server } from 'node:http';
 import { lookupUser, SESSION_COOKIE_NAME } from '../auth/sessions.js';
 import type { AuthedUser } from '../types.js';
+import { visibleUserIds } from '../directory.js';
 
 // In-memory presence: user_id → set of connected lobby WebSockets.
 const presence = new Map<number, Set<WebSocket>>();
+// Who each connected user is, for deciding whose presence they may be told about.
+const viewers = new Map<number, Pick<AuthedUser, 'id' | 'role'>>();
 
 function parseCookies(header: string | undefined): Record<string, string> {
   if (!header) return {};
@@ -36,10 +39,19 @@ export function notifyUser(userId: number, payload: Record<string, unknown>): bo
   return true;
 }
 
+// Who is online, as far as this user may know (directory.ts): everyone on an
+// open directory, otherwise themselves and the people they have played.
+function presenceFor(user: Pick<AuthedUser, 'id' | 'role'>, online: number[]): string {
+  const visible = visibleUserIds(user);
+  return JSON.stringify({ type: 'presence_update', online: visible ? online.filter((id) => visible.has(id)) : online });
+}
+
 export function broadcastPresence() {
   const ids = onlineUserIds();
-  const payload = JSON.stringify({ type: 'presence_update', online: ids });
-  for (const set of presence.values()) {
+  for (const [userId, set] of presence) {
+    const viewer = viewers.get(userId);
+    if (!viewer) continue;
+    const payload = presenceFor(viewer, ids);
     for (const ws of set) {
       if (ws.readyState === ws.OPEN) ws.send(payload);
     }
@@ -70,12 +82,12 @@ function handleConnection(ws: WebSocket, user: AuthedUser) {
   set.add(ws);
 
   ws.send(JSON.stringify({ type: 'lobby_hello', user_id: user.id }));
-  ws.send(JSON.stringify({ type: 'presence_update', online: onlineUserIds() }));
+  viewers.set(user.id, { id: user.id, role: user.role });
   broadcastPresence();
 
   ws.on('close', () => {
     set!.delete(ws);
-    if (set!.size === 0) presence.delete(user.id);
+    if (set!.size === 0) { presence.delete(user.id); viewers.delete(user.id); }
     broadcastPresence();
   });
 

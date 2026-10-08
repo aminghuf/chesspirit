@@ -26,6 +26,9 @@ interface LobbyState {
   ws: WebSocket | null;
   online: Set<number>;
   users: LobbyUser[];
+  // 'private': the list holds only people I have played; anyone else is
+  // reached by username.
+  directory: 'open' | 'private';
   incoming: Challenge[];
   outgoing: Challenge[];
   pendingAcceptedNav: AcceptedNav | null;
@@ -41,6 +44,7 @@ export const useLobby = create<LobbyState>((set, get) => ({
   ws: null,
   online: new Set(),
   users: [],
+  directory: 'open',
   incoming: [],
   outgoing: [],
   pendingAcceptedNav: null,
@@ -96,8 +100,8 @@ export const useLobby = create<LobbyState>((set, get) => ({
 
   refreshUsers: async () => {
     try {
-      const r = await api.get<{ users: LobbyUser[] }>('/api/lobby/users');
-      set({ users: r.users });
+      const r = await api.get<{ users: LobbyUser[]; directory?: 'open' | 'private' }>('/api/lobby/users');
+      set({ users: r.users, directory: r.directory ?? 'open' });
     } catch { /* ignore */ }
   },
 

@@ -406,7 +406,11 @@
     "noPlayers": "Es gibt noch keine anderen Spieler. Bitte einen Admin, ein weiteres Konto anzulegen.",
     "send": "Herausforderung senden",
     "accept": "Annehmen",
-    "decline": "Ablehnen"
+    "decline": "Ablehnen",
+    "byUsername": "Per Benutzername herausfordern",
+    "byUsernameHint": "Du siehst nur Personen, gegen die du gespielt hast. Um gegen jemand Neues zu spielen, gib den genauen Benutzernamen ein.",
+    "usernamePlaceholder": "Benutzername",
+    "userNotFound": "Kein Spieler mit diesem Benutzernamen."
   },
   "settings": {
     "title": "Einstellungen",
@@ -669,7 +673,9 @@
     "llmUserHosts": "Allen Nutzern eine Ollama- oder vLLM-Adresse erlauben",
     "llmUserHostsHint": "Aus: Nur Admins können eine Ollama- oder vLLM-Adresse nutzen; andere Nutzer können einen DeepSeek-Schlüssel eintragen. An: Dieser Server schickt Anfragen an jede Adresse, die ein Nutzer eingibt – zu Hause in Ordnung, auf einem Server mit Fremden nicht.",
     "coachModel": "KI-Coach",
-    "coachModelIntro": "Es gibt kein gemeinsames Modell. Jeder Nutzer trägt unter Einstellungen → Verbindungen sein eigenes ein und zahlt den eigenen Verbrauch."
+    "coachModelIntro": "Es gibt kein gemeinsames Modell. Jeder Nutzer trägt unter Einstellungen → Verbindungen sein eigenes ein und zahlt den eigenen Verbrauch.",
+    "privateDirectory": "Privates Spielerverzeichnis",
+    "privateDirectoryHint": "Spieler sehen nur sich selbst und die Personen, gegen die sie gespielt haben. Einschalten, wenn sich Leute registrieren können, die einander nicht kennen."
   },
   "palette": {
     "switchLanguage": "Wechseln zu",
@@ -1335,7 +1341,8 @@
       "rapid": "Schnellschach",
       "daily": "Täglich"
     },
-    "onlineTitle": "online"
+    "onlineTitle": "online",
+    "privateHint": "Du siehst nur Spieler, gegen die du gespielt hast. Um gegen jemand Neues zu spielen, fordere die Person auf der Seite „Spielen“ per Benutzername heraus."
   },
   "threat": {
     "title": "Was droht?",

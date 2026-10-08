@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { db } from '../db.js';
 import { requireAuth } from '../auth/middleware.js';
 import { onlineUserIds } from '../ws/lobby.js';
+import { directoryMode, visibleUserIds } from '../directory.js';
 
 const router = new Hono();
 router.use('*', requireAuth);
@@ -12,15 +13,16 @@ interface UserRow {
 
 router.get('/users', (c) => {
   const me = c.get('user');
-  const rows = db.prepare(`
+  const visible = visibleUserIds(me);
+  const rows = (db.prepare(`
     SELECT u.id, u.username, p.display_name, p.avatar_emoji
     FROM users u JOIN profiles p ON p.user_id = u.id
     WHERE u.id != ?
     ORDER BY p.display_name
-  `).all(me.id) as UserRow[];
+  `).all(me.id) as UserRow[]).filter((u) => !visible || visible.has(u.id));
   const onlineSet = new Set(onlineUserIds());
   const users = rows.map((u) => ({ ...u, online: onlineSet.has(u.id) }));
-  return c.json({ users });
+  return c.json({ users, directory: directoryMode() });
 });
 
 export default router;

@@ -1319,6 +1319,10 @@ function FriendTab({ onChallengeAccepted }: { onChallengeAccepted: (gameId: numb
   const [color, setColor] = useState<'white' | 'black' | 'random'>('random');
   const [tc, setTc] = useState<typeof TIME_CONTROLS[number]>('rapid');
   const [target, setTarget] = useState<number | null>(null);
+  // A private directory lists only people I have played; someone new is
+  // challenged by typing their username.
+  const [username, setUsername] = useState('');
+  const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState(false);
 
   // Sort: online first, then by name
@@ -1332,11 +1336,16 @@ function FriendTab({ onChallengeAccepted }: { onChallengeAccepted: (gameId: numb
   }, [lobby.users, lobby.online]);
 
   async function sendChallenge() {
-    if (!target) return;
+    const name = username.trim().replace(/^@/, '');
+    if (!target && !name) return;
     setBusy(true);
+    setNotFound(false);
     try {
-      await api.post('/api/challenges', { to_user_id: target, color, time_control: tc });
+      await api.post('/api/challenges', { ...(name ? { to_username: name } : { to_user_id: target }), color, time_control: tc });
+      setUsername('');
       await lobby.refreshChallenges();
+    } catch {
+      if (name) setNotFound(true);
     } finally { setBusy(false); }
   }
   async function cancel(id: number) {
@@ -1423,14 +1432,28 @@ function FriendTab({ onChallengeAccepted }: { onChallengeAccepted: (gameId: numb
               </select>
             </div>
           </div>
-          {users.length === 0 ? (
-            <div className="rounded-xl bg-ink-100 p-4 text-center text-sm text-ink-500 dark:bg-ink-800">
-              {t('challenge.noPlayers')}
+          {lobby.directory === 'private' && (
+            <div>
+              <label className="label mb-1 block" htmlFor="challenge-username">{t('challenge.byUsername')}</label>
+              <input id="challenge-username" className="input" value={username} autoComplete="off" autoCapitalize="none" spellCheck={false}
+                placeholder={t('challenge.usernamePlaceholder')}
+                onChange={(e) => { setUsername(e.target.value); setTarget(null); setNotFound(false); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') void sendChallenge(); }} />
+              <p className={`mt-1 text-xs ${notFound ? 'text-bad' : 'text-ink-400'}`} role={notFound ? 'alert' : undefined}>
+                {notFound ? t('challenge.userNotFound') : t('challenge.byUsernameHint')}
+              </p>
             </div>
+          )}
+          {users.length === 0 ? (
+            lobby.directory === 'private' ? null : (
+              <div className="rounded-xl bg-ink-100 p-4 text-center text-sm text-ink-500 dark:bg-ink-800">
+                {t('challenge.noPlayers')}
+              </div>
+            )
           ) : (
             <div className="max-h-72 space-y-1 overflow-auto">
               {users.map((u) => (
-                <button key={u.id} onClick={() => setTarget(u.id)}
+                <button key={u.id} onClick={() => { setTarget(u.id); setUsername(''); setNotFound(false); }}
                   className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-start transition-colors
                     ${target === u.id ? 'bg-chesscom-900 text-white dark:bg-chesscom-100 dark:text-chesscom-900' : 'hover:bg-chesscom-100 dark:hover:bg-chesscom-800'}`}>
                   <span className="text-xl">{u.avatar_emoji}</span>
@@ -1443,7 +1466,7 @@ function FriendTab({ onChallengeAccepted }: { onChallengeAccepted: (gameId: numb
               ))}
             </div>
           )}
-          <button onClick={sendChallenge} disabled={!target || busy} className="btn-primary w-full">
+          <button onClick={sendChallenge} disabled={(!target && !username.trim()) || busy} className="btn-primary w-full">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Swords className="h-4 w-4" />}
             {t('challenge.send')}
           </button>

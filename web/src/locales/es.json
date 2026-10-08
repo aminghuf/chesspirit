@@ -312,7 +312,11 @@
     "noPlayers": "Aún no hay otros jugadores. Pide a un administrador que cree más cuentas.",
     "send": "Enviar reto",
     "accept": "Aceptar",
-    "decline": "Rechazar"
+    "decline": "Rechazar",
+    "byUsername": "Retar por nombre de usuario",
+    "byUsernameHint": "Solo ves a las personas con las que has jugado. Para jugar con alguien nuevo, escribe su nombre de usuario exacto.",
+    "usernamePlaceholder": "nombre de usuario",
+    "userNotFound": "No hay ningún jugador con ese nombre de usuario."
   },
   "settings": {
     "title": "Ajustes",
@@ -458,7 +462,9 @@
     "llmUserHosts": "Permitir a todos los usuarios una dirección de Ollama o vLLM",
     "llmUserHostsHint": "Desactivado: solo los administradores pueden usar una dirección de Ollama o vLLM; los demás pueden añadir una clave de DeepSeek. Activado: este servidor enviará peticiones a cualquier dirección que escriba un usuario; bien en casa, no en un servidor con desconocidos.",
     "coachModel": "Entrenador de IA",
-    "coachModelIntro": "No hay un modelo compartido. Cada usuario añade el suyo en Ajustes → Conexiones y paga su propio uso."
+    "coachModelIntro": "No hay un modelo compartido. Cada usuario añade el suyo en Ajustes → Conexiones y paga su propio uso.",
+    "privateDirectory": "Directorio de jugadores privado",
+    "privateDirectoryHint": "Cada jugador solo se ve a sí mismo y a las personas con las que ha jugado. Actívalo cuando puedan registrarse personas que no se conocen."
   },
   "palette": {
     "switchLanguage": "Cambiar a",
@@ -824,7 +830,8 @@
       "blitz": "Blitz",
       "rapid": "Rápidas",
       "daily": "Diarias"
-    }
+    },
+    "privateHint": "Solo ves a los jugadores con los que has jugado. Para jugar con alguien nuevo, rétalo por nombre de usuario en la página Jugar."
   },
   "threat": {
     "title": "¿Cuál es la amenaza?",

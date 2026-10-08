@@ -51,7 +51,7 @@ export default function Players() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['players'],
-    queryFn: () => api.get<{ players: PlayerSummary[] }>('/api/players'),
+    queryFn: () => api.get<{ players: PlayerSummary[]; directory?: 'open' | 'private' }>('/api/players'),
     refetchInterval: 30_000,
   });
   const { data: history } = useQuery({
@@ -101,6 +101,9 @@ export default function Players() {
               online: onlineCount,
             })}
           </p>
+          {data?.directory === 'private' && (
+            <p className="mt-1 max-w-xl text-xs text-chesscom-500">{t('players.privateHint')}</p>
+          )}
         </div>
       </motion.div>
 
