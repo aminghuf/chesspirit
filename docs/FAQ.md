@@ -12,10 +12,27 @@ play-vs-Stockfish and play-vs-friend, all in one Docker container.
 
 ## Wasn't this called "Patzer"?
 
-Yes — Chesspirit used to be named Patzer. A *patzer* is chess slang for a weak
-amateur. The maintainer is one. The old name set expectations that still hold:
-this tool is built for people who want to get better, not for grandmasters who
-already have a coaching team.
+Chesspirit started as a fork of [Patzer](https://github.com/SikamikanikoBG/patzer),
+an MIT-licensed project by [SikamikanikoBG](https://github.com/SikamikanikoBG),
+and has been developed independently here since 7.0.0 (October 2026). Patzer's
+history is kept in the [changelog](../CHANGELOG.md), its copyright notice in
+[LICENSE](../LICENSE), and its contributors in [CONTRIBUTORS.md](../CONTRIBUTORS.md).
+(A *patzer* is chess slang for a weak amateur.)
+
+## I ran the old `patzer` container. How do I keep my data?
+
+The examples now name the container `chesspirit` and the volume `chesspirit-data`.
+Your games are still in the old `patzer-data` volume. Either keep using that
+name in your `docker run` / `docker-compose.yml`, or copy it across once:
+
+```bash
+docker stop patzer
+docker volume create chesspirit-data
+docker run --rm -v patzer-data:/from -v chesspirit-data:/to alpine cp -a /from/. /to/
+```
+
+With `docker compose`, the volume is prefixed with the project (folder) name,
+e.g. `chesspirit_patzer-data`; `docker volume ls` shows the real name.
 
 ## Is using the Chess.com API legal? Will I get a takedown?
 
@@ -109,8 +126,8 @@ by putting the file back in the same volume.
 There's no in-app reset yet. Until one ships:
 
 ```bash
-docker stop patzer
-sqlite3 /var/lib/docker/volumes/patzer-data/_data/chess.db  # or wherever
+docker stop chesspirit
+sqlite3 /var/lib/docker/volumes/chesspirit-data/_data/chess.db  # or wherever
 ```
 
 Then replace the offending row's `password_hash` with a fresh `bcryptjs` hash

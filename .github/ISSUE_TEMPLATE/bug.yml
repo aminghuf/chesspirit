@@ -53,5 +53,5 @@ body:
     id: logs
     attributes:
       label: Relevant logs
-      description: Server logs (`docker logs patzer`) and/or browser console output.
+      description: Server logs (`docker logs chesspirit`) and/or browser console output.
       render: shell
