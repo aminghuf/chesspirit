@@ -4,6 +4,7 @@ import { db } from '../db.js';
 import { requireAuth } from '../auth/middleware.js';
 import { notifyUser } from '../ws/lobby.js';
 import { createPvpGamePair } from '../chess/pvpGames.js';
+import { canSeeUser } from '../directory.js';
 
 const router = new Hono();
 router.use('*', requireAuth);
@@ -56,8 +57,12 @@ function shapeChallenge(row: ChallengeRow) {
   };
 }
 
+// The opponent is named by id (picked from a list) or by exact username (typed
+// in). With a private directory the username is how two people who have never
+// played find each other: nobody can browse for it, they have to be told it.
 const createSchema = z.object({
-  to_user_id: z.number().int().positive(),
+  to_user_id: z.number().int().positive().optional(),
+  to_username: z.string().trim().min(1).max(40).optional(),
   color: z.enum(['white', 'black', 'random']).default('random'),
   time_control: z.enum(['untimed', 'bullet', 'blitz', 'rapid', 'classical']).default('rapid'),
 });
@@ -67,11 +72,21 @@ router.post('/', async (c) => {
   const body = await c.req.json().catch(() => null);
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: 'invalid_input' }, 400);
-  const { to_user_id, color, time_control } = parsed.data;
-  if (to_user_id === me.id) return c.json({ error: 'cannot_challenge_self' }, 400);
+  const { color, time_control } = parsed.data;
+  if ((parsed.data.to_user_id === undefined) === (parsed.data.to_username === undefined)) {
+    return c.json({ error: 'invalid_input' }, 400);
+  }
 
-  const target = db.prepare('SELECT id FROM users WHERE id = ?').get(to_user_id);
+  let target: { id: number } | undefined;
+  if (parsed.data.to_username !== undefined) {
+    target = db.prepare('SELECT id FROM users WHERE username = ?').get(parsed.data.to_username) as { id: number } | undefined;
+  } else if (canSeeUser(me, parsed.data.to_user_id!)) {
+    // An id I may not see answers like one that doesn't exist.
+    target = db.prepare('SELECT id FROM users WHERE id = ?').get(parsed.data.to_user_id) as { id: number } | undefined;
+  }
   if (!target) return c.json({ error: 'user_not_found' }, 404);
+  const to_user_id = target.id;
+  if (to_user_id === me.id) return c.json({ error: 'cannot_challenge_self' }, 400);
 
   // Soft-cancel any prior pending challenge from me to them so we don't pile up.
   db.prepare(`UPDATE challenges SET status = 'cancelled'

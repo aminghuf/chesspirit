@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Private player directory
+
+- **New: a private player directory, for servers where strangers can sign
+  up.** Until now every account could see every other account on the
+  Players page: name, record, ratings, recent games and whether they were
+  online. That suits a household and leaks on a public server. Switch on
+  *Admin → System → Private player directory* and a player sees only
+  themselves and the people they have played (a shared game, or a challenge
+  one of them accepted). Someone else's profile answers "not found", the
+  challenge list and the online dots follow the same rule, and admins still
+  see everyone. Off by default, so existing servers don't change.
+- **New: challenge by username.** With the directory private, the *vs Friend*
+  tab has a username field: type a friend's exact username to challenge them.
+  You appear on each other's Players page once they accept.
+
 ### Android app
 
 - **New: Chesspirit for Android** (`mobile/`, built with Capacitor). It

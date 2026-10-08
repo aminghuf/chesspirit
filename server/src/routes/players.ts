@@ -10,6 +10,7 @@ import { Hono } from 'hono';
 import { db } from '../db.js';
 import { requireAuth } from '../auth/middleware.js';
 import { onlineUserIds } from '../ws/lobby.js';
+import { canSeeUser, directoryMode, visibleUserIds } from '../directory.js';
 import { GLICKO_DEFAULTS, PROVISIONAL_RD_THRESHOLD, PROVISIONAL_GAMES } from '../chess/glicko.js';
 import type { TimeClass } from '../chess/timeClass.js';
 
@@ -40,9 +41,11 @@ function shapeRating(time_class: TimeClass, row: RatingRow | null) {
 // GET /api/players — the directory. One row per user (self included, badged
 // `is_me` so the UI can render "You" in the leaderboard), with lifetime counts
 // and the player's best non-provisional-leaning rating across time classes.
+// With a private directory (directory.ts) that is only the people I have played.
 router.get('/', (c) => {
   const me = c.get('user');
-  const rows = db.prepare(`
+  const visible = visibleUserIds(me);
+  const allRows = db.prepare(`
     SELECT u.id, u.username, p.display_name, p.avatar_emoji, u.created_at,
       COUNT(g.id) AS total,
       SUM(CASE WHEN g.result = 'win'  THEN 1 ELSE 0 END) AS wins,
@@ -54,6 +57,7 @@ router.get('/', (c) => {
     GROUP BY u.id
     ORDER BY p.display_name COLLATE NOCASE
   `).all() as DirRow[];
+  const rows = visible ? allRows.filter((u) => visible.has(u.id)) : allRows;
 
   // Best rating + most-recent activity per user, in one pass over ratings.
   const ratingRows = db.prepare(`
@@ -96,7 +100,7 @@ router.get('/', (c) => {
     };
   });
 
-  return c.json({ players });
+  return c.json({ players, directory: directoryMode() });
 });
 
 interface ResultRow { result: string }
@@ -107,6 +111,8 @@ router.get('/:id', (c) => {
   const me = c.get('user');
   const id = Number(c.req.param('id'));
   if (!Number.isInteger(id) || id <= 0) return c.json({ error: 'invalid_id' }, 400);
+  // The same answer as for an id that doesn't exist, so ids can't be probed.
+  if (!canSeeUser(me, id)) return c.json({ error: 'not_found' }, 404);
 
   const player = db.prepare(`
     SELECT u.id, u.username, u.created_at, p.display_name, p.avatar_emoji, p.audience

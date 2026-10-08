@@ -14,6 +14,7 @@ interface SysSettings {
   update_check_enabled?: boolean;
   llm_user_hosts?: boolean;
   signup_mode?: SignupMode;
+  player_directory?: 'open' | 'private';
   require_email_verification?: boolean;
   notify_admin_on_signup?: boolean;
   public_base_url?: string;
@@ -46,6 +47,7 @@ interface MailState {
   update_check_enabled: boolean;
   llm_user_hosts: boolean;
   signup_mode: SignupMode;
+  private_directory: boolean;
   require_email_verification: boolean;
   notify_admin_on_signup: boolean;
   public_base_url: string;
@@ -65,7 +67,7 @@ export default function AdminSystem() {
   // Signup + email (v7.7.0)
   const [mail, setMail] = useState<MailState>({
     update_check_enabled: true, llm_user_hosts: false,
-    signup_mode: 'open', require_email_verification: false, notify_admin_on_signup: true,
+    signup_mode: 'open', private_directory: false, require_email_verification: false, notify_admin_on_signup: true,
     public_base_url: '', smtp_host: '', smtp_port: '', smtp_secure: false, smtp_user: '', smtp_from: '',
   });
   const [smtpPass, setSmtpPass] = useState('');
@@ -90,6 +92,7 @@ export default function AdminSystem() {
         update_check_enabled: d.update_check_enabled ?? true,
         llm_user_hosts: d.llm_user_hosts ?? false,
         signup_mode: d.signup_mode ?? 'open',
+        private_directory: d.player_directory === 'private',
         require_email_verification: d.require_email_verification ?? false,
         notify_admin_on_signup: d.notify_admin_on_signup ?? true,
         public_base_url: d.public_base_url ?? '',
@@ -113,6 +116,7 @@ export default function AdminSystem() {
         update_check_enabled: mail.update_check_enabled,
         llm_user_hosts: mail.llm_user_hosts,
         signup_mode: mail.signup_mode,
+        player_directory: mail.private_directory ? 'private' : 'open',
         require_email_verification: mail.require_email_verification,
         notify_admin_on_signup: mail.notify_admin_on_signup,
         public_base_url: mail.public_base_url,
@@ -363,6 +367,8 @@ export default function AdminSystem() {
               ))}
             </div>
           </fieldset>
+          <ToggleRow checked={mail.private_directory} onChange={(v) => setMail({ ...mail, private_directory: v })}
+            label={t('admin.privateDirectory')} hint={t('admin.privateDirectoryHint')} />
           <ToggleRow checked={mail.require_email_verification} onChange={(v) => setMail({ ...mail, require_email_verification: v })}
             label={t('admin.requireVerification')} hint={emailEnabled ? t('admin.requireVerificationHint') : t('admin.requireVerificationNeedsSmtp')}
             disabled={!emailEnabled} />

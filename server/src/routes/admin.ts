@@ -19,6 +19,7 @@ import {
   formatInviteCode,
   type InviteRow,
 } from '../auth/invites.js';
+import { directoryMode, setDirectoryMode } from '../directory.js';
 import { publicBaseUrl } from '../publicUrl.js';
 import type { Profile, Role } from '../types.js';
 
@@ -237,6 +238,7 @@ router.get('/system', async (c) => {
 
     // ---- Signup + email (v7.7.0) ----
     signup_mode: signupMode(),
+    player_directory: directoryMode(),
     require_email_verification: getSetting('require_email_verification') === '1',
     notify_admin_on_signup: getSetting('notify_admin_on_signup') !== '0',
     public_base_url: getSetting('public_base_url') ?? '',
@@ -263,6 +265,7 @@ const systemSchema = z.object({
   update_check_enabled: z.boolean().optional(),
   // Signup + email config
   signup_mode: z.enum(['open', 'invite', 'closed']).optional(),
+  player_directory: z.enum(['open', 'private']).optional(),
   // Pre-invite on/off switch, still accepted: true = open, false = closed.
   allow_signup: z.boolean().optional(),
   require_email_verification: z.boolean().optional(),
@@ -301,6 +304,7 @@ router.patch('/system', async (c) => {
 
   if (d.update_check_enabled !== undefined) setUpdateCheckEnabled(d.update_check_enabled);
   if (d.signup_mode) setSignupMode(d.signup_mode);
+  if (d.player_directory) setDirectoryMode(d.player_directory);
   else if (d.allow_signup !== undefined) setSignupMode(d.allow_signup ? 'open' : 'closed');
   setBool('require_email_verification', d.require_email_verification);
   setBool('notify_admin_on_signup', d.notify_admin_on_signup);

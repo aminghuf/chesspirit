@@ -406,7 +406,11 @@
     "noPlayers": "No other players exist yet. Ask an admin to create another account.",
     "send": "Send challenge",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+    "byUsername": "Challenge by username",
+    "byUsernameHint": "You only see people you have played. To play someone new, type their exact username.",
+    "usernamePlaceholder": "username",
+    "userNotFound": "No player with that username."
   },
   "settings": {
     "title": "Settings",
@@ -669,7 +673,9 @@
     "llmUserHosts": "Let every user enter an Ollama or vLLM address",
     "llmUserHostsHint": "Off: only admins can use an Ollama or vLLM address; other users can add a DeepSeek key. On: this server will send requests to whatever address a user types — fine at home, not on a server with strangers.",
     "coachModel": "AI coach",
-    "coachModelIntro": "There is no shared model. Each user adds their own in Settings → Connections and pays for their own use."
+    "coachModelIntro": "There is no shared model. Each user adds their own in Settings → Connections and pays for their own use.",
+    "privateDirectory": "Private player directory",
+    "privateDirectoryHint": "Players see only themselves and the people they have played. Turn this on when people who don't know each other can sign up."
   },
   "palette": {
     "switchLanguage": "Switch to",
@@ -1335,7 +1341,8 @@
       "rapid": "Rapid",
       "daily": "Daily"
     },
-    "onlineTitle": "online"
+    "onlineTitle": "online",
+    "privateHint": "You only see players you have played. To play someone new, challenge them by username on the Play page."
   },
   "threat": {
     "title": "What's the threat?",
