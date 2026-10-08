@@ -173,12 +173,15 @@ export default function App() {
         {/* Reached from emailed links — must work without an authenticated session. */}
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        {/* Public pages. "/" is the landing page on a public site and sends a
-            household server's visitors straight on to /login. */}
+        {/* Public pages, public sites only (a household server sends these on
+            to /login). /self-host is the page for people who want to run their
+            own copy. "/" renders it too, for a public site whose reverse proxy
+            doesn't put a separate home page there (chesspirit.app does). */}
         <Route path="/" element={<Landing />} />
+        <Route path="/self-host" element={<Landing />} />
         <Route path="/try" element={<Try />} />
         <Route path="/r/:slug" element={<PublicReview />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
   }
@@ -191,6 +194,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/r/:slug" element={<PublicReview />} />
         <Route path="/try" element={<Try />} />
+        <Route path="/self-host" element={<Landing />} />
         <Route element={<Layout onOpenPalette={() => setPaletteOpen(true)} onOpenShortcuts={() => setShortcutsOpen(true)} />}>
           <Route path="/" element={<Home />} />
           <Route path="/play" element={<Play />} />

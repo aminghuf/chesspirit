@@ -54,7 +54,7 @@ Or let the installer check for Docker and run that for you ([read it first](inst
 curl -fsSL https://raw.githubusercontent.com/aminghuf/chesspirit/main/install.sh | sh
 ```
 
-Open <http://localhost:8800>; a setup wizard creates the admin account. Your games stay in the `chesspirit-data` volume and never leave the machine. More options — `docker compose`, building from source, Codespaces — are under [First run](#first-run-in-five-minutes).
+Open <http://localhost:8800>; a setup wizard creates the admin account. Your games stay in the `chesspirit-data` volume and never leave the machine. More options — `docker compose`, building from source, Codespaces — are under [First run](#first-run-in-five-minutes) and on [chesspirit.app/self-host](https://chesspirit.app/self-host).
 
 ## What works without an LLM
 

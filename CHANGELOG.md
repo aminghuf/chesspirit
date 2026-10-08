@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Public site, try-it and shared reviews
 
+- **The self-hosting page has its own address: `/self-host`.** chesspirit.app
+  serves a separate home page at `/` from its reverse proxy, so the in-app
+  landing page showed only after a client-side jump back from `/try`. The
+  logo on public pages now does a full page load to `/`, `/self-host` is
+  linked from their header, and an unknown signed-out path goes to the login
+  form again.
 - **New: a landing page for public instances** (`PUBLIC_SITE=true`, as on
   chesspirit.app). Logged-out visitors see what Chesspirit does, a comparison
   with Chess.com's free plan (with its source and date), a language switcher,

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
 import { LogoLockup } from './Logo';
@@ -31,12 +31,22 @@ export default function PublicHeader() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { config } = useAuthConfig();
+  const { pathname } = useLocation();
+  const logoClass = 'me-auto rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50';
   return (
     <header className="border-b border-chesscom-200 bg-white/80 backdrop-blur dark:border-chesscom-800 dark:bg-chesscom-900/80">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-        <Link to="/" className="me-auto rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50">
-          <LogoLockup size={30} />
-        </Link>
+        {/* Signed out, home is a full page load: on chesspirit.app the reverse
+            proxy serves its own home page at "/", which a client-side route
+            would never reach. Signed in, "/" is the app's Home. */}
+        {user ? (
+          <Link to="/" className={logoClass}><LogoLockup size={30} /></Link>
+        ) : (
+          <a href="/" className={logoClass}><LogoLockup size={30} /></a>
+        )}
+        {config.public_site && pathname !== '/self-host' && pathname !== '/' && (
+          <Link to="/self-host" className="hidden text-sm text-chesscom-600 hover:text-chesscom-900 hover:underline md:inline dark:text-chesscom-300 dark:hover:text-white">{t('landing.selfHostLink')}</Link>
+        )}
         <LanguageSelect />
         <GitHubStar variant="inline" className="hidden sm:inline-flex" />
         {user ? (
