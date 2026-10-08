@@ -55,3 +55,11 @@ The offline puzzles are the Lichess set already bundled with the server (`server
 ## Vazirmatn font (SIL OFL 1.1)
 
 `web/src/assets/fonts/Vazirmatn-wght.woff2` is the variable webfont of [Vazirmatn](https://github.com/rastikerdar/vazirmatn), Copyright 2015 The Vazirmatn Project Authors, licensed under the [SIL Open Font License 1.1](https://openfontlicense.org). It is used for the Persian (Farsi) interface. The full license text is next to the font in `web/src/assets/fonts/Vazirmatn-OFL.txt`; the font is bundled unmodified.
+
+## Share cards: Inter font (OFL-1.1), cburnett pieces (GPL-2.0-or-later), resvg (MPL-2.0)
+
+The PNG share cards (`server/src/share/card.ts`) are drawn with:
+
+- **Inter** by Rasmus Andersson and the Inter Project Authors — `server/assets/fonts/Inter_400Regular.ttf` and `Inter_700Bold.ttf`, under the [SIL Open Font License 1.1](server/assets/fonts/Inter-OFL.txt).
+- **cburnett chess pieces** by Colin M.L. Burnett, GPL-2.0-or-later — the same set chessground ships (`chessground.cburnett.css`), copied into `server/src/share/pieces.ts`. The GPL note under *chessground* above applies.
+- **[resvg-js](https://github.com/yisibl/resvg-js)** (MPL-2.0), an unmodified runtime dependency that turns the SVG into a PNG.

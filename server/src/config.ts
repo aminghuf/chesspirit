@@ -44,4 +44,15 @@ export const config = {
   stockfishPathHint: process.env.STOCKFISH_PATH || undefined,
   projectRoot: PROJECT_ROOT,
   cookieSecure: parseBool(process.env.COOKIE_SECURE, false),
+  // A public instance (chesspirit.app): logged-out visitors get the landing
+  // page instead of the login form, and can try a Game Review on any public
+  // Chess.com / Lichess username without an account (routes/try.ts). Off for
+  // a household server, where neither makes sense.
+  publicSite: parseBool(process.env.PUBLIC_SITE, false),
+  // Engine depth for those anonymous reviews — lower than a member's, since
+  // strangers share the CPU.
+  tryDepth: Math.max(8, Math.min(22, Number(process.env.TRY_DEPTH) || 14)),
+  // Umami (cookieless analytics) website id. Unset = no analytics script, and
+  // the CSP stays closed to it. Only the operator of a public site sets this.
+  umamiWebsiteId: /^[0-9a-f-]{36}$/i.test(process.env.UMAMI_WEBSITE_ID ?? '') ? process.env.UMAMI_WEBSITE_ID! : null,
 };
