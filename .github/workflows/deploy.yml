@@ -1,0 +1,89 @@
+name: Deploy
+
+# Ships every commit on main to the production server: copies the source over
+# SSH, rebuilds the container there with docker-compose.deploy.yml, and checks
+# that it comes back healthy.
+#
+# Needs three secrets:
+#   DEPLOY_SSH_KEY          private key the server accepts for DEPLOY_SSH_USER
+#   DEPLOY_SSH_HOST         the server's address
+#   DEPLOY_SSH_KNOWN_HOSTS  the server's known_hosts line ("<host> ssh-ed25519 AAAA…")
+# The address and host key are secrets too, so this public repo doesn't point
+# at the origin server behind the CDN.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deploys against the server at once.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  SSH_USER: root
+  REMOTE_DIR: /root/patzer
+
+jobs:
+  deploy:
+    # The fork only — the same file on upstream or another fork must not try.
+    if: github.repository == 'aminghuf/chesspirit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Check the deploy secrets
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ] || [ -z "$KNOWN_HOSTS" ]; then
+            echo "::error::DEPLOY_SSH_KEY, DEPLOY_SSH_HOST and DEPLOY_SSH_KNOWN_HOSTS must all be set; nothing was deployed."
+            exit 1
+          fi
+
+      - name: Install SSH deploy key
+        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      # Pinned host key instead of ssh-keyscan, which would trust whoever
+      # answers on that address. If the server is reinstalled, update the secret.
+      - name: Trust the server's host key
+        env:
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+
+      - name: Deploy to the server
+        run: |
+          rsync -az \
+            --exclude '.git' --exclude 'node_modules' --exclude 'dist' --exclude 'build' \
+            --exclude 'data' --exclude 'bin' --exclude '.github' \
+            --exclude '*.db' --exclude '*.db-*' --exclude 'coverage' \
+            --exclude '*.log' --exclude '*.tsbuildinfo' \
+            ./ "$SSH_USER@$SSH_HOST:$REMOTE_DIR/"
+          ssh "$SSH_USER@$SSH_HOST" "cd $REMOTE_DIR && docker compose -f docker-compose.deploy.yml up -d --build"
+
+      - name: Verify health
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if ssh "$SSH_USER@$SSH_HOST" 'curl -sf http://localhost:8800/api/health'; then
+              echo "Health check OK"
+              ssh "$SSH_USER@$SSH_HOST" "echo $GITHUB_SHA > $REMOTE_DIR/.deployed-sha && docker image prune -f"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "Health check failed after retries"
+          exit 1

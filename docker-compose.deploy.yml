@@ -1,0 +1,38 @@
+services:
+  patzer:
+    build: .
+    image: patzer:local
+    container_name: patzer
+    restart: unless-stopped
+    # Loopback only: Caddy on the host is the one way in. Published on all
+    # interfaces, Docker would expose the port to the internet past ufw.
+    ports:
+      - "127.0.0.1:8800:8800"
+    volumes:
+      - patzer-data:/app/data
+    environment:
+      - NODE_ENV=production
+      # The site is HTTPS-only, so the session cookie must never travel over http.
+      - COOKIE_SECURE=true
+    # The host has 2 CPUs and 4 GB shared with other services; any signed-up
+    # user can start engine analysis, so cap what one container may take.
+    cpus: 1.5
+    mem_limit: 2g
+    pids_limit: 512
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8800/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  patzer-data:
+    external: true
