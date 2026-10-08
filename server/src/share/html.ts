@@ -71,7 +71,7 @@ export function renderIndexHtml(path: string, c: Context): string {
         'twitter:image': `${base}/api/share/${r.slug}/card.png`,
       }));
     }
-  } else if (config.publicSite && (url.pathname === '/' || url.pathname === '/try')) {
+  } else if (config.publicSite && (url.pathname === '/' || url.pathname === '/try' || url.pathname === '/self-host')) {
     parts.push(ogTags({
       'og:type': 'website',
       'og:site_name': 'Chesspirit',

@@ -81,7 +81,7 @@ export default function PublicReview() {
         <main className="mx-auto max-w-xl px-4 py-16 text-center">
           <h1 className="text-2xl font-bold">{t('share.notFoundTitle')}</h1>
           <p className="mt-2 text-chesscom-500">{t('share.notFoundBody')}</p>
-          <Link to="/" className="btn-primary mt-6">{t('share.goHome')}</Link>
+          <a href="/" className="btn-primary mt-6">{t('share.goHome')}</a>
         </main>
       </div>
     );
