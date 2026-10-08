@@ -9,14 +9,15 @@
 </p>
 
 <p align="center">
-  <b>Your private Chess.com.</b> Self-hosted, AI-coached, family-friendly.<br/>
-  Stockfish + your own LLM (Ollama or vLLM), in one Docker container.
+  <b>Free, unlimited chess game reviews.</b> Stockfish grades every move of your Chess.com or Lichess games, shows where the game turned, and turns your blunders into puzzles.<br/>
+  Open source (MIT). Use it at <a href="https://chesspirit.app">chesspirit.app</a> or run it yourself in one Docker container.<br/>
+  An AI coach explains your mistakes if you connect a model of your own (Ollama, vLLM or DeepSeek); everything else works without one.
 </p>
 
 <p align="center">
-  <a href="https://codespaces.new/aminghuf/chesspirit?quickstart=1">
-    <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" height="32"/>
-  </a>
+  <a href="https://chesspirit.app/try"><b>Try it with your username →</b></a>
+  &nbsp;·&nbsp;
+  <a href="#run-it-yourself">Run it yourself</a>
 </p>
 
 <p align="center">
@@ -28,13 +29,75 @@
 </p>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/analyzer-dark.png">
-    <img src="docs/screenshots/analyzer.png" width="960" alt="Chesspirit Game Review — classified move list, engine lines and the What's-the-threat probe on a sacrifice from the Opera Game"/>
-  </picture>
+  <img src="docs/demo/demo.gif" width="960" alt="Demo: type a Chess.com username, pick a game, Stockfish grades every move, then the worst mistake comes back as a puzzle"/>
   <br/>
-  <sub><b>Game Review</b> — every move classified, top engine lines, and <i>What's the threat?</i> answering in plain words. <i>Demo accounts, Morphy's Opera Game.</i></sub>
+  <sub>Username → your last games → every move graded → your worst move as a puzzle. <i>Recorded on a local instance with historical games.</i></sub>
 </p>
+
+## Try it
+
+**[chesspirit.app/try](https://chesspirit.app/try)** — type any public Chess.com or Lichess username, pick one of the last ten games, and get the full review in about a minute. No account. Each review gets a link you can share. Register on the site to import your whole history and keep everything.
+
+Free Chess.com accounts get one full Game Review a day ([Chess.com Help Center](https://support.chess.com/en/articles/8562418-what-does-each-level-of-membership-get-me), checked 8 October 2026). Chesspirit has no limit.
+
+## Run it yourself
+
+One command, Docker only:
+
+```bash
+docker run -d -p 8800:8800 -v chesspirit-data:/app/data --name chesspirit ghcr.io/aminghuf/chesspirit:latest
+```
+
+Or let the installer check for Docker and run that for you ([read it first](install.sh)):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aminghuf/chesspirit/main/install.sh | sh
+```
+
+Open <http://localhost:8800>; a setup wizard creates the admin account. Your games stay in the `chesspirit-data` volume and never leave the machine. More options — `docker compose`, building from source, Codespaces — are under [First run](#first-run-in-five-minutes).
+
+## What works without an LLM
+
+Almost everything. The AI model only writes the coach's words; the engine work is Stockfish and chess.js.
+
+| Works out of the box | Needs your own model |
+| --- | --- |
+| Game Review: every move classified (Brilliant → Blunder), accuracy, estimated Elo, eval graph, key moments, engine lines | The AI Coach's explanations in plain words |
+| Chess.com and Lichess import, automatic sync, PGN paste | Automatic written game reports |
+| Puzzles: the Lichess database by theme, and your own blunders | |
+| Play vs Stockfish (seven levels), play a friend on the same server | |
+| Learn (69 lessons), opening trainer, insights, shareable review links | |
+
+Without a model the *Coach* panel shows the engine facts as plain text. Each user adds their own model in *Settings → Connections*.
+
+## Share a review
+
+Any analysed game can be shared: *Share review* on the review page makes a public link (`/r/…?utm_source=share`) and a PNG card with the accuracy, the best moment and the move you missed. The link unfurls with that card on chat apps and social sites. *Stop sharing* deletes it.
+
+<p align="center">
+  <img src="docs/screenshots/share-card.png" width="720" alt="Share card: the board at the game's best moment, the player's accuracy, the move they missed and counts of each move class"/>
+</p>
+
+## How it's built
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/architecture-dark.svg">
+    <img src="docs/diagrams/architecture-light.svg" width="960" alt="Architecture: your browser talks HTTPS/WebSocket to one Docker container running a Hono server, native Stockfish and SQLite; an Ollama or vLLM host on your LAN and Chess.com/Lichess are optional, outside the container"/>
+  </picture>
+</p>
+
+One container: a [Hono](https://hono.dev) server, native Stockfish and a single SQLite file. The coach teaches from facts it is handed and never analyses on its own: the server works out what a move allows, hangs, wins or stops (chess.js, [server/src/coach/tactics.ts](server/src/coach/tactics.ts)), the opponent's best answer and the alternatives (Stockfish), and the player's recurring mistakes ([server/src/coach/memory.ts](server/src/coach/memory.ts)), and the LLM turns that into coaching ([server/src/coach/coaching.ts](server/src/coach/coaching.ts)). Every answer is checked against the engine's verdict before it is shown, so a small local model is enough.
+
+## Origins & credits
+
+Chesspirit began as a fork of **[Patzer](https://github.com/SikamikanikoBG/patzer)** by [SikamikanikoBG](https://github.com/SikamikanikoBG), released under the MIT license, and has been developed independently here since 7.0.0 (October 2026). Patzer's copyright notice is kept in [LICENSE](LICENSE) next to Chesspirit's, its history is in the [changelog](CHANGELOG.md) (everything from 7.18.0 down), and everyone who has sent code to either project is in [CONTRIBUTORS.md](CONTRIBUTORS.md). Thank you.
+
+Also standing on: [Stockfish](https://stockfishchess.org/), [chessground](https://github.com/lichess-org/chessground) and the [Lichess puzzle database](https://database.lichess.org/#puzzles) — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Roadmap
+
+Next up: master-game stats when Lichess reopens its explorer API, more languages, a capped demo coach on chesspirit.app, and federated play between separate Chesspirit servers. Out of scope: variants and a multi-tenant SaaS. The full list, with what shipped recently, is in [ROADMAP.md](ROADMAP.md).
 
 ## Why Chesspirit
 
@@ -113,8 +176,8 @@ Spins up a temporary Codespace with Chesspirit + Stockfish pre-installed. Wait ~
 ```bash
 docker run -d \
   -p 8800:8800 \
-  -v patzer-data:/app/data \
-  --name patzer \
+  -v chesspirit-data:/app/data \
+  --name chesspirit \
   ghcr.io/aminghuf/chesspirit:latest
 ```
 
@@ -124,14 +187,14 @@ docker run -d \
 services:
   chesspirit:
     image: ghcr.io/aminghuf/chesspirit:latest
-    container_name: patzer
+    container_name: chesspirit
     restart: unless-stopped
     ports:
       - "8800:8800"
     volumes:
-      - patzer-data:/app/data
+      - chesspirit-data:/app/data
 volumes:
-  patzer-data:
+  chesspirit-data:
 ```
 
 > **What works without any extras:** play vs Stockfish, play vs friend on the same server,
@@ -175,17 +238,9 @@ Get the APK from the [releases page](https://github.com/aminghuf/chesspirit/rele
 | Multi-user / family    |   ✅   |       ❌        |        ❌         |    ❌    |
 | Multilingual coach     |   ✅   |  partial UI    |        ❌         |    ❌    |
 | Free                   |   ✅   |       ✅        |        💳         |    💳    |
+| Full reviews, free plan | unlimited | unlimited    |   1 a day¹        |    —     |
 
-## How it's built
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/architecture-dark.svg">
-    <img src="docs/diagrams/architecture-light.svg" width="960" alt="Architecture: your browser talks HTTPS/WebSocket to one Docker container running a Hono server, native Stockfish and SQLite; an Ollama or vLLM host on your LAN and Chess.com/Lichess are optional, outside the container"/>
-  </picture>
-</p>
-
-The coach teaches from facts it is handed and never analyses on its own: the server works out what a move allows, hangs, wins or stops (chess.js, [server/src/coach/tactics.ts](server/src/coach/tactics.ts)), the opponent's best answer and the alternatives (Stockfish), and the player's recurring mistakes ([server/src/coach/memory.ts](server/src/coach/memory.ts)), and the LLM turns that into coaching ([server/src/coach/coaching.ts](server/src/coach/coaching.ts)). Every answer is checked against the engine's verdict before it is shown. Because the model only explains what it is handed, a small local model is enough for a useful coach.
+¹ [Chess.com Help Center](https://support.chess.com/en/articles/8562418-what-does-each-level-of-membership-get-me): Basic (free) members get "1 full game review analysis per day". Checked 8 October 2026.
 
 ## Local development
 
@@ -266,6 +321,10 @@ All user-facing configuration is done **through the UI** and persisted in SQLite
 | `COOKIE_SECURE`  | `false` | Set to `true` when terminating TLS at a reverse proxy so session cookies are flagged `Secure`. |
 | `ENGINE_BACKEND` | `local` | `chessapi` sends Game Review positions to the hosted chess-api.com engine instead of the bundled Stockfish (also a toggle in *Admin → System*; the env var wins over the UI setting, and while it is set analysis stays on Stockfish even if another engine is selected there) |
 | `CHESSCOM_SYNC_MINUTES` | `15` | Default Chess.com auto-sync interval (minutes) applied when a profile's setting is first created. The live interval is per-profile under *Settings → Automation* (Lichess has its own too); `0` makes auto-sync opt-in |
+| `PUBLIC_SITE` | `false` | `true` makes this a public instance like chesspirit.app: logged-out visitors get the landing page instead of the login form, and can review a public Chess.com / Lichess game without an account (`/try`, rate-limited, one analysis at a time). Leave it off for a household server |
+| `TRY_DEPTH` | `14` | Engine depth for those account-free reviews |
+| `PUBLIC_BASE_URL` | (from the request) | Absolute base for share links, Open Graph tags and emails, e.g. `https://chesspirit.app` (*Admin → System* can set it too) |
+| `UMAMI_WEBSITE_ID` | (none) | Adds the [Umami](https://umami.is) script (cookieless page counts) and opens the CSP to it. Unset = no analytics at all; only an operator of a public site sets this |
 
 System settings (the analysis engine and its default depth, Stockfish path override, who can sign up, whether users may enter their own Ollama/vLLM address) live in *Admin → System*; invites in *Admin → Users*. Engines downloaded there are stored in `engines/` next to the database, so they survive image updates as long as the data volume does; downloads are available when Chesspirit runs on Linux (the Docker image), and bot play always uses the bundled Stockfish.
 Per-profile settings (language, audience, coach behavior, TTS voice, sound sets, Chess.com / Lichess usernames) live in *Settings*, alongside the *Automation* section: a toggle to write the AI review automatically when a game finishes, and a per-site auto-sync interval for Chess.com and Lichess. *Settings → Connections* holds each user's own coach model and Lichess API token; both are stored on the server and never sent back to the browser.

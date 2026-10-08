@@ -16,6 +16,8 @@ A loose, opinionated list of where Chesspirit is headed. Items aren't promises �
 
 ## Shipped since this was last updated
 
+- **Public instance at [chesspirit.app](https://chesspirit.app)** — a landing page, a Game Review for any public Chess.com or Lichess username without an account, and shareable review links with a PNG card. All opt-in (`PUBLIC_SITE`); a household server is unchanged.
+
 - **7.16.0** — Learn section, beta (#49–#51, roadmap #7), opening-trainer follow-ups (#48), Docker coach setup (#53) and Referer hardening (#46) by @eric-gpu; Russian (#52) by @Fristail27.
 - **7.15.0** — German (#39), Lichess import (#40), invite-only sign-up (#42), soft and real-board sounds (#41/#43), opening trainer (#45) — all by @eric-gpu; DeepSeek, opt-in hosted engine and automatic Chess.com sync (#44) by @aminghuf.
 - **7.10.0** — Spanish (#14/#17), PvP draw / takeback / rematch (#10), "What's the threat?" (#12), master-game stats (#11), phone Play layout (#13), `setup.sh` (#16), vitest suite + e2e (#15); PvP sessions and clocks fixed; Brilliant classification fixed.
@@ -27,7 +29,7 @@ A loose, opinionated list of where Chesspirit is headed. Items aren't promises �
 
 ## Maybe / later
 
-- **Live demo at demo.patzer.app** (read-only, daily DB reset, rate-limited).
+- **A capped demo coach** on chesspirit.app, so a visitor can hear the AI coach before setting up a model of their own.
 - **Annotation engine.** Auto-generate PGN comments like `{Threatening Nf6+ winning the queen}` from pre-computed facts.
 - **Internal Glicko rating** between family-member profiles.
 - **Position search.** "All my games where I had a backward pawn on d6."

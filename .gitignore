@@ -38,3 +38,5 @@ docs/launch/
 
 # Test coverage
 coverage/
+# record-demo.mjs scratch
+docs/demo/.rec-*
