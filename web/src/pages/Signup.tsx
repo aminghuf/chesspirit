@@ -72,6 +72,7 @@ export default function Signup() {
     form.password.length >= 10 &&
     form.display_name.trim().length >= 1 &&
     emailLooksValid &&
+    (!config.email_required || form.email.trim().length > 0) &&
     inviteOk &&
     !busy;
 
@@ -157,9 +158,9 @@ export default function Signup() {
         </div>
         <div>
           <label className="label mb-1 block">
-            {t('common.email')} <span className="text-ink-400">{config.email_enabled ? t('auth.emailRecommended') : t('common.optional')}</span>
+            {t('common.email')}{!config.email_required && <> <span className="text-ink-400">{config.email_enabled ? t('auth.emailRecommended') : t('common.optional')}</span></>}
           </label>
-          <input className="input" type="email" autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <input className="input" type="email" autoComplete="email" required={!!config.email_required} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           {config.email_enabled && <p className="mt-1 text-xs text-ink-400">{t('auth.emailWhy')}</p>}
         </div>
         <div>

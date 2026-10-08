@@ -171,12 +171,22 @@ router.get('/me', (c) => {
 
 // ---- Self-service signup + email flows -----------------------------------
 
+// "Require email verification" used to gate only accounts that gave an email,
+// so leaving the field empty skipped it. With verification on (and a mailer to
+// send the link) an account must have one.
+function signupNeedsEmail(): boolean {
+  return getSetting('require_email_verification') === '1' && isMailerConfigured();
+}
+
 // Public capability probe so the login/signup pages can show or hide the
 // "Sign up" and "Forgot password?" affordances without guessing.
 // signup_enabled stays for older front-ends: true for 'open' and 'invite'.
 router.get('/config', (c) => {
   const mode = signupMode();
-  return c.json({ signup_enabled: mode !== 'closed', signup_mode: mode, email_enabled: isMailerConfigured() });
+  return c.json({
+    signup_enabled: mode !== 'closed', signup_mode: mode,
+    email_enabled: isMailerConfigured(), email_required: signupNeedsEmail(),
+  });
 });
 
 // Lets the signup page say "this invite has expired" before anyone fills in
@@ -218,6 +228,7 @@ router.post('/register', async (c) => {
   const email = parsed.data.email ? parsed.data.email : null;
   const inviteCode = normalizeInviteCode(parsed.data.invite ?? '');
   if (mode === 'invite' && !inviteCode) return c.json({ error: 'invite_required' }, 403);
+  if (!email && signupNeedsEmail()) return c.json({ error: 'email_required' }, 400);
 
   // Reuse the login limiter buckets — registration is just as abusable for
   // resource exhaustion (each call runs a ~250ms bcrypt hash).

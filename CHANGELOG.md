@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Sign-up
+
+- **Fixed: "Require email verification" could be skipped by leaving the email
+  field empty.** Only accounts that gave an address were held for
+  verification; one without an address was let straight in. With verification
+  on and email configured, sign-up now requires an address, and the form says
+  so.
 ### Private player directory
 
 - **New: a private player directory, for servers where strangers can sign
