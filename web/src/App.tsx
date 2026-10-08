@@ -31,6 +31,9 @@ import IncomingChallengeModal from './components/IncomingChallengeModal';
 import CommandPalette from './components/CommandPalette';
 import ShortcutsModal from './components/ShortcutsModal';
 import { LogoMark } from './components/Logo';
+import Landing from './pages/Landing';
+import Try from './pages/Try';
+import PublicReview from './pages/PublicReview';
 
 export default function App() {
   const { loading, setupRequired, user, refresh } = useAuth();
@@ -170,7 +173,12 @@ export default function App() {
         {/* Reached from emailed links — must work without an authenticated session. */}
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Public pages. "/" is the landing page on a public site and sends a
+            household server's visitors straight on to /login. */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/try" element={<Try />} />
+        <Route path="/r/:slug" element={<PublicReview />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
@@ -181,6 +189,8 @@ export default function App() {
         {/* Email links still resolve even if the user happens to be logged in. */}
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/r/:slug" element={<PublicReview />} />
+        <Route path="/try" element={<Try />} />
         <Route element={<Layout onOpenPalette={() => setPaletteOpen(true)} onOpenShortcuts={() => setShortcutsOpen(true)} />}>
           <Route path="/" element={<Home />} />
           <Route path="/play" element={<Play />} />

@@ -7,6 +7,8 @@ export interface AuthConfig {
   email_enabled: boolean;
   // Signup must include an email: the admin requires verification. Absent on older servers.
   email_required?: boolean;
+  // A public instance (PUBLIC_SITE): landing page and try-it for visitors.
+  public_site?: boolean;
 }
 
 // Public capability probe (GET /api/auth/config). Drives whether the login page
